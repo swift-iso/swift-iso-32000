@@ -41,17 +41,17 @@ extension ISO_32000.`9`.`8` {
 // MARK: - FontDesign Tagged Arithmetic
 
 extension Tagged: AdditiveArithmetic
-where Tag == ISO_32000.`9`.`8`.FontDesign, RawValue: AdditiveArithmetic {
+where Tag == ISO_32000.`9`.`8`.FontDesign, Underlying: AdditiveArithmetic {
     /// The zero value in font design units.
     @inlinable
-    public static var zero: Self { Self(__unchecked: (), RawValue.zero) }
+    public static var zero: Self { Self(_unchecked: Underlying.zero) }
 
     /// Adds two font design unit values.
     ///
     /// Valid for accumulating glyph widths (e.g., total string width).
     @inlinable
     public static func + (lhs: Self, rhs: Self) -> Self {
-        Self(__unchecked: (), lhs.rawValue + rhs.rawValue)
+        Self(_unchecked: lhs.underlying + rhs.underlying)
     }
 
     /// Subtracts one font design unit value from another.
@@ -59,7 +59,7 @@ where Tag == ISO_32000.`9`.`8`.FontDesign, RawValue: AdditiveArithmetic {
     /// Valid for computing differences (e.g., `ascender - descender` for line height).
     @inlinable
     public static func - (lhs: Self, rhs: Self) -> Self {
-        Self(__unchecked: (), lhs.rawValue - rhs.rawValue)
+        Self(_unchecked: lhs.underlying - rhs.underlying)
     }
 }
 
@@ -88,8 +88,8 @@ extension ISO_32000.FontDesign.Width {
         by fontSize: ISO_32000.UserSpace.Size<1>,
         unitsPerEm: Int = 1000
     ) -> ISO_32000.UserSpace.Width {
-        let scale = fontSize.length.rawValue / Double(unitsPerEm)
-        return ISO_32000.UserSpace.Width(Double(self.rawValue) * scale)
+        let scale = fontSize.length.underlying / Double(unitsPerEm)
+        return ISO_32000.UserSpace.Width(Double(self.underlying) * scale)
     }
 }
 
@@ -108,8 +108,8 @@ extension ISO_32000.FontDesign.Height {
         by fontSize: ISO_32000.UserSpace.Size<1>,
         unitsPerEm: Int = 1000
     ) -> ISO_32000.UserSpace.Height {
-        let scale = fontSize.length.rawValue / Double(unitsPerEm)
-        return ISO_32000.UserSpace.Height(Double(self.rawValue) * scale)
+        let scale = fontSize.length.underlying / Double(unitsPerEm)
+        return ISO_32000.UserSpace.Height(Double(self.underlying) * scale)
     }
 }
 
@@ -196,13 +196,13 @@ extension ISO_32000.`9`.`8` {
         /// - Parameter codePoint: Unicode code point (e.g., 65 for 'A')
         /// - Returns: Width in font design units
         public func width(forCodePoint codePoint: UInt32) -> Int {
-            (widths[codePoint] ?? defaultWidth).rawValue
+            (widths[codePoint] ?? defaultWidth).underlying
         }
 
         /// The default width for missing glyphs (in font design units).
         ///
         /// Used for characters not in the width table.
-        public var missingWidth: Int { defaultWidth.rawValue }
+        public var missingWidth: Int { defaultWidth.underlying }
 
         /// Create metrics with a width table and vertical metrics
         public init(
@@ -259,7 +259,7 @@ extension ISO_32000.`9`.`8`.Metrics {
     where Bytes.Element == UInt8 {
         var total = 0
         for byte in bytes {
-            total += winAnsiByteWidths[Int(byte)].rawValue
+            total += winAnsiByteWidths[Int(byte)].underlying
         }
         return ISO_32000.FontDesign.Width(total)
     }
@@ -294,9 +294,9 @@ extension ISO_32000.`9`.`8`.Metrics {
         var total = 0
         for scalar in text.unicodeScalars {
             if let byte = ISO_32000.WinAnsiEncoding.encode(scalar) {
-                total += winAnsiByteWidths[Int(byte)].rawValue
+                total += winAnsiByteWidths[Int(byte)].underlying
             } else {
-                total += defaultWidth.rawValue
+                total += defaultWidth.underlying
             }
         }
         return ISO_32000.FontDesign.Width(total)
@@ -416,7 +416,7 @@ extension ISO_32000.`9`.`8`.Metrics {
         ///
         /// This is the ratio of the typographic line height to the em square.
         public var height: Multiplier {
-            let h = metrics.ascender.rawValue - metrics.descender.rawValue
+            let h = metrics.ascender.underlying - metrics.descender.underlying
             return Multiplier(Double(h) / Double(metrics.unitsPerEm))
         }
 
@@ -426,7 +426,7 @@ extension ISO_32000.`9`.`8`.Metrics {
         /// recommended leading (from the Leading entry in the font descriptor).
         public var normal: Multiplier {
             let h =
-                metrics.ascender.rawValue - metrics.descender.rawValue + metrics.leading.rawValue
+                metrics.ascender.underlying - metrics.descender.underlying + metrics.leading.underlying
             return Multiplier(Double(h) / Double(metrics.unitsPerEm))
         }
 

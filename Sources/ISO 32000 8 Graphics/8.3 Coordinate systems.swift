@@ -58,15 +58,15 @@ extension ISO_32000.UserSpace.Length {
 
     /// The measurement in inches
     @inlinable
-    public var inches: Self { Self(rawValue / 72) }
+    public var inches: Self { Self(underlying / 72) }
 
     /// The measurement in millimeters
     @inlinable
-    public var millimeters: Self { Self(rawValue / 2.83465) }
+    public var millimeters: Self { Self(underlying / 2.83465) }
 
     /// The measurement in centimeters
     @inlinable
-    public var centimeters: Self { Self(rawValue / 28.3465) }
+    public var centimeters: Self { Self(underlying / 28.3465) }
 }
 
 extension ISO_32000.UserSpace.Width {
