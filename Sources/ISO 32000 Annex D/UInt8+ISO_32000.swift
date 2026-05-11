@@ -108,7 +108,7 @@ extension UInt8.WinAnsi {
         /// - Parameters:
         ///   - bytes: The WinAnsiEncoding byte representation
         ///   - context: Parsing context (use `()` for context-free types)
-        /// - Throws: Self.Error if the bytes are malformed
+        /// - Throws: Error if the bytes are malformed
         init<Bytes: Collection>(
             winAnsi bytes: Bytes,
             in context: Context
