@@ -34,6 +34,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-dimension-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-numeric-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-witness-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-ownership-primitives.git", branch: "main"),
@@ -122,7 +123,10 @@ let package = Package(
         ),
         .target(
             name: "ISO 32000 Annex D",
-            dependencies: ["ISO 32000 Shared"]
+            dependencies: [
+                "ISO 32000 Shared",
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
+            ]
         ),
 
         // MARK: - High-level API

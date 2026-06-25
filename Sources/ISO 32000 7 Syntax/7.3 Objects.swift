@@ -15,6 +15,7 @@
 public import Format_Primitives
 public import Formatter_Primitives
 public import Binary_Primitives
+public import Binary_Serializable_Primitives
 import IEEE_754
 public import ASCII_Primitives
 public import ISO_32000_Shared
@@ -52,7 +53,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     ///
     /// Legacy dictionary version - kept for compatibility.
     /// Use `serializeLiteralString` which uses optimized array lookup.
-    public static let escapeTable: [UInt8: [UInt8]] = [
+    public static let escapeTable: [Byte: [Byte]] = [
         .ascii.lf: [.ascii.backslash, .ascii.n],  // \n
         .ascii.cr: [.ascii.backslash, .ascii.r],  // \r
         .ascii.htab: [.ascii.backslash, .ascii.t],  // \t
@@ -70,8 +71,8 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     /// - For escaped bytes: returns the character after backslash (n, r, t, b, f, (, ), \)
     /// - For non-escaped bytes: returns 0
     @usableFromInline
-    internal static let escapeCharLookup: [UInt8] = {
-        var table = [UInt8](repeating: 0, count: 256)
+    internal static let escapeCharLookup: [Byte] = {
+        var table = [Byte](repeating: 0, count: 256)
         table[Int(UInt8.ascii.lf)] = .ascii.n  // \n
         table[Int(UInt8.ascii.cr)] = .ascii.r  // \r
         table[Int(UInt8.ascii.htab)] = .ascii.t  // \t
@@ -102,10 +103,10 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     >(
         _ bytes: Bytes,
         into buffer: inout Buffer
-    ) where Bytes.Element == UInt8, Buffer.Element == UInt8 {
+    ) where Bytes.Element == Byte, Buffer.Element == Byte {
         buffer.append(.ascii.leftParenthesis)
         for byte in bytes {
-            let escapeChar = escapeCharLookup[Int(byte)]
+            let escapeChar = escapeCharLookup[Int(byte.underlying)]
             if escapeChar != 0 {
                 buffer.append(.ascii.backslash)
                 buffer.append(escapeChar)
@@ -126,8 +127,8 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     @inlinable
     public static func literalString<Bytes: Collection>(
         from bytes: Bytes
-    ) -> [UInt8] where Bytes.Element == UInt8 {
-        var result: [UInt8] = []
+    ) -> [Byte] where Bytes.Element == Byte {
+        var result: [Byte] = []
         result.reserveCapacity(bytes.count + 2)
         serializeLiteralString(bytes, into: &result)
         return result
@@ -998,7 +999,7 @@ extension ISO_32000.`7`.`3`.COS {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Object,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         switch object {
         case .null:
             buffer.append(contentsOf: "null".utf8)
@@ -1060,7 +1061,7 @@ extension ISO_32000.`7`.`3`.COS.Object: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         ISO_32000.`7`.`3`.COS.serialize(object, into: &buffer)
     }
 }
@@ -1072,7 +1073,7 @@ extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ dict: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(.ascii.lessThan)
         buffer.append(.ascii.lessThan)
 
@@ -1096,16 +1097,15 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ name: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(.ascii.solidus)
 
-        for byte in name.rawValue.utf8 {
-            if shouldEscapeNameByte(byte) {
+        for byte in Array<Byte>(name.rawValue.utf8) {
+            let raw = byte.underlying
+            if shouldEscapeNameByte(raw) {
                 buffer.append(.ascii.numberSign)
-                let hi = byte >> 4
-                let lo = byte & 0x0F
-                buffer.append(hexChar(hi))
-                buffer.append(hexChar(lo))
+                buffer.append(hexChar(raw >> 4))
+                buffer.append(hexChar(raw & 0x0F))
             } else {
                 buffer.append(byte)
             }
@@ -1125,9 +1125,14 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
         return false
     }
 
-    /// Get hex character for a nibble
-    private static func hexChar(_ nibble: UInt8) -> UInt8 {
-        nibble < 10 ? .ascii.0 + nibble : .ascii.A + nibble - 10
+    /// Get the uppercase hex ASCII character for a nibble (0–15).
+    ///
+    /// Adopts the ecosystem nibble→hex primitive
+    /// (`ASCII.Serialization.hexDigitUppercase`) rather than hand-rolling the
+    /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
+    /// so the result is never nil.
+    private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
+        ASCII.Code(ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30)
     }
 }
 
@@ -1142,7 +1147,7 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ str: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(.ascii.leftParenthesis)
         let useDocEnc = str.value.unicodeScalars.allSatisfy {
             ISO_32000.PDFDocEncoding.canEncode($0)
@@ -1160,8 +1165,9 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
             buffer.append(0xFE)
             buffer.append(0xFF)
             for codeUnit in str.value.utf16 {
-                let hi = UInt8((codeUnit >> 8) & 0xFF)
-                let lo = UInt8(codeUnit & 0xFF)
+                // UTF-16BE byte split is arithmetic-domain; bridge to Byte.
+                let hi = Byte(UInt8((codeUnit >> 8) & 0xFF))
+                let lo = Byte(UInt8(codeUnit & 0xFF))
                 if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[hi] {
                     buffer.append(contentsOf: escaped)
                 } else {
@@ -1191,7 +1197,7 @@ extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ stream: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         var dict = stream.dictionary
         dict[.length] = .integer(Int64(stream.data.count))
         ISO_32000.`7`.`3`.COS.Dictionary.serialize(dict, into: &buffer)
@@ -1207,7 +1213,7 @@ extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ ref: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8)
     }
 }
@@ -1248,10 +1254,10 @@ extension ISO_32000.`7`.`3`.`3` {
         public static func serialize<Buffer>(
             _ number: ISO_32000_Shared.ISO_32000.`7`.`3`.`3`.PDFNumber,
             into buffer: inout Buffer
-        ) where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
+        ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
             // Handle special cases (PDF doesn't support infinity/NaN)
             guard number.value.isFinite else {
-                buffer.append(ASCII.Character.Graphic.`0`)
+                buffer.append(.ascii.0)
                 return
             }
 
@@ -1265,7 +1271,7 @@ extension ISO_32000.`7`.`3`.`3` {
             // Handle negative numbers
             let absValue: Double
             if number.value < 0 {
-                buffer.append(ASCII.Character.Graphic.hyphen)
+                buffer.append(.ascii.hyphen)
                 absValue = -number.value
             } else {
                 absValue = number.value
@@ -1282,31 +1288,38 @@ extension ISO_32000.`7`.`3`.`3` {
             let fracDigits = Int64((fracPart * Self.multiplier).rounded())
 
             if fracDigits != 0 {
-                buffer.append(ASCII.Character.Graphic.period)
-                // Serialize fractional digits with leading zeros, then strip trailing zeros
-                // Use InlineArray for fixed-size stack storage (no heap allocation)
+                buffer.append(.ascii.period)
+                // Emit fractional digits with leading zeros, then strip trailing
+                // zeros. InlineArray gives fixed-size stack storage (no heap
+                // allocation); digits are ASCII.Code via the ecosystem
+                // decimal-digit primitive (`ASCII.Serialization.digit`).
                 var fracValue = fracDigits
-                let digit0 = ASCII.Character.Graphic.`0`
+                let zero = ASCII.Code.`0`
 
-                // Build digits in reverse order into InlineArray (most significant at index 0)
-                var digits = InlineArray<5, UInt8>(repeating: digit0)
-                digits[4] = digit0 + UInt8(fracValue % 10)
+                func digit(_ value: Int64) -> ASCII.Code {
+                    // value % 10 is always 0–9, so `digit(_:)` never returns nil.
+                    ASCII.Code(ASCII.Serialization.digit(UInt8(value % 10)) ?? 0x30)
+                }
+
+                // Build digits in reverse order (most significant at index 0).
+                var digits = InlineArray<5, ASCII.Code>(repeating: zero)
+                digits[4] = digit(fracValue)
                 fracValue /= 10
-                digits[3] = digit0 + UInt8(fracValue % 10)
+                digits[3] = digit(fracValue)
                 fracValue /= 10
-                digits[2] = digit0 + UInt8(fracValue % 10)
+                digits[2] = digit(fracValue)
                 fracValue /= 10
-                digits[1] = digit0 + UInt8(fracValue % 10)
+                digits[1] = digit(fracValue)
                 fracValue /= 10
-                digits[0] = digit0 + UInt8(fracValue % 10)
+                digits[0] = digit(fracValue)
 
                 // Find last non-zero digit (strip trailing zeros)
                 var count = 5
-                while count > 1 && digits[count - 1] == digit0 {
+                while count > 1 && digits[count - 1] == zero {
                     count -= 1
                 }
 
-                // Append digits
+                // Append digits (ASCII.Code → Byte buffer, direct).
                 for i in 0..<count {
                     buffer.append(digits[i])
                 }

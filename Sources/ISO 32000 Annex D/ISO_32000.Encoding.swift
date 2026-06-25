@@ -5,6 +5,7 @@
 // Per ISO 32000-2 Section D.1, these encodings shall be predefined in any PDF processor.
 
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 // MARK: - Encoding Protocol
 
@@ -57,13 +58,13 @@ extension ISO_32000 {
         ///
         /// - Parameter scalar: The Unicode scalar value to encode
         /// - Returns: The encoded byte, or `nil` if the character cannot be encoded
-        static func encode(_ scalar: Unicode.Scalar) -> UInt8?
+        static func encode(_ scalar: Unicode.Scalar) -> Byte?
 
         /// Convert an encoded byte to a Unicode scalar
         ///
         /// - Parameter byte: The encoded byte value (0-255)
         /// - Returns: The Unicode scalar, or `nil` if the byte is undefined in this encoding
-        static func decode(_ byte: UInt8) -> Unicode.Scalar?
+        static func decode(_ byte: Byte) -> Unicode.Scalar?
 
         /// Check if a Unicode scalar can be encoded
         ///
@@ -99,8 +100,8 @@ extension ISO_32000.Encoding {
     @inlinable
     public static func encode<Scalars: Sequence>(
         _ scalars: Scalars
-    ) -> [UInt8]? where Scalars.Element == Unicode.Scalar {
-        var result: [UInt8] = []
+    ) -> [Byte]? where Scalars.Element == Unicode.Scalar {
+        var result: [Byte] = []
         for scalar in scalars {
             guard let byte = encode(scalar) else { return nil }
             result.append(byte)
@@ -117,8 +118,8 @@ extension ISO_32000.Encoding {
     @inlinable
     public static func encodeWithFallback<Scalars: Sequence>(
         _ scalars: Scalars
-    ) -> [UInt8] where Scalars.Element == Unicode.Scalar {
-        var result: [UInt8] = []
+    ) -> [Byte] where Scalars.Element == Unicode.Scalar {
+        var result: [Byte] = []
         for scalar in scalars {
             result.append(encode(scalar) ?? 0x3F)
         }
@@ -153,7 +154,7 @@ extension ISO_32000 {
     /// Provides graceful degradation when full Unicode support (font embedding,
     /// ToUnicode CMaps) is not available. Based on common typographic conventions
     /// for ASCII-only environments.
-    public static let unicodeFallbackMap: [UInt32: [UInt8]] = [
+    public static let unicodeFallbackMap: [UInt32: [Byte]] = [
         // MARK: Checkmarks and crosses (ZapfDingbats U+2700 block)
         0x2713: [0x2A],  // ✓ CHECK MARK → *
         0x2714: [0x2A],  // ✔ HEAVY CHECK MARK → *
@@ -228,7 +229,7 @@ extension ISO_32000 {
 
 // MARK: - String → Bytes (Encoding)
 
-extension Array where Element == UInt8 {
+extension Array where Element == Byte {
     /// Initialize bytes by encoding a string using a PDF encoding
     ///
     /// Returns `nil` if any character cannot be encoded.
@@ -241,7 +242,7 @@ extension Array where Element == UInt8 {
         _ string: some StringProtocol,
         encoding: E.Type
     ) {
-        var result: [UInt8] = []
+        var result: [Byte] = []
         for scalar in string.unicodeScalars {
             guard let byte = E.encode(scalar) else { return nil }
             result.append(byte)
@@ -271,12 +272,12 @@ extension Array where Element == UInt8 {
         withFallback: Bool,
         preservingControlChars: Bool = false
     ) {
-        var result: [UInt8] = []
+        var result: [Byte] = []
         for scalar in string.unicodeScalars {
             let value = scalar.value
             // Preserve control characters (0x00-0x1F) if requested
             if preservingControlChars && value < 0x20 {
-                result.append(UInt8(value))
+                result.append(Byte(UInt8(value)))
             } else if let byte = E.encode(scalar) {
                 // Direct encoding succeeded
                 result.append(byte)
@@ -306,7 +307,7 @@ extension String {
     public init?<E: ISO_32000.Encoding, Bytes: Collection>(
         _ bytes: Bytes,
         encoding: E.Type
-    ) where Bytes.Element == UInt8 {
+    ) where Bytes.Element == Byte {
         var scalars = String.UnicodeScalarView()
         scalars.reserveCapacity(bytes.count)
         for byte in bytes {
@@ -329,7 +330,7 @@ extension String {
         _ bytes: Bytes,
         encoding: E.Type,
         withReplacement: Bool
-    ) where Bytes.Element == UInt8 {
+    ) where Bytes.Element == Byte {
         var scalars = String.UnicodeScalarView()
         scalars.reserveCapacity(bytes.count)
         for byte in bytes {

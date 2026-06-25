@@ -5,6 +5,7 @@
 // This is the most commonly used encoding for PDF content streams.
 
 public import ISO_32000_Shared
+import Byte_Primitives
 
 extension ISO_32000 {
     /// WinAnsiEncoding - Windows Code Page 1252
@@ -297,7 +298,7 @@ extension ISO_32000 {
         /// Only contains mappings for characters outside 0x20-0x7E range.
         /// ASCII characters are handled directly.
         @usableFromInline
-        static let encodeTable: [UInt32: UInt8] = [
+        static let encodeTable: [UInt32: Byte] = [
             // Extended Latin (0x80-0x9F)
             0x20AC: 0x80,  // Euro
             0x201A: 0x82,  // quotesinglbase
@@ -430,12 +431,12 @@ extension ISO_32000 {
 
         /// Encode a Unicode scalar to a WinAnsi byte
         @inlinable
-        public static func encode(_ scalar: Unicode.Scalar) -> UInt8? {
+        public static func encode(_ scalar: Unicode.Scalar) -> Byte? {
             let value = scalar.value
 
             // ASCII printable range (0x20-0x7E) maps directly
             if value >= 0x20 && value <= 0x7E {
-                return UInt8(value)
+                return Byte(UInt8(value))
             }
 
             // Look up in encode table
@@ -444,8 +445,8 @@ extension ISO_32000 {
 
         /// Decode a WinAnsi byte to Unicode scalar
         @inlinable
-        public static func decode(_ byte: UInt8) -> Unicode.Scalar? {
-            decodeTable[Int(byte)]
+        public static func decode(_ byte: Byte) -> Unicode.Scalar? {
+            decodeTable[Int(byte.underlying)]
         }
     }
 }

@@ -5,6 +5,7 @@
 // containing decorative symbols, arrows, and ornaments.
 
 public import ISO_32000_Shared
+import Byte_Primitives
 
 extension ISO_32000 {
     /// ZapfDingbatsEncoding - ZapfDingbats Font Built-in Encoding
@@ -273,11 +274,11 @@ extension ISO_32000 {
 
         /// Unicode to byte mapping
         @usableFromInline
-        static let encodeTable: [UInt32: UInt8] = {
-            var table: [UInt32: UInt8] = [:]
+        static let encodeTable: [UInt32: Byte] = {
+            var table: [UInt32: Byte] = [:]
             for (byte, scalar) in decodeTable.enumerated() {
                 if let scalar = scalar {
-                    table[scalar.value] = UInt8(byte)
+                    table[scalar.value] = Byte(byte)
                 }
             }
             return table
@@ -287,14 +288,14 @@ extension ISO_32000 {
 
         /// Encode a Unicode scalar to ZapfDingbatsEncoding byte
         @inlinable
-        public static func encode(_ scalar: Unicode.Scalar) -> UInt8? {
+        public static func encode(_ scalar: Unicode.Scalar) -> Byte? {
             encodeTable[scalar.value]
         }
 
         /// Decode a ZapfDingbatsEncoding byte to Unicode scalar
         @inlinable
-        public static func decode(_ byte: UInt8) -> Unicode.Scalar? {
-            decodeTable[Int(byte)]
+        public static func decode(_ byte: Byte) -> Unicode.Scalar? {
+            decodeTable[Int(byte.underlying)]
         }
     }
 }
