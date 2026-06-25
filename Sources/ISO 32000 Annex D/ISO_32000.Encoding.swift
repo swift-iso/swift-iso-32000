@@ -6,7 +6,7 @@
 
 public import ISO_32000_Shared
 public import Byte_Primitives
-internal import Byte_Primitives_Standard_Library_Integration
+public import Byte_Primitives_Standard_Library_Integration
 
 // MARK: - Encoding Protocol
 
