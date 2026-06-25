@@ -3,6 +3,7 @@
 
 import Foundation
 import ISO_32000_Shared
+import Byte_Primitives
 import Testing
 
 @testable import ISO_32000_Annex_D
@@ -100,7 +101,7 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `Collection wrapper isValid`() {
-            let validBytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
+            let validBytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
             #expect(validBytes.winAnsi.isValid)
         }
     }
@@ -146,7 +147,7 @@ struct `ISO_32000.Encoding Tests` {
             // PDFDocEncoding should have all 256 positions defined
             var definedCount = 0
             for byte in 0..<256 {
-                if ISO_32000.PDFDocEncoding.decode(UInt8(byte)) != nil {
+                if ISO_32000.PDFDocEncoding.decode(Byte(UInt8(byte))) != nil {
                     definedCount += 1
                 }
             }
@@ -506,7 +507,8 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `Roundtrip encode-decode for WinAnsi ASCII`() {
-            for byte: UInt8 in 0x20...0x7E {
+            for raw: UInt8 in 0x20...0x7E {
+                let byte = Byte(raw)
                 if let scalar = ISO_32000.WinAnsiEncoding.decode(byte) {
                     let encoded = ISO_32000.WinAnsiEncoding.encode(scalar)
                     #expect(encoded == byte, "Roundtrip failed for byte \(byte)")
@@ -523,14 +525,14 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `String init from bytes`() {
-            let bytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
+            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
             let decoded = String(winAnsi: bytes)
             #expect(decoded == "Hello")
         }
 
         @Test
         func `String init with replacement from bytes`() {
-            let bytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
+            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
             let decoded = String(winAnsi: bytes, withReplacement: true)
             #expect(decoded == "Hello")
         }

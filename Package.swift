@@ -171,6 +171,7 @@ let package = Package(
             name: "ISO 32000 Annex D Tests",
             dependencies: [
                 "ISO 32000",
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
             ]
         ),
         .testTarget(
@@ -179,6 +180,7 @@ let package = Package(
                 "ISO 32000",
                 "ISO 32000 9 Text",
                 "ISO 32000 Flate",
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
             ]
         ),
     ],

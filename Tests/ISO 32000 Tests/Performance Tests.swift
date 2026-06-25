@@ -1,6 +1,7 @@
 // Performance Tests.swift
 
 import Testing
+import Byte_Primitives
 
 @testable import ISO_32000
 
@@ -42,21 +43,21 @@ struct PerformanceTests {
     @Test
     func `WinAnsi width: 10 bytes`() {
         let font = ISO_32000.Font.helvetica
-        let bytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C]
+        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C]
         let _ = font.winAnsi.width(of: bytes, atSize: 12)
     }
 
     @Test
     func `WinAnsi width: 100 bytes`() {
         let font = ISO_32000.Font.helvetica
-        let bytes = [UInt8](repeating: 0x61, count: 100)  // 'a' repeated
+        let bytes = [Byte](repeating: 0x61, count: 100)  // 'a' repeated
         let _ = font.winAnsi.width(of: bytes, atSize: 12)
     }
 
     @Test
     func `WinAnsi width: 1000 bytes`() {
         let font = ISO_32000.Font.helvetica
-        let bytes = [UInt8](repeating: 0x61, count: 1000)
+        let bytes = [Byte](repeating: 0x61, count: 1000)
         let _ = font.winAnsi.width(of: bytes, atSize: 12)
     }
 
@@ -88,7 +89,7 @@ struct PerformanceTests {
     @Test
     func `WinAnsi width throughput (5s)`() {
         let font = ISO_32000.Font.helvetica
-        let bytes = [UInt8](repeating: 0x61, count: 100)
+        let bytes = [Byte](repeating: 0x61, count: 100)
         let duration: Duration = .seconds(5)
         let start = ContinuousClock.now
 
@@ -117,7 +118,7 @@ struct PerformanceTests {
         var results: [(size: Int, time: Double)] = []
 
         for size in sizes {
-            let bytes = [UInt8](repeating: 0x61, count: size)
+            let bytes = [Byte](repeating: 0x61, count: size)
             let iterations = max(10, 1000 / size)
             var totalTime: Double = 0
 
@@ -158,7 +159,7 @@ struct RegressionGuards {
     @Test
     func `Width calculation regression guard`() {
         let font = ISO_32000.Font.helvetica
-        let bytes = [UInt8](repeating: 0x61, count: 100)
+        let bytes = [Byte](repeating: 0x61, count: 100)
 
         // Minimum acceptable: 10,000 calculations/sec for 100-byte strings
         // Baseline (2025-12-17): ~17,000-22,000/sec (varies with system load)

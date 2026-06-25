@@ -1,6 +1,7 @@
 // ISO_32000.Font Tests.swift
 
 import Testing
+import Byte_Primitives
 
 @testable import ISO_32000
 
@@ -236,7 +237,7 @@ struct `ISO_32000.Font Tests` {
     @Test
     func `Bytes width calculation`() {
         let font = ISO_32000.Font.helvetica
-        let bytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello" in ASCII/WinAnsi
+        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello" in ASCII/WinAnsi
         let width = font.winAnsi.width(of: bytes, atSize: 12)
         #expect(width.underlying > 0)
     }
