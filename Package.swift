@@ -151,6 +151,7 @@ let package = Package(
                 .product(name: "Format Primitives", package: "swift-format-primitives"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
+                .product(name: "Byte Primitives Standard Library Integration", package: "swift-byte-primitives"),
                 .product(name: "ISO 9899", package: "swift-iso-9899"),
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),

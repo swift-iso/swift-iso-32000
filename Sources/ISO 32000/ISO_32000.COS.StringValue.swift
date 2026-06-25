@@ -4,6 +4,8 @@
 
 public import ASCII_Primitives
 public import Byte_Primitives
+import Binary_Serializable_Primitives
+import Byte_Primitives_Standard_Library_Integration
 import ISO_32000_7_Syntax
 import ISO_32000_Annex_D
 
@@ -180,7 +182,7 @@ extension ISO_32000.COS.StringValue {
     public init<C: Collection>(pdfStringBytes bytes: C) where C.Element == UInt8 {
         switch ISO_32000.PDFDocEncoding.detectEncoding(bytes) {
         case .pdfDocEncoding:
-            self.init(String(pdfDoc: bytes, withReplacement: true))
+            self.init(String(pdfDoc: [Byte](bytes), withReplacement: true))
         case .utf16BE:
             // Skip BOM (first 2 bytes) and decode UTF-16BE
             let dataBytes = bytes.dropFirst(2)
