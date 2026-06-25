@@ -1,7 +1,6 @@
 // ISO 32000-2:2020, 9.1 General
 
 import ISO_32000_Annex_D
-import Byte_Primitives_Standard_Library_Integration
 public import ISO_32000_Shared
 
 // 9 Text
@@ -48,13 +47,13 @@ extension ISO_32000 {
     ///
     /// ## Storage
     ///
-    /// Content is stored as `[UInt8]` (encoded bytes), not `String`, because:
+    /// Content is stored as `[Byte]` (encoded bytes), not `String`, because:
     /// - PDF text operators work with byte sequences
     /// - Encoding happens once at construction, not at render time
     /// - Matches the PDF specification model
     public struct Text: Sendable, Equatable, Hashable {
         /// The text content as encoded bytes (typically WinAnsi or UTF-16BE).
-        public var content: [UInt8]
+        public var content: [Byte]
 
         /// The text state parameters controlling rendering.
         public var state: State
@@ -68,7 +67,7 @@ extension ISO_32000 {
         ///   - string: The text content.
         ///   - state: Text state parameters. Defaults to initial state.
         public init(_ string: String, state: State = .init()) {
-            self.content = [Byte](winAnsi: string, withFallback: true).underlying
+            self.content = [Byte](winAnsi: string, withFallback: true)
             self.state = state
         }
 
@@ -80,7 +79,7 @@ extension ISO_32000 {
         /// - Parameters:
         ///   - bytes: The encoded text content.
         ///   - state: Text state parameters. Defaults to initial state.
-        public init(bytes: [UInt8], state: State = .init()) {
+        public init(bytes: [Byte], state: State = .init()) {
             self.content = bytes
             self.state = state
         }
