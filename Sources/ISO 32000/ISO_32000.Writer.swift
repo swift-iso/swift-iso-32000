@@ -134,15 +134,14 @@ extension ISO_32000 {
                     let objNum = state.nextObjectNumber()
                     pageContentRefs.append(COS.IndirectReference(objectNumber: objNum))
 
-                    // ContentStream.data is [Byte]; COS.Stream.data and the Flate
-                    // compression callback are the raw-blob boundary ([UInt8]).
-                    // Bridge once (outbound BSLI) so the compression path stays [UInt8].
-                    var streamData = Array<UInt8>(content.data)
+                    // ContentStream.data, COS.Stream.data, and the Flate compression
+                    // callback are all [Byte] post-cascade; the data flows with no bridge.
+                    var streamData = content.data
                     var streamDict = COS.Dictionary()
 
                     // Apply compression if available
                     if let compress = compression {
-                        var compressed: [UInt8] = []
+                        var compressed: [Byte] = []
                         compress.compress(streamData, into: &compressed)
                         if compressed.count < streamData.count {
                             streamData = compressed
@@ -722,7 +721,7 @@ extension ISO_32000 {
 
             // Apply compression if available
             if let compress = compression {
-                var compressed: [UInt8] = []
+                var compressed: [Byte] = []
                 compress.compress(fontFileData, into: &compressed)
                 if compressed.count < fontFileData.count {
                     fontFileData = compressed
@@ -772,7 +771,7 @@ extension ISO_32000 {
 
             // Apply compression if available
             if let compress = compression {
-                var compressed: [UInt8] = []
+                var compressed: [Byte] = []
                 compress.compress(toUnicodeData, into: &compressed)
                 if compressed.count < toUnicodeData.count {
                     toUnicodeData = compressed
@@ -828,7 +827,7 @@ extension ISO_32000 {
         /// > This is essential for text extraction and accessibility.
         ///
         /// - Returns: The CMap data as UTF-8 bytes
-        private func generateToUnicodeCMap() -> [UInt8] {
+        private func generateToUnicodeCMap() -> [Byte] {
             var cmap = ""
 
             // CMap header
@@ -869,7 +868,7 @@ extension ISO_32000 {
             cmap += "end\n"
             cmap += "end\n"
 
-            return [UInt8](cmap.utf8)
+            return cmap.utf8.map(Byte.init)
         }
 
         /// WinAnsi (Windows-1252) to Unicode mapping table
@@ -951,15 +950,15 @@ extension ISO_32000 {
     ///
     /// Uses `inout` pattern for consistency with RFC compress APIs.
     public struct StreamCompression: Sendable, Witness.`Protocol` {
-        private let _compress: @Sendable ([UInt8], inout [UInt8]) -> Void
+        private let _compress: @Sendable ([Byte], inout [Byte]) -> Void
 
         /// Create a compression callback
-        public init(compress: @escaping @Sendable ([UInt8], inout [UInt8]) -> Void) {
+        public init(compress: @escaping @Sendable ([Byte], inout [Byte]) -> Void) {
             self._compress = compress
         }
 
         /// Compress data into output buffer
-        public func compress(_ input: [UInt8], into output: inout [UInt8]) {
+        public func compress(_ input: [Byte], into output: inout [Byte]) {
             _compress(input, &output)
         }
     }

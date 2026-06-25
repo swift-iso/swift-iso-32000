@@ -687,16 +687,16 @@ extension ISO_32000.`7`.`3`.`8` {
         public var dictionary: ISO_32000.`7`.`3`.COS.Dictionary
 
         /// Raw stream data (may be compressed)
-        public var data: [UInt8]
+        public var data: [Byte]
 
         /// Create a stream with dictionary and data
-        public init(dictionary: ISO_32000.`7`.`3`.COS.Dictionary = [:], data: [UInt8] = []) {
+        public init(dictionary: ISO_32000.`7`.`3`.COS.Dictionary = [:], data: [Byte] = []) {
             self.dictionary = dictionary
             self.data = data
         }
 
         /// Create a stream with just data (dictionary will have /Length set)
-        public init(data: [UInt8]) {
+        public init(data: [Byte]) {
             self.dictionary = [:]
             self.data = data
         }
@@ -1228,7 +1228,7 @@ extension Double {
     /// ## Usage
     ///
     /// ```swift
-    /// var buffer: [UInt8] = []
+    /// var buffer: [Byte] = []
     /// (72.5).pdf.serialize(into: &buffer)
     /// // buffer contains [0x37, 0x32, 0x2E, 0x35] ("72.5")
     /// ```

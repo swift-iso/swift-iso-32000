@@ -4,6 +4,8 @@
 public import ISO_32000
 public import RFC_1950
 public import W3C_PNG
+public import Byte_Primitives
+internal import Byte_Primitives_Standard_Library_Integration
 
 extension ISO_32000.Image {
     /// Create an image from PNG data
@@ -23,7 +25,7 @@ extension ISO_32000.Image {
     /// - Parameter compressionLevel: Flate compression level (default: balanced)
     /// - Throws: `Parse.Error` if the data is not valid PNG
     public init(
-        png pngData: [UInt8],
+        png pngData: [Byte],
         compressionLevel: RFC_1951.Level = .balanced
     ) throws(Parse.Error) {
         // Parse PNG
@@ -38,7 +40,7 @@ extension ISO_32000.Image {
         let (rawPixels, colorSpace) = Self.convertToRawPixels(image)
 
         // Compress with Flate/zlib
-        var compressedData: [UInt8] = []
+        var compressedData: [Byte] = []
         RFC_1950.compress(rawPixels, into: &compressedData, level: compressionLevel)
 
         self.init(
@@ -61,7 +63,7 @@ extension ISO_32000.Image {
     /// - Indexed: Expand palette to RGB
     private static func convertToRawPixels(
         _ image: W3C_PNG.Image
-    ) -> (pixels: [UInt8], colorSpace: Color.Space) {
+    ) -> (pixels: [Byte], colorSpace: Color.Space) {
         switch image.colorType {
         case .grayscale:
             // Grayscale: 1 byte per pixel
@@ -73,7 +75,7 @@ extension ISO_32000.Image {
 
         case .rgba:
             // RGBA: 4 bytes per pixel → strip alpha → 3 bytes per pixel
-            var rgb: [UInt8] = []
+            var rgb: [Byte] = []
             rgb.reserveCapacity(image.width * image.height * 3)
             for i in stride(from: 0, to: image.rawPixels.count, by: 4) {
                 rgb.append(image.rawPixels[i])  // R
@@ -85,7 +87,7 @@ extension ISO_32000.Image {
 
         case .grayscaleAlpha:
             // Grayscale+Alpha: 2 bytes per pixel → strip alpha → 1 byte per pixel
-            var gray: [UInt8] = []
+            var gray: [Byte] = []
             gray.reserveCapacity(image.width * image.height)
             for i in stride(from: 0, to: image.rawPixels.count, by: 2) {
                 gray.append(image.rawPixels[i])  // Gray
@@ -99,7 +101,7 @@ extension ISO_32000.Image {
                 // Should not happen (PNG parser ensures palette exists for indexed)
                 return (image.rawPixels, .deviceGray)
             }
-            var rgb: [UInt8] = []
+            var rgb: [Byte] = []
             rgb.reserveCapacity(image.width * image.height * 3)
             for index in image.rawPixels {
                 let idx = Int(index)

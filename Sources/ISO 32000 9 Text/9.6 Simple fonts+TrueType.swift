@@ -10,6 +10,7 @@
 public import ISO_14496_22
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
+public import Byte_Primitives
 import Ownership_Primitives
 
 // MARK: - Embedded TrueType Font
@@ -25,7 +26,7 @@ extension ISO_32000.`9`.`6` {
     /// ## Usage
     ///
     /// ```swift
-    /// let fontData: [UInt8] = ... // TrueType font bytes
+    /// let fontData: [Byte] = ... // TrueType font bytes
     /// let embedded = try ISO_32000.Font.Embedded(data: fontData)
     /// let font = try ISO_32000.Font(embedded: embedded, resourceName: .init("F15"))
     /// let width = font.width(of: "Hello", atSize: .init(12))
@@ -35,7 +36,7 @@ extension ISO_32000.`9`.`6` {
         public let fontFile: ISO_14496_22.FontFile
 
         /// The raw font file data (for embedding in PDF)
-        public let data: [UInt8]
+        public let data: [Byte]
 
         /// PostScript name of the font (from name table)
         public let postScriptName: String
@@ -50,7 +51,7 @@ extension ISO_32000.`9`.`6` {
         ///
         /// - Parameter data: The raw font file bytes
         /// - Throws: `ISO_14496_22.FontFile.ParsingError` if the font cannot be parsed
-        public init(data: [UInt8]) throws(ISO_14496_22.FontFile.ParsingError) {
+        public init(data: [Byte]) throws(ISO_14496_22.FontFile.ParsingError) {
             let fontFile = try ISO_14496_22.FontFile(data: data)
 
             self.fontFile = fontFile
@@ -90,7 +91,7 @@ extension ISO_32000.`9`.`6` {
         /// ## Example
         ///
         /// ```swift
-        /// let fontData: [UInt8] = ... // Full TrueType font (500KB)
+        /// let fontData: [Byte] = ... // Full TrueType font (500KB)
         /// let embedded = try Embedded(data: fontData)
         /// let usedChars: Set<Character> = ["H", "e", "l", "o", " ", "W", "r", "d", "!"]
         /// let subset = try embedded.subsetted(for: usedChars)
@@ -98,7 +99,7 @@ extension ISO_32000.`9`.`6` {
         /// ```
         public func subsetted(for characters: Set<Character>) throws(SubsettingError) -> Embedded {
             let subsetter = ISO_14496_22.FontSubsetter(fontFile: fontFile)
-            let subsetData: [UInt8]
+            let subsetData: [Byte]
             do {
                 subsetData = try subsetter.subset(characters: characters)
             } catch {
@@ -245,7 +246,7 @@ extension ISO_32000.`9`.`6`.Font {
     ///   - style: Font style (defaults to `.normal`)
     /// - Throws: `DataError` if the font cannot be parsed or the PostScript name is invalid
     public init(
-        data: [UInt8],
+        data: [Byte],
         resourceName: ISO_32000.`7`.`3`.COS.Name,
         weight: Weight = .regular,
         style: Style = .normal
