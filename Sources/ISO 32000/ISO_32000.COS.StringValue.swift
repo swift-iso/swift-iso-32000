@@ -76,10 +76,9 @@ extension ISO_32000.COS.StringValue {
     ///
     /// Characters not in WinAnsiEncoding are replaced with `?`.
     public func asLiteralWinAnsi() -> [Byte] {
-        // Encode string to WinAnsi bytes using Annex D. The winAnsi array init
-        // vends UInt8 (arithmetic-domain); bridge each to Byte for the
-        // byte-domain literal-string serializer.
-        let encodedBytes = [UInt8](winAnsi: value, withFallback: true).map { Byte($0) }
+        // Encode string to WinAnsi bytes using Annex D — the array init vends
+        // byte-domain `[Byte]` directly for the literal-string serializer.
+        let encodedBytes = [Byte](winAnsi: value, withFallback: true)
         // Serialize as PDF literal string using 7.3 canonical function
         return ISO_32000.`7`.`3`.Table.`3`.literalString(from: encodedBytes)
     }

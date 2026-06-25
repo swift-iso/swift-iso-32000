@@ -1,6 +1,7 @@
 // ISO 32000-2:2020, 9.1 General
 
 import ISO_32000_Annex_D
+import Byte_Primitives_Standard_Library_Integration
 public import ISO_32000_Shared
 
 // 9 Text
@@ -67,7 +68,7 @@ extension ISO_32000 {
         ///   - string: The text content.
         ///   - state: Text state parameters. Defaults to initial state.
         public init(_ string: String, state: State = .init()) {
-            self.content = [UInt8](winAnsi: string, withFallback: true)
+            self.content = [Byte](winAnsi: string, withFallback: true).underlying
             self.state = state
         }
 

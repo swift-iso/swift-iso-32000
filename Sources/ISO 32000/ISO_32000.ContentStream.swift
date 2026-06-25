@@ -312,9 +312,8 @@ extension ISO_32000.ContentStream {
         /// Encodes the string using WinAnsiEncoding (for Standard 14 fonts).
         /// Characters not in WinAnsiEncoding are replaced with `?`.
         public mutating func showText(_ text: String) {
-            // WinAnsi array init vends UInt8 (arithmetic-domain); bridge each to
-            // Byte for the byte-domain showText operator.
-            let bytes = [UInt8](winAnsi: text, withFallback: true).map { Byte($0) }
+            // The WinAnsi array init vends byte-domain `[Byte]` directly.
+            let bytes = [Byte](winAnsi: text, withFallback: true)
             emit(.showText(bytes))
         }
 
