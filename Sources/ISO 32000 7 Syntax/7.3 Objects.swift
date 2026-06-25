@@ -16,6 +16,7 @@ public import Format_Primitives
 public import Formatter_Primitives
 public import Binary_Primitives
 public import Binary_Serializable_Primitives
+internal import Binary_Primitives_Standard_Library_Integration
 import IEEE_754
 public import ASCII_Primitives
 public import ISO_32000_Shared
@@ -1165,18 +1166,13 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
             buffer.append(0xFE)
             buffer.append(0xFF)
             for codeUnit in str.value.utf16 {
-                // UTF-16BE byte split is arithmetic-domain; bridge to Byte.
-                let hi = Byte(UInt8((codeUnit >> 8) & 0xFF))
-                let lo = Byte(UInt8(codeUnit & 0xFF))
-                if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[hi] {
-                    buffer.append(contentsOf: escaped)
-                } else {
-                    buffer.append(hi)
-                }
-                if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[lo] {
-                    buffer.append(contentsOf: escaped)
-                } else {
-                    buffer.append(lo)
+                // Serialize each UTF-16BE code unit as two big-endian bytes.
+                for byte in codeUnit.bytes(endianness: .big) {
+                    if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[byte] {
+                        buffer.append(contentsOf: escaped)
+                    } else {
+                        buffer.append(byte)
+                    }
                 }
             }
         }

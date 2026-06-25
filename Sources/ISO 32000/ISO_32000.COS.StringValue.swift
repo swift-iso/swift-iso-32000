@@ -5,6 +5,7 @@
 public import ASCII_Primitives
 public import Byte_Primitives
 import Binary_Serializable_Primitives
+import Binary_Primitives_Standard_Library_Integration
 import Byte_Primitives_Standard_Library_Integration
 import ISO_32000_7_Syntax
 import ISO_32000_Annex_D
@@ -50,19 +51,14 @@ extension ISO_32000.COS.StringValue {
             result.append(0xFE)
             result.append(0xFF)
             for codeUnit in value.utf16 {
-                // UTF-16BE byte split is arithmetic-domain; bridge to Byte.
-                let hi = Byte(UInt8((codeUnit >> 8) & 0xFF))
-                let lo = Byte(UInt8(codeUnit & 0xFF))
-                // Escape special bytes
-                if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[hi] {
-                    result.append(contentsOf: escaped)
-                } else {
-                    result.append(hi)
-                }
-                if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[lo] {
-                    result.append(contentsOf: escaped)
-                } else {
-                    result.append(lo)
+                // Serialize each UTF-16BE code unit as two big-endian bytes.
+                for byte in codeUnit.bytes(endianness: .big) {
+                    // Escape special bytes
+                    if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[byte] {
+                        result.append(contentsOf: escaped)
+                    } else {
+                        result.append(byte)
+                    }
                 }
             }
         }
@@ -111,12 +107,10 @@ extension ISO_32000.COS.StringValue {
 
             for scalar in value.unicodeScalars {
                 let codeUnit = UInt16(scalar.value)
-                let hi = UInt8((codeUnit >> 8) & 0xFF)
-                let lo = UInt8(codeUnit & 0xFF)
-                result.append(Self.hexChar(hi >> 4))
-                result.append(Self.hexChar(hi & 0x0F))
-                result.append(Self.hexChar(lo >> 4))
-                result.append(Self.hexChar(lo & 0x0F))
+                for byte in codeUnit.bytes(endianness: .big) {
+                    result.append(Self.hexChar(byte.underlying >> 4))
+                    result.append(Self.hexChar(byte.underlying & 0x0F))
+                }
             }
         }
 
@@ -189,7 +183,7 @@ extension ISO_32000.COS.StringValue {
             var scalars: [Unicode.Scalar] = []
             var iterator = dataBytes.makeIterator()
             while let hi = iterator.next(), let lo = iterator.next() {
-                let codeUnit = UInt16(hi) << 8 | UInt16(lo)
+                let codeUnit = UInt16(bytes: [hi, lo], endianness: .big)!
                 if let scalar = Unicode.Scalar(codeUnit) {
                     scalars.append(scalar)
                 }

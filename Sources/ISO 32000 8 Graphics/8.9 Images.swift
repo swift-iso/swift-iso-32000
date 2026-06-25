@@ -4,6 +4,7 @@ public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 public import Byte_Primitives
 internal import Byte_Primitives_Standard_Library_Integration
+internal import Binary_Primitives_Standard_Library_Integration
 import Synchronization
 
 // MARK: - Section Namespace
@@ -253,9 +254,9 @@ extension ISO_32000.`8`.`9`.Image {
 
                 // Skip length bytes (2), read precision (1 byte)
                 // Height: 2 bytes big-endian at offset+3
-                let height = (Int(data[offset + 3]) << 8) | Int(data[offset + 4])
+                let height = Int(UInt16(bytes: data[offset + 3..<offset + 5], endianness: .big)!)
                 // Width: 2 bytes big-endian at offset+5
-                let width = (Int(data[offset + 5]) << 8) | Int(data[offset + 6])
+                let width = Int(UInt16(bytes: data[offset + 5..<offset + 7], endianness: .big)!)
                 // Components: 1 byte at offset+7
                 let components = Int(data[offset + 7])
 
@@ -271,7 +272,7 @@ extension ISO_32000.`8`.`9`.Image {
             guard offset + 1 < data.count else {
                 throw .truncatedData
             }
-            let length = (Int(data[offset]) << 8) | Int(data[offset + 1])
+            let length = Int(UInt16(bytes: data[offset..<offset + 2], endianness: .big)!)
             offset += length
         }
 
