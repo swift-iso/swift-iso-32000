@@ -5,6 +5,7 @@
 // following the pattern established by INCITS_4_1986.ASCII<Source>.
 
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 // MARK: - WinAnsi Collection Wrapper
 
@@ -22,7 +23,7 @@ extension ISO_32000 {
     /// print(winAnsi.isValid)  // true
     /// ```
     @frozen
-    public struct WinAnsi<Source: Collection> where Source.Element == UInt8 {
+    public struct WinAnsi<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -40,7 +41,7 @@ extension ISO_32000.WinAnsi {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as WinAnsiEncoding
     @inlinable
     public var winAnsi: ISO_32000.WinAnsi<Self> { .init(self) }
@@ -51,7 +52,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing PDFDocEncoding operations on a byte collection.
     @frozen
-    public struct PDFDoc<Source: Collection> where Source.Element == UInt8 {
+    public struct PDFDoc<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -69,7 +70,7 @@ extension ISO_32000.PDFDoc {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as PDFDocEncoding
     @inlinable
     public var pdfDoc: ISO_32000.PDFDoc<Self> { .init(self) }
@@ -80,7 +81,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing StandardEncoding operations on a byte collection.
     @frozen
-    public struct Standard<Source: Collection> where Source.Element == UInt8 {
+    public struct Standard<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -98,7 +99,7 @@ extension ISO_32000.Standard {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as StandardEncoding
     @inlinable
     public var standard: ISO_32000.Standard<Self> { .init(self) }
@@ -109,7 +110,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing MacRomanEncoding operations on a byte collection.
     @frozen
-    public struct MacRoman<Source: Collection> where Source.Element == UInt8 {
+    public struct MacRoman<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -127,7 +128,7 @@ extension ISO_32000.MacRoman {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as MacRomanEncoding
     @inlinable
     public var macRoman: ISO_32000.MacRoman<Self> { .init(self) }
@@ -138,7 +139,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing MacExpertEncoding operations on a byte collection.
     @frozen
-    public struct MacExpert<Source: Collection> where Source.Element == UInt8 {
+    public struct MacExpert<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -156,7 +157,7 @@ extension ISO_32000.MacExpert {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as MacExpertEncoding
     @inlinable
     public var macExpert: ISO_32000.MacExpert<Self> { .init(self) }
@@ -167,7 +168,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing SymbolEncoding operations on a byte collection.
     @frozen
-    public struct Symbol<Source: Collection> where Source.Element == UInt8 {
+    public struct Symbol<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -185,7 +186,7 @@ extension ISO_32000.Symbol {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as SymbolEncoding
     @inlinable
     public var symbol: ISO_32000.Symbol<Self> { .init(self) }
@@ -196,7 +197,7 @@ extension Collection where Element == UInt8 {
 extension ISO_32000 {
     /// A wrapper providing ZapfDingbatsEncoding operations on a byte collection.
     @frozen
-    public struct ZapfDingbats<Source: Collection> where Source.Element == UInt8 {
+    public struct ZapfDingbats<Source: Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -214,7 +215,7 @@ extension ISO_32000.ZapfDingbats {
     }
 }
 
-extension Collection where Element == UInt8 {
+extension Collection where Element == Byte {
     /// Access this byte collection as ZapfDingbatsEncoding
     @inlinable
     public var zapfDingbats: ISO_32000.ZapfDingbats<Self> { .init(self) }

@@ -5,6 +5,7 @@ import Ownership_Primitives
 import RFC_4648
 import Standard_Library_Extensions
 public import Binary_Primitives
+public import Byte_Primitives
 public import Witness_Primitives
 
 extension ISO_32000 {
@@ -30,7 +31,7 @@ extension ISO_32000 {
         public mutating func write<Buffer: RangeReplaceableCollection>(
             _ document: Document,
             into buffer: inout Buffer
-        ) where Buffer.Element == UInt8 {
+        ) where Buffer.Element == Byte {
             var state = Writer.State()
 
             // Header
@@ -132,7 +133,10 @@ extension ISO_32000 {
                     let objNum = state.nextObjectNumber()
                     pageContentRefs.append(COS.IndirectReference(objectNumber: objNum))
 
-                    var streamData = content.data
+                    // ContentStream.data is [Byte]; COS.Stream.data and the Flate
+                    // compression callback are the raw-blob boundary ([UInt8]).
+                    // Bridge once (outbound BSLI) so the compression path stays [UInt8].
+                    var streamData = Array<UInt8>(content.data)
                     var streamDict = COS.Dictionary()
 
                     // Apply compression if available
@@ -368,9 +372,11 @@ extension ISO_32000 {
 
         /// Convenience: write and return bytes
         public mutating func write(_ document: Document) -> [UInt8] {
-            var buffer: [UInt8] = []
+            // Serialize via the Byte witnesses into a Byte buffer, then bridge once
+            // to [UInt8] for the on-disk / cross-package file-output boundary.
+            var buffer: [Byte] = []
             write(document, into: &buffer)
-            return buffer
+            return Array<UInt8>(buffer)
         }
 
         // MARK: - Private Helpers
@@ -378,7 +384,7 @@ extension ISO_32000 {
         private func writeHeader<Buffer: RangeReplaceableCollection>(
             _ version: Version,
             into buffer: inout Buffer
-        ) where Buffer.Element == UInt8 {
+        ) where Buffer.Element == Byte {
             buffer.append(contentsOf: "\(version.header)\n".utf8)
         }
 
@@ -386,7 +392,7 @@ extension ISO_32000 {
             _ objectNumber: Int,
             object: COS.Object,
             into buffer: inout Buffer
-        ) where Buffer.Element == UInt8 {
+        ) where Buffer.Element == Byte {
             buffer.append(contentsOf: "\(objectNumber) 0 obj\n".utf8)
             COS.serialize(object, into: &buffer)
             buffer.append(contentsOf: "\nendobj\n".utf8)
@@ -395,7 +401,7 @@ extension ISO_32000 {
         private func writeXref<Buffer: RangeReplaceableCollection>(
             state: Writer.State,
             into buffer: inout Buffer
-        ) where Buffer.Element == UInt8 {
+        ) where Buffer.Element == Byte {
             buffer.append(contentsOf: "xref\n".utf8)
             buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8)
 
@@ -432,7 +438,7 @@ extension ISO_32000 {
             pageRefs: [COS.IndirectReference],
             state: inout Writer.State,
             into buffer: inout Buffer
-        ) -> COS.IndirectReference where Buffer.Element == UInt8 {
+        ) -> COS.IndirectReference where Buffer.Element == Byte {
             // Outline root object number
             let outlineObjNum = state.nextObjectNumber()
             let outlineRef = COS.IndirectReference(objectNumber: outlineObjNum)
@@ -671,7 +677,7 @@ extension ISO_32000 {
             infoRef: COS.IndirectReference?,
             xrefOffset: Int,
             into buffer: inout Buffer
-        ) where Buffer.Element == UInt8 {
+        ) where Buffer.Element == Byte {
             buffer.append(contentsOf: "trailer\n".utf8)
 
             var trailerDict = COS.Dictionary()
@@ -704,7 +710,7 @@ extension ISO_32000 {
             embedded: ISO_32000.`9`.`6`.Embedded,
             state: inout Writer.State,
             into buffer: inout Buffer
-        ) -> COS.IndirectReference where Buffer.Element == UInt8 {
+        ) -> COS.IndirectReference where Buffer.Element == Byte {
             // 1. Write FontFile2 stream (the raw TrueType font program)
             let fontFileObjNum = state.nextObjectNumber()
             let fontFileRef = COS.IndirectReference(objectNumber: fontFileObjNum)
@@ -844,13 +850,15 @@ extension ISO_32000 {
 
             cmap += "\(mappingCount) beginbfchar\n"
             for (charCode, unicodeValue) in mappings.sorted(by: { $0.key < $1.key }) {
-                // Use RFC 4648 Base16 encoding (uppercase)
-                var charCodeHex: [UInt8] = []
+                // Use RFC 4648 Base16 encoding (uppercase). Base16.encode writes ASCII
+                // hex digits, so its destination buffer element is ASCII.Code; bridge
+                // each scratch buffer back to [UInt8] for String(decoding:as:).
+                var charCodeHex: [ASCII.Code] = []
                 RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
-                var unicodeHex: [UInt8] = []
+                var unicodeHex: [ASCII.Code] = []
                 RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
                 cmap +=
-                    "<\(String(decoding: charCodeHex, as: UTF8.self))> <\(String(decoding: unicodeHex, as: UTF8.self))>\n"
+                    "<\(String(decoding: Array<UInt8>(charCodeHex), as: UTF8.self))> <\(String(decoding: Array<UInt8>(unicodeHex), as: UTF8.self))>\n"
             }
             cmap += "endbfchar\n"
 
@@ -971,13 +979,13 @@ extension ISO_32000.Document: Binary.Serializable {
     /// let pdfBytes = document.bytes
     ///
     /// // Streaming to a buffer
-    /// var buffer: [UInt8] = []
+    /// var buffer: [Byte] = []
     /// document.serialize(into: &buffer)
     /// ```
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ document: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         var writer = ISO_32000.Writer()
         writer.write(document, into: &buffer)
     }

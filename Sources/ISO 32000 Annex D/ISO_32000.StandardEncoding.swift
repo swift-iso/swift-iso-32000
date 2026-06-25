@@ -6,7 +6,7 @@
 // the base encoding from which differences may be specified.
 
 public import ISO_32000_Shared
-import Byte_Primitives
+public import Byte_Primitives
 
 extension ISO_32000 {
     /// StandardEncoding - Type 1 Font Built-in Encoding
@@ -249,7 +249,7 @@ extension ISO_32000 {
             var table: [UInt32: Byte] = [:]
             for (byte, scalar) in decodeTable.enumerated() {
                 if let scalar = scalar {
-                    table[scalar.value] = Byte(byte)
+                    table[scalar.value] = Byte(UInt8(byte))
                 }
             }
             return table

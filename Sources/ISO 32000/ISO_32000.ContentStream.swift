@@ -2,6 +2,7 @@
 
 public import Geometry_Primitives
 public import Binary_Primitives
+public import Byte_Primitives
 import ISO_9899
 import Standard_Library_Extensions
 
@@ -24,7 +25,7 @@ extension ISO_32000 {
     /// ```
     public struct ContentStream: Sendable {
         /// Raw content stream bytes
-        public var data: [UInt8]
+        public var data: [Byte]
 
         /// Fonts used in this content stream
         public var fontsUsed: Set<Font>
@@ -41,7 +42,7 @@ extension ISO_32000 {
 
         /// Create a content stream from raw bytes
         public init(
-            data: [UInt8],
+            data: [Byte],
             fontsUsed: Set<Font> = [],
             imagesUsed: Set<Image> = []
         ) {
@@ -67,7 +68,7 @@ extension ISO_32000.ContentStream {
     /// Builder for constructing content streams
     public struct Builder: Sendable {
         /// Accumulated content stream data
-        public var data: [UInt8] = []
+        public var data: [Byte] = []
 
         /// Fonts used in this content stream
         public var fontsUsed: Set<ISO_32000.Font> = []
@@ -301,7 +302,7 @@ extension ISO_32000.ContentStream {
         /// Show pre-encoded text bytes (Tj)
         ///
         /// This is the primitive form - bytes are emitted directly as a PDF literal string.
-        public mutating func showText(_ bytes: [UInt8]) {
+        public mutating func showText(_ bytes: [Byte]) {
             emit(.showText(bytes))
         }
 
@@ -310,7 +311,9 @@ extension ISO_32000.ContentStream {
         /// Encodes the string using WinAnsiEncoding (for Standard 14 fonts).
         /// Characters not in WinAnsiEncoding are replaced with `?`.
         public mutating func showText(_ text: String) {
-            let bytes = [UInt8](winAnsi: text, withFallback: true)
+            // WinAnsi array init vends UInt8 (arithmetic-domain); bridge each to
+            // Byte for the byte-domain showText operator.
+            let bytes = [UInt8](winAnsi: text, withFallback: true).map { Byte($0) }
             emit(.showText(bytes))
         }
 
@@ -618,7 +621,7 @@ extension ISO_32000.ContentStream: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ stream: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(contentsOf: stream.data)
     }
 }

@@ -7,6 +7,7 @@
 
 import ISO_32000_8_Graphics
 import ISO_32000_Annex_D
+import Byte_Primitives
 public import ISO_32000_Shared
 
 extension ISO_32000.`9` {
@@ -231,7 +232,9 @@ extension ISO_32000.`9`.`8` {
             // This eliminates the decode step in the hot path
             var byteWidths = [ISO_32000.FontDesign.Width](repeating: typedDefaultWidth, count: 256)
             for byte in UInt8.min...UInt8.max {
-                if let scalar = ISO_32000.WinAnsiEncoding.decode(byte) {
+                // `byte` stays UInt8 — it is also the array index; bridge to Byte
+                // for the byte-domain WinAnsi decode.
+                if let scalar = ISO_32000.WinAnsiEncoding.decode(Byte(byte)) {
                     byteWidths[Int(byte)] = typedWidths[scalar.value] ?? typedDefaultWidth
                 }
             }
@@ -279,8 +282,9 @@ extension ISO_32000.`9`.`8`.Metrics {
     /// Composed from byte primitive: encodes scalar to WinAnsi byte, then looks up width.
     /// Returns default width if scalar cannot be encoded in WinAnsi.
     public func glyphWidth(for scalar: UnicodeScalar) -> ISO_32000.FontDesign.Width {
+        // encode now vends Byte; the byte-width primitive indexes on UInt8.
         if let byte = ISO_32000.WinAnsiEncoding.encode(scalar) {
-            return width(of: byte)
+            return width(of: byte.underlying)
         }
         return defaultWidth
     }
@@ -293,8 +297,9 @@ extension ISO_32000.`9`.`8`.Metrics {
     public func width(of text: String) -> ISO_32000.FontDesign.Width {
         var total = 0
         for scalar in text.unicodeScalars {
+            // encode now vends Byte; the lookup table is indexed on the underlying UInt8.
             if let byte = ISO_32000.WinAnsiEncoding.encode(scalar) {
-                total += winAnsiByteWidths[Int(byte)].underlying
+                total += winAnsiByteWidths[Int(byte.underlying)].underlying
             } else {
                 total += defaultWidth.underlying
             }

@@ -12,6 +12,7 @@ public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 public import Standard_Library_Extensions
 public import Binary_Primitives
+public import Byte_Primitives
 
 // MARK: - 14.8 Tagged PDF
 
@@ -298,7 +299,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.Table: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ table: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         var dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.table)
         ]
@@ -313,7 +314,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TR: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ tr: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         let dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.tr)
         ]
@@ -325,7 +326,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TH: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ th: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         var dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.th)
         ]
@@ -365,7 +366,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TD: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ td: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         var dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.td)
         ]
@@ -388,7 +389,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.THead: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ thead: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         let dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.thead)
         ]
@@ -400,7 +401,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TBody: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ tbody: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         let dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.tbody)
         ]
@@ -412,7 +413,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TFoot: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ tfoot: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         let dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.tfoot)
         ]
@@ -424,7 +425,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`4`.Caption: Binary.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ caption: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         let dict: ISO_32000.`7`.`3`.COS.Dictionary = [
             .s: .name(.caption)
         ]

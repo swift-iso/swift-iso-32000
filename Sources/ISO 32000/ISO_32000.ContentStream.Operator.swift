@@ -3,6 +3,7 @@
 import Format_Primitives
 import Geometry_Primitives
 import Binary_Primitives
+public import Byte_Primitives
 import ISO_32000_7_Syntax
 
 extension ISO_32000.ContentStream {
@@ -174,7 +175,7 @@ extension ISO_32000.ContentStream {
         ///
         /// Takes pre-encoded bytes (e.g., WinAnsiEncoding for Standard 14 fonts).
         /// The bytes are serialized as a PDF literal string with proper escaping.
-        case showText([UInt8])
+        case showText([Byte])
 
         // MARK: - Line Style (Section 8.4.3)
 
@@ -223,7 +224,7 @@ extension ISO_32000.ContentStream.Operator {
     /// Serialize this operator into a byte buffer
     package func serialize<Buffer: RangeReplaceableCollection>(
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         switch self {
         // Graphics State
         case .saveState:

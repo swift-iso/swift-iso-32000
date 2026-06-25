@@ -5,7 +5,7 @@
 // This is the most commonly used encoding for PDF content streams.
 
 public import ISO_32000_Shared
-import Byte_Primitives
+public import Byte_Primitives
 
 extension ISO_32000 {
     /// WinAnsiEncoding - Windows Code Page 1252

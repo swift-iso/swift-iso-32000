@@ -2,6 +2,8 @@
 // StringValue base is defined in Section 7.3.
 // This file adds encoding-aware extensions using Annex D.
 
+public import ASCII_Primitives
+public import Byte_Primitives
 import ISO_32000_7_Syntax
 import ISO_32000_Annex_D
 
@@ -27,8 +29,8 @@ extension ISO_32000.COS.StringValue {
     ///
     /// TODO: dedup with StringValue.serialize(_:into:) at ISO 32000 7 Syntax/7.3 Objects.swift —
     /// both now carry the §7.9.2.2 algorithm; dedup pending separate dispatch.
-    public func asLiteral() -> [UInt8] {
-        var result: [UInt8] = [.ascii.leftParenthesis]
+    public func asLiteral() -> [Byte] {
+        var result: [Byte] = [.ascii.leftParenthesis]
 
         if canUsePDFDocEncoding {
             // Use PDFDocEncoding - encode each scalar to its PDFDoc byte
@@ -46,8 +48,9 @@ extension ISO_32000.COS.StringValue {
             result.append(0xFE)
             result.append(0xFF)
             for codeUnit in value.utf16 {
-                let hi = UInt8((codeUnit >> 8) & 0xFF)
-                let lo = UInt8(codeUnit & 0xFF)
+                // UTF-16BE byte split is arithmetic-domain; bridge to Byte.
+                let hi = Byte(UInt8((codeUnit >> 8) & 0xFF))
+                let lo = Byte(UInt8(codeUnit & 0xFF))
                 // Escape special bytes
                 if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[hi] {
                     result.append(contentsOf: escaped)
@@ -72,9 +75,11 @@ extension ISO_32000.COS.StringValue {
     /// WinAnsiEncoding rather than PDFDocEncoding.
     ///
     /// Characters not in WinAnsiEncoding are replaced with `?`.
-    public func asLiteralWinAnsi() -> [UInt8] {
-        // Encode string to WinAnsi bytes using Annex D
-        let encodedBytes = [UInt8](winAnsi: value, withFallback: true)
+    public func asLiteralWinAnsi() -> [Byte] {
+        // Encode string to WinAnsi bytes using Annex D. The winAnsi array init
+        // vends UInt8 (arithmetic-domain); bridge each to Byte for the
+        // byte-domain literal-string serializer.
+        let encodedBytes = [UInt8](winAnsi: value, withFallback: true).map { Byte($0) }
         // Serialize as PDF literal string using 7.3 canonical function
         return ISO_32000.`7`.`3`.Table.`3`.literalString(from: encodedBytes)
     }
@@ -83,15 +88,17 @@ extension ISO_32000.COS.StringValue {
     ///
     /// Uses PDFDocEncoding if all characters are encodable, otherwise
     /// falls back to UTF-16BE with BOM per ISO 32000-2 Section 7.9.2.2.
-    public func asHexadecimal() -> [UInt8] {
-        var result: [UInt8] = [.ascii.lessThan]
+    public func asHexadecimal() -> [Byte] {
+        var result: [Byte] = [.ascii.lessThan]
 
         if canUsePDFDocEncoding {
             // Use PDFDocEncoding
             for scalar in value.unicodeScalars {
                 if let byte = ISO_32000.PDFDocEncoding.encode(scalar) {
-                    result.append(Self.hexChar(byte >> 4))
-                    result.append(Self.hexChar(byte & 0x0F))
+                    // Nibble extraction is arithmetic-domain; operate on the
+                    // underlying UInt8, emit hex digits via the ecosystem primitive.
+                    result.append(Self.hexChar(byte.underlying >> 4))
+                    result.append(Self.hexChar(byte.underlying & 0x0F))
                 }
             }
         } else {
@@ -116,9 +123,14 @@ extension ISO_32000.COS.StringValue {
         return result
     }
 
-    /// Get hex character for a nibble
-    private static func hexChar(_ nibble: UInt8) -> UInt8 {
-        nibble < 10 ? .ascii.0 + nibble : .ascii.A + nibble - 10
+    /// Get the uppercase hex digit for a nibble (0–15).
+    ///
+    /// Adopts the ecosystem nibble→hex primitive
+    /// (`ASCII.Serialization.hexDigitUppercase`) rather than hand-rolling the
+    /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
+    /// so the result is never nil.
+    private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
+        ASCII.Code(ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30)
     }
 
     /// Preferred serialization format based on content
