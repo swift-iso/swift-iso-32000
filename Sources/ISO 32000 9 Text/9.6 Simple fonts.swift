@@ -8,6 +8,7 @@
 //   9.6.5  TrueType fonts
 //   9.6.6  Type 3 fonts
 
+import Byte_Primitives
 public import ISO_32000_7_Syntax
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
@@ -382,7 +383,7 @@ extension ISO_32000.`9`.`6`.Font {
         public func width<Bytes: Collection>(
             of bytes: Bytes,
             atSize fontSize: ISO_32000.UserSpace.Size<1>
-        ) -> ISO_32000.UserSpace.Width where Bytes.Element == UInt8 {
+        ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
             font.metrics.winAnsi.width(of: bytes, atSize: fontSize)
         }
     }
