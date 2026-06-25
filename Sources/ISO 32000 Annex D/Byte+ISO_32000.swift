@@ -1,4 +1,4 @@
-// UInt8+ISO_32000.swift
+// Byte+ISO_32000.swift
 // ISO 32000-2:2020 Annex D - Byte-level encoding protocols and accessors
 //
 // Provides byte-level protocols and ergonomic accessors for PDF character encodings,
@@ -19,7 +19,7 @@ public import Byte_Primitives
 
 // MARK: - UInt8 Encoding Wrapper
 
-extension UInt8 {
+extension Byte {
     /// WinAnsiEncoding byte constants and operations
     ///
     /// Provides ergonomic access to WinAnsiEncoding (Windows CP1252) byte values
@@ -29,10 +29,10 @@ extension UInt8 {
     ///
     /// ```swift
     /// // Access common byte constants
-    /// UInt8.winAnsi.euro        // 0x80 (€)
-    /// UInt8.winAnsi.bullet      // 0x95 (•)
-    /// UInt8.winAnsi.trademark   // 0x99 (™)
-    /// UInt8.winAnsi.emdash      // 0x97 (—)
+    /// Byte.winAnsi.euro        // 0x80 (€)
+    /// Byte.winAnsi.bullet      // 0x95 (•)
+    /// Byte.winAnsi.trademark   // 0x99 (™)
+    /// Byte.winAnsi.emdash      // 0x97 (—)
     ///
     /// // Decode a byte to Unicode
     /// let byte: Byte = 0x80
@@ -55,13 +55,13 @@ extension UInt8 {
     /// Access WinAnsiEncoding operations for this byte
     @inlinable
     public var winAnsi: WinAnsi {
-        WinAnsi(Byte(self))
+        WinAnsi(self)
     }
 }
 
 // MARK: - WinAnsi Serializable Protocol
 
-extension UInt8.WinAnsi {
+extension Byte.WinAnsi {
     /// Protocol for types with canonical WinAnsiEncoding byte-level transformations
     ///
     /// Types conforming to this protocol work at the byte level as the primitive form,
@@ -135,7 +135,7 @@ extension UInt8.WinAnsi {
 
 // MARK: - WinAnsi Context-Free Convenience
 
-extension UInt8.WinAnsi.Serializable where Context == Void {
+extension Byte.WinAnsi.Serializable where Context == Void {
     /// Parse from canonical WinAnsiEncoding byte representation (context-free)
     @inlinable
     public init<Bytes: Collection>(winAnsi bytes: Bytes) throws(Error)
@@ -205,7 +205,7 @@ extension String {
     }
 }
 
-extension UInt8 {
+extension Byte {
     /// PDFDocEncoding byte constants and operations
     ///
     /// Provides ergonomic access to PDFDocEncoding byte values for text strings
@@ -215,8 +215,8 @@ extension UInt8 {
     ///
     /// ```swift
     /// // Access byte constants (note: differs from WinAnsi!)
-    /// UInt8.pdfDoc.euro         // 0xA0 (€) - different from WinAnsi!
-    /// UInt8.pdfDoc.bullet       // 0x80 (•)
+    /// Byte.pdfDoc.euro         // 0xA0 (€) - different from WinAnsi!
+    /// Byte.pdfDoc.bullet       // 0x80 (•)
     ///
     /// // Decode a byte
     /// let byte: Byte = 0x80
@@ -239,13 +239,13 @@ extension UInt8 {
     /// Access PDFDocEncoding operations for this byte
     @inlinable
     public var pdfDoc: PDFDoc {
-        PDFDoc(Byte(self))
+        PDFDoc(self)
     }
 }
 
 // MARK: - PDFDoc Serializable Protocol
 
-extension UInt8.PDFDoc {
+extension Byte.PDFDoc {
     /// Protocol for types with canonical PDFDocEncoding byte-level transformations
     ///
     /// Types conforming to this protocol work at the byte level as the primitive form,
@@ -275,7 +275,7 @@ extension UInt8.PDFDoc {
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-extension UInt8.PDFDoc.Serializable where Context == Void {
+extension Byte.PDFDoc.Serializable where Context == Void {
     @inlinable
     public init<Bytes: Collection>(pdfDoc bytes: Bytes) throws(Error) where Bytes.Element == Byte {
         try self.init(pdfDoc: bytes, in: ())
@@ -315,7 +315,7 @@ extension String {
     }
 }
 
-extension UInt8 {
+extension Byte {
     /// StandardEncoding byte constants and operations
     ///
     /// Provides access to StandardEncoding (Type 1 font built-in encoding).
@@ -336,13 +336,13 @@ extension UInt8 {
     /// Access StandardEncoding operations for this byte
     @inlinable
     public var standard: Standard {
-        Standard(Byte(self))
+        Standard(self)
     }
 }
 
 // MARK: - Standard Serializable Protocol
 
-extension UInt8.Standard {
+extension Byte.Standard {
     /// Protocol for types with canonical StandardEncoding byte-level transformations
     ///
     /// StandardEncoding is the built-in encoding for Type 1 Latin-text fonts.
@@ -368,7 +368,7 @@ extension UInt8.Standard {
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-extension UInt8.Standard.Serializable where Context == Void {
+extension Byte.Standard.Serializable where Context == Void {
     @inlinable
     public init<Bytes: Collection>(
         standard bytes: Bytes
@@ -412,7 +412,7 @@ extension String {
     }
 }
 
-extension UInt8 {
+extension Byte {
     /// MacRomanEncoding byte constants and operations
     ///
     /// Provides access to MacRomanEncoding (Mac OS standard Latin encoding).
@@ -433,13 +433,13 @@ extension UInt8 {
     /// Access MacRomanEncoding operations for this byte
     @inlinable
     public var macRoman: MacRoman {
-        MacRoman(Byte(self))
+        MacRoman(self)
     }
 }
 
 // MARK: - MacRoman Serializable Protocol
 
-extension UInt8.MacRoman {
+extension Byte.MacRoman {
     /// Protocol for types with canonical MacRomanEncoding byte-level transformations
     ///
     /// MacRomanEncoding is the Mac OS standard Latin encoding.
@@ -465,7 +465,7 @@ extension UInt8.MacRoman {
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-extension UInt8.MacRoman.Serializable where Context == Void {
+extension Byte.MacRoman.Serializable where Context == Void {
     @inlinable
     public init<Bytes: Collection>(macRoman bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
@@ -508,7 +508,7 @@ extension String {
     }
 }
 
-extension UInt8 {
+extension Byte {
     /// SymbolEncoding byte constants and operations
     ///
     /// Provides access to SymbolEncoding (Symbol font built-in encoding).
@@ -529,13 +529,13 @@ extension UInt8 {
     /// Access SymbolEncoding operations for this byte
     @inlinable
     public var symbol: Symbol {
-        Symbol(Byte(self))
+        Symbol(self)
     }
 }
 
 // MARK: - Symbol Serializable Protocol
 
-extension UInt8.Symbol {
+extension Byte.Symbol {
     /// Protocol for types with canonical SymbolEncoding byte-level transformations
     ///
     /// SymbolEncoding is the built-in encoding for the Symbol font.
@@ -561,7 +561,7 @@ extension UInt8.Symbol {
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-extension UInt8.Symbol.Serializable where Context == Void {
+extension Byte.Symbol.Serializable where Context == Void {
     @inlinable
     public init<Bytes: Collection>(symbol bytes: Bytes) throws(Error) where Bytes.Element == Byte {
         try self.init(symbol: bytes, in: ())
@@ -599,7 +599,7 @@ extension String {
     }
 }
 
-extension UInt8 {
+extension Byte {
     /// ZapfDingbatsEncoding byte constants and operations
     ///
     /// Provides access to ZapfDingbatsEncoding (ZapfDingbats font encoding).
@@ -620,13 +620,13 @@ extension UInt8 {
     /// Access ZapfDingbatsEncoding operations for this byte
     @inlinable
     public var zapfDingbats: ZapfDingbats {
-        ZapfDingbats(Byte(self))
+        ZapfDingbats(self)
     }
 }
 
 // MARK: - ZapfDingbats Serializable Protocol
 
-extension UInt8.ZapfDingbats {
+extension Byte.ZapfDingbats {
     /// Protocol for types with canonical ZapfDingbatsEncoding byte-level transformations
     ///
     /// ZapfDingbatsEncoding is the built-in encoding for the ZapfDingbats font.
@@ -652,7 +652,7 @@ extension UInt8.ZapfDingbats {
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-extension UInt8.ZapfDingbats.Serializable where Context == Void {
+extension Byte.ZapfDingbats.Serializable where Context == Void {
     @inlinable
     public init<Bytes: Collection>(zapfDingbats bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
@@ -697,7 +697,7 @@ extension String {
 
 // MARK: - WinAnsi Instance Operations
 
-extension UInt8.WinAnsi {
+extension Byte.WinAnsi {
     /// Decode this byte to its Unicode scalar in WinAnsiEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -713,7 +713,7 @@ extension UInt8.WinAnsi {
 
 // MARK: - WinAnsi Static Constants (PDF 1.3+ mappings)
 
-extension UInt8.WinAnsi {
+extension Byte.WinAnsi {
     // MARK: Extended Latin (0x80-0x9F) - PDF 1.3+
 
     /// EURO SIGN (0x80) - €
@@ -869,7 +869,7 @@ extension UInt8.WinAnsi {
 
 // MARK: - PDFDoc Instance Operations
 
-extension UInt8.PDFDoc {
+extension Byte.PDFDoc {
     /// Decode this byte to its Unicode scalar in PDFDocEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -885,7 +885,7 @@ extension UInt8.PDFDoc {
 
 // MARK: - PDFDoc Static Constants
 
-extension UInt8.PDFDoc {
+extension Byte.PDFDoc {
     // MARK: Diacritical Marks (0x18-0x1F) - Unique to PDFDocEncoding
 
     /// BREVE (0x18) - ˘
@@ -1002,7 +1002,7 @@ extension UInt8.PDFDoc {
 
 // MARK: - Standard Instance Operations
 
-extension UInt8.Standard {
+extension Byte.Standard {
     /// Decode this byte to its Unicode scalar in StandardEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -1018,7 +1018,7 @@ extension UInt8.Standard {
 
 // MARK: - Standard Static Constants
 
-extension UInt8.Standard {
+extension Byte.Standard {
     // Key differences from ASCII
 
     /// RIGHT SINGLE QUOTATION MARK (0x27) - '
@@ -1049,7 +1049,7 @@ extension UInt8.Standard {
 
 // MARK: - MacRoman Instance Operations
 
-extension UInt8.MacRoman {
+extension Byte.MacRoman {
     /// Decode this byte to its Unicode scalar in MacRomanEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -1065,7 +1065,7 @@ extension UInt8.MacRoman {
 
 // MARK: - MacRoman Static Constants
 
-extension UInt8.MacRoman {
+extension Byte.MacRoman {
     /// CURRENCY SIGN (0xDB) - ¤
     /// Note: PDF maintains original Mac Roman mapping, NOT Apple's later Euro
     public static let currency: Byte = 0xDB
@@ -1082,7 +1082,7 @@ extension UInt8.MacRoman {
 
 // MARK: - Symbol Instance Operations
 
-extension UInt8.Symbol {
+extension Byte.Symbol {
     /// Decode this byte to its Unicode scalar in SymbolEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -1098,7 +1098,7 @@ extension UInt8.Symbol {
 
 // MARK: - Symbol Static Constants
 
-extension UInt8.Symbol {
+extension Byte.Symbol {
     // Greek uppercase
     /// GREEK CAPITAL LETTER ALPHA (0x41) - Α
     public static let Alpha: Byte = 0x41
@@ -1154,7 +1154,7 @@ extension UInt8.Symbol {
 
 // MARK: - ZapfDingbats Instance Operations
 
-extension UInt8.ZapfDingbats {
+extension Byte.ZapfDingbats {
     /// Decode this byte to its Unicode scalar in ZapfDingbatsEncoding
     @inlinable
     public var decoded: Unicode.Scalar? {
@@ -1170,7 +1170,7 @@ extension UInt8.ZapfDingbats {
 
 // MARK: - ZapfDingbats Static Constants
 
-extension UInt8.ZapfDingbats {
+extension Byte.ZapfDingbats {
     // Common symbols
     /// UPPER BLADE SCISSORS (0x21) - ✁
     public static let scissors: Byte = 0x21

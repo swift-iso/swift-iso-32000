@@ -18,7 +18,7 @@ extension ISO_32000 {
     /// ## Usage
     ///
     /// ```swift
-    /// let bytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
+    /// let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
     /// let winAnsi = bytes.winAnsi
     /// print(winAnsi.isValid)  // true
     /// ```
