@@ -371,12 +371,10 @@ extension ISO_32000 {
         }
 
         /// Convenience: write and return bytes
-        public mutating func write(_ document: Document) -> [UInt8] {
-            // Serialize via the Byte witnesses into a Byte buffer, then bridge once
-            // to [UInt8] for the on-disk / cross-package file-output boundary.
+        public mutating func write(_ document: Document) -> [Byte] {
             var buffer: [Byte] = []
             write(document, into: &buffer)
-            return Array<UInt8>(buffer)
+            return buffer
         }
 
         // MARK: - Private Helpers

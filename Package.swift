@@ -63,7 +63,10 @@ let package = Package(
         // MARK: - Clause Targets (literal spec encoding)
         .target(
             name: "ISO 32000 3 Terms and definitions",
-            dependencies: ["ISO 32000 Shared"]
+            dependencies: [
+                "ISO 32000 Shared",
+                .product(name: "Byte Primitives", package: "swift-byte-primitives")
+            ]
         ),
         .target(
             name: "ISO 32000 7 Syntax",

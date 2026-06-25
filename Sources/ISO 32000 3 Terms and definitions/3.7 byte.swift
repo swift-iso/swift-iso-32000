@@ -1,6 +1,7 @@
 // ISO 32000-2:2020, 3.7 byte
 
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 extension ISO_32000.`3` {
     /// A group of 8 binary digits (an 8-bit value) which collectively can be
@@ -23,5 +24,5 @@ extension ISO_32000.`3` {
     /// ## See Also
     /// - ``ISO_32000/`3`/BinaryData``
     /// - ``ISO_32000/`3`/StringObject``
-    public typealias Byte = UInt8
+    public typealias Byte = Byte_Primitives.Byte
 }
