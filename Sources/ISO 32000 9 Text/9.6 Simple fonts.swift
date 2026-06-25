@@ -8,7 +8,7 @@
 //   9.6.5  TrueType fonts
 //   9.6.6  Type 3 fonts
 
-import Byte_Primitives
+public import Byte_Primitives
 public import ISO_32000_7_Syntax
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
