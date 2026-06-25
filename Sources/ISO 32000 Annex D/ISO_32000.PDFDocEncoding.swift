@@ -368,7 +368,7 @@ extension ISO_32000.PDFDocEncoding {
     /// - Parameter bytes: The raw bytes from a PDF text string
     /// - Returns: The encoding type detected
     public static func detectEncoding<C: Collection>(_ bytes: C) -> TextStringEncoding
-    where C.Element == UInt8 {
+    where C.Element == Byte {
         var iterator = bytes.makeIterator()
 
         guard let first = iterator.next() else {

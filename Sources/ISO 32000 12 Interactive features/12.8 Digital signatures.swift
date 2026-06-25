@@ -20,6 +20,7 @@
 
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 extension ISO_32000.`12` {
     /// ISO 32000-2:2020, 12.8 Digital signatures
@@ -64,7 +65,7 @@ extension ISO_32000.DigitalSignature {
         public var subFilter: SubFilter?
 
         /// The signature value (byte range digest as hex string). Required.
-        public var contents: [UInt8]
+        public var contents: [Byte]
 
         /// X.509 certificate chain. Required when SubFilter is adbe.x509.rsa_sha1.
         public var cert: CertValue?
@@ -112,7 +113,7 @@ extension ISO_32000.DigitalSignature {
             type: DictionaryType = .sig,
             filter: String,
             subFilter: SubFilter? = nil,
-            contents: [UInt8],
+            contents: [Byte],
             cert: CertValue? = nil,
             byteRange: [ByteRangePair]? = nil,
             reference: [SignatureReference]? = nil,
@@ -207,9 +208,9 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
     /// Certificate value (single or chain)
     public enum CertValue: Sendable, Hashable {
         /// Single certificate
-        case single([UInt8])
+        case single([Byte])
         /// Certificate chain (signing cert first)
-        case chain([[UInt8]])
+        case chain([[Byte]])
     }
 
     /// Byte range pair (offset, length)

@@ -6,6 +6,7 @@
 
 public import ISO_32000_Shared
 public import Byte_Primitives
+internal import Byte_Primitives_Standard_Library_Integration
 
 // MARK: - Encoding Protocol
 
@@ -146,7 +147,7 @@ extension ISO_32000 {
     ///
     /// ## Usage
     ///
-    /// This map is automatically consulted by `[UInt8].init(_:encoding:withFallback:)`
+    /// This map is automatically consulted by `[Byte].init(_:encoding:withFallback:)`
     /// when a character cannot be directly encoded.
     ///
     /// ## Reference
@@ -364,11 +365,11 @@ extension ISO_32000 {
     @frozen
     public struct GlyphName: Hashable, Sendable {
         /// The glyph name as ASCII bytes (canonical representation)
-        public let bytes: [UInt8]
+        public let bytes: [Byte]
 
         /// Initialize from ASCII bytes
         @inlinable
-        public init(bytes: [UInt8]) {
+        public init(bytes: [Byte]) {
             self.bytes = bytes
         }
 
@@ -378,7 +379,7 @@ extension ISO_32000 {
         /// The string must contain only ASCII characters.
         @inlinable
         public init(_ name: StaticString) {
-            self.bytes = name.withUTF8Buffer { Array($0) }
+            self.bytes = name.withUTF8Buffer { $0.map(Byte.init) }
         }
     }
 }

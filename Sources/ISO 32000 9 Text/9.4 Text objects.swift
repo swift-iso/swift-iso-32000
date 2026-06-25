@@ -7,6 +7,7 @@
 //   9.4.4  Text space details
 
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 extension ISO_32000.`9` {
     /// ISO 32000-2:2020, 9.4 Text objects
@@ -289,7 +290,7 @@ extension ISO_32000.`9`.`4` {
     /// and is subtracted from the current position.
     public enum TJElement: Sendable {
         /// A text string to show (bytes, not decoded)
-        case string([UInt8])
+        case string([Byte])
 
         /// A position adjustment in thousandths of text space unit
         ///

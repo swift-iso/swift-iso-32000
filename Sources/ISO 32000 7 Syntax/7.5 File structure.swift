@@ -12,6 +12,7 @@
 //          cross-reference streams and object streams
 
 public import ISO_32000_Shared
+public import Byte_Primitives
 
 extension ISO_32000.`7` {
     /// ISO 32000-2:2020, 7.5 File structure
@@ -70,8 +71,8 @@ extension ISO_32000.`7`.`5`.`2` {
         }
 
         /// Header bytes for this version
-        public var headerBytes: [UInt8] {
-            Array(header.utf8)
+        public var headerBytes: [Byte] {
+            header.utf8.map(Byte.init)
         }
     }
 }

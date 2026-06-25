@@ -2,6 +2,8 @@
 
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
+public import Byte_Primitives
+internal import Byte_Primitives_Standard_Library_Integration
 import Synchronization
 
 // MARK: - Section Namespace
@@ -66,7 +68,7 @@ extension ISO_32000.`8`.`9` {
         ///
         /// For JPEG: raw JPEG bytes (DCTDecode passthrough)
         /// For raw pixels: FlateDecode-compressed RGB/Gray data
-        public let data: [UInt8]
+        public let data: [Byte]
 
         /// Unique identifier for resource naming
         public let id: UInt64
@@ -90,7 +92,7 @@ extension ISO_32000.`8`.`9` {
             colorSpace: Color.Space,
             bitsPerComponent: Int,
             filter: Filter,
-            data: [UInt8]
+            data: [Byte]
         ) {
             self.pixelWidth = pixelWidth
             self.pixelHeight = pixelHeight
@@ -190,7 +192,7 @@ extension ISO_32000.`8`.`9`.Image {
     ///
     /// - Parameter jpegData: Raw JPEG file bytes
     /// - Throws: `Parse.Error` if the data is not valid JPEG
-    public init(jpeg jpegData: [UInt8]) throws(Parse.Error) {
+    public init(jpeg jpegData: [Byte]) throws(Parse.Error) {
         // Verify JPEG magic bytes: 0xFF 0xD8 (SOI)
         guard jpegData.count >= 2,
             jpegData[0] == 0xFF,
@@ -227,7 +229,7 @@ extension ISO_32000.`8`.`9`.Image {
     /// Scans for SOF0 (baseline) or SOF2 (progressive) marker.
     /// SOF format: FF C0/C2 LENGTH(2) PRECISION(1) HEIGHT(2) WIDTH(2) COMPONENTS(1)
     private static func parseJPEGHeader(
-        _ data: [UInt8]
+        _ data: [Byte]
     ) throws(Parse.Error) -> (width: Int, height: Int, components: Int) {
         var offset = 2  // Skip SOI marker
 

@@ -179,7 +179,7 @@ extension ISO_32000.COS.StringValue {
     /// - All other bytes are PDFDocEncoding
     ///
     /// - Parameter bytes: Raw bytes from a PDF string object (without delimiters)
-    public init<C: Collection>(pdfStringBytes bytes: C) where C.Element == UInt8 {
+    public init<C: Collection>(pdfStringBytes bytes: C) where C.Element == Byte {
         switch ISO_32000.PDFDocEncoding.detectEncoding(bytes) {
         case .pdfDocEncoding:
             self.init(String(pdfDoc: [Byte](bytes), withReplacement: true))
