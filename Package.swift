@@ -94,7 +94,8 @@ let package = Package(
                 "ISO 32000 8 Graphics",
                 "ISO 32000 Annex D",
                 .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
-                .product(name: "Ownership Primitives", package: "swift-ownership-primitives")
+                .product(name: "Ownership Primitives", package: "swift-ownership-primitives"),
+                .product(name: "Byte Primitives", package: "swift-byte-primitives")
             ]
         ),
         .target(
