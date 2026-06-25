@@ -12,6 +12,7 @@ public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 public import Standard_Library_Extensions
 public import Binary_Primitives
+public import Binary_Serializable_Primitives
 public import Byte_Primitives
 
 // MARK: - 14.8 Tagged PDF

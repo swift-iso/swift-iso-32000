@@ -5,6 +5,7 @@ import Ownership_Primitives
 import RFC_4648
 import Standard_Library_Extensions
 public import Binary_Primitives
+public import Binary_Serializable_Primitives
 public import Byte_Primitives
 public import Witness_Primitives
 

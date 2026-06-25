@@ -2,6 +2,7 @@
 
 public import Geometry_Primitives
 public import Binary_Primitives
+public import Binary_Serializable_Primitives
 public import Byte_Primitives
 import ISO_9899
 import Standard_Library_Extensions

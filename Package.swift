@@ -34,6 +34,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-dimension-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-numeric-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-witness-primitives.git", branch: "main"),
@@ -118,7 +119,8 @@ let package = Package(
                 "ISO 32000 Shared",
                 "ISO 32000 7 Syntax",
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives")
+                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives")
             ]
         ),
         .target(
@@ -147,6 +149,7 @@ let package = Package(
                 .product(name: "Geometry Primitives", package: "swift-geometry-primitives"),
                 .product(name: "Format Primitives", package: "swift-format-primitives"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
                 .product(name: "ISO 9899", package: "swift-iso-9899"),
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
