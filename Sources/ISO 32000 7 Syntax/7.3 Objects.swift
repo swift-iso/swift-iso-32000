@@ -17,6 +17,7 @@ public import Formatter_Primitives
 public import Binary_Primitives
 public import Binary_Serializable_Primitives
 internal import Binary_Primitives_Standard_Library_Integration
+internal import Binary_Endianness_Primitives
 import IEEE_754
 public import ASCII_Primitives
 public import ISO_32000_Shared
