@@ -76,7 +76,7 @@ extension Byte.WinAnsi {
     /// ## Usage
     ///
     /// ```swift
-    /// struct PDFTextString: UInt8.WinAnsi.Serializable {
+    /// struct PDFTextString: Byte.WinAnsi.Serializable {
     ///     let rawValue: String
     ///
     ///     init<Bytes: Collection>(winAnsi bytes: Bytes, in context: Void) throws(Error) {
