@@ -32,7 +32,7 @@ struct `ISO_32000.Writer Tests` {
         var writer = ISO_32000.Writer()
         let pdf = writer.write(document)
 
-        let headerEnd = pdf.firstIndex(of: UInt8(ascii: "\n"))!
+        let headerEnd = pdf.firstIndex(of: Byte(UInt8(ascii: "\n")))!
         let markerStart = pdf.index(after: headerEnd)
         #expect(pdf[pdf.index(after: markerStart)] > 127)
     }
@@ -287,7 +287,7 @@ struct `ISO_32000.Writer Tests` {
             // Load Geneva.ttf from system fonts
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = [UInt8](fontData)
+            let fontBytes = [Byte](fontData)
 
             // Create embedded font with unique resource name (avoiding F1-F14 used by standard fonts)
             let customFont = try ISO_32000.Font(
@@ -374,7 +374,7 @@ struct `ISO_32000.Writer Tests` {
             // Load Geneva.ttf from system fonts
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = [UInt8](fontData)
+            let fontBytes = [Byte](fontData)
 
             // Create embedded font
             let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)

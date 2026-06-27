@@ -23,7 +23,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     @Test
     func `ASCII-only payload serializes as raw PDFDocEncoding bytes`() {
         let str = ISO_32000.`7`.`3`.COS.StringValue("Hello")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         // ASCII subset of PDFDocEncoding == ASCII == "(Hello)"
         #expect(bytes == Array("(Hello)".utf8))
@@ -33,7 +33,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     func `Bullet U_2022 takes PDFDocEncoding single-byte path at 0x80`() {
         // PDFDocEncoding maps U+2022 BULLET to 0x80 (per Annex D).
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{2022}")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(bytes == [0x28, 0x80, 0x29])  // ( bullet )
     }
@@ -42,7 +42,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     func `Euro U_20AC takes PDFDocEncoding single-byte path at 0xA0`() {
         // PDFDocEncoding maps U+20AC EURO to 0xA0 (NOT WinAnsi 0x80; NOT UTF-16BE).
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{20AC}")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(bytes == [0x28, 0xA0, 0x29])
     }
@@ -51,7 +51,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     func `Dutch dieresis Cli_e_ntnummer takes PDFDocEncoding path`() {
         // U+00EB is in PDFDocEncoding at 0xEB; payload is fully encodable.
         let str = ISO_32000.`7`.`3`.COS.StringValue("Cli\u{00EB}ntnummer")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         // ( C l i ë n t n u m m e r )
         #expect(bytes == [
@@ -70,7 +70,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         // PDFDocEncoding's 0xA0 slot holds EURO; NBSP has no PDFDocEncoding
         // representation. A single NBSP forces the entire string into UTF-16BE.
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{00A0}")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         // ( 0xFE 0xFF 0x00 0xA0 )
         #expect(bytes == [0x28, 0xFE, 0xFF, 0x00, 0xA0, 0x29])
@@ -81,7 +81,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         // The on-disk reproducer pattern: "€\u{00A0}150,12" — NBSP forces
         // UTF-16BE even though Euro alone would use single-byte PDFDocEncoding.
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{20AC}\u{00A0}150,12")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(bytes == [
             0x28, 0xFE, 0xFF,                // ( BOM
@@ -102,7 +102,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         // U+1F600 GRINNING FACE — beyond BMP. UTF-16 surrogate pair:
         // High 0xD83D, Low 0xDE00. Not in PDFDocEncoding → UTF-16BE.
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{1F600}")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(bytes == [
             0x28, 0xFE, 0xFF,                // ( BOM
@@ -117,7 +117,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     @Test
     func `Parens and backslash escape inside PDFDocEncoding literal`() {
         let str = ISO_32000.`7`.`3`.COS.StringValue("abc(def)ghi")
-        var bytes: [UInt8] = []
+        var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         let decoded = String(decoding: bytes, as: UTF8.self)
         #expect(decoded == "(abc\\(def\\)ghi)")
@@ -128,7 +128,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     @Test
     func `asLiteral matches serialize on PDFDocEncoding-only payload`() {
         let str = ISO_32000.COS.StringValue("Hello")
-        var via = [UInt8]()
+        var via = [Byte]()
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &via)
         #expect(via == str.asLiteral())
     }
@@ -136,7 +136,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     @Test
     func `asLiteral matches serialize on UTF-16BE payload`() {
         let str = ISO_32000.COS.StringValue("\u{20AC}\u{00A0}150,12")
-        var via = [UInt8]()
+        var via = [Byte]()
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &via)
         #expect(via == str.asLiteral())
     }
@@ -144,7 +144,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
     @Test
     func `asLiteral matches serialize on surrogate-pair payload`() {
         let str = ISO_32000.COS.StringValue("\u{1F600}")
-        var via = [UInt8]()
+        var via = [Byte]()
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &via)
         #expect(via == str.asLiteral())
     }

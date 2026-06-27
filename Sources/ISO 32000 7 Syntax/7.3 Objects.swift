@@ -1134,7 +1134,7 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
     /// so the result is never nil.
     private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
-        ASCII.Code(ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30)
+        ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30
     }
 }
 

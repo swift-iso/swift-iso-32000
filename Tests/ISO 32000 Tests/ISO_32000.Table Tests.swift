@@ -229,7 +229,7 @@ struct `ISO_32000.Table.Serialization Tests` {
             scope: .column
         )
 
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         ISO_32000.TH.serialize(header, into: &buffer)
 
         let output = String(decoding: buffer, as: UTF8.self)
@@ -245,7 +245,7 @@ struct `ISO_32000.Table.Serialization Tests` {
             headers: ["h1"]
         )
 
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         ISO_32000.TD.serialize(cell, into: &buffer)
 
         let output = String(decoding: buffer, as: UTF8.self)
@@ -258,7 +258,7 @@ struct `ISO_32000.Table.Serialization Tests` {
     func `Table with summary serializes`() {
         let table = ISO_32000.Table(summary: "Test table")
 
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         ISO_32000.Table.serialize(table, into: &buffer)
 
         let output = String(decoding: buffer, as: UTF8.self)
@@ -270,7 +270,7 @@ struct `ISO_32000.Table.Serialization Tests` {
     func `TH default values omit optional attributes`() {
         let header = ISO_32000.TH()
 
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         ISO_32000.TH.serialize(header, into: &buffer)
 
         let output = String(decoding: buffer, as: UTF8.self)

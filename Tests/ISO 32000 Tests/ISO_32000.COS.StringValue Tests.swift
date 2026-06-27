@@ -103,7 +103,7 @@ struct `ISO_32000.COS.StringValue Tests` {
         // Use character NOT in PDFDocEncoding to trigger UTF-16BE with BOM
         let str = ISO_32000.COS.StringValue("\u{4F60}")  // 你 (Chinese character)
         let bytes = str.asLiteral()
-        #expect(bytes[0] == UInt8(ascii: "("))
+        #expect(bytes[0] == Byte(UInt8(ascii: "(")))
         #expect(bytes.contains(0xFE))
         #expect(bytes.contains(0xFF))
     }

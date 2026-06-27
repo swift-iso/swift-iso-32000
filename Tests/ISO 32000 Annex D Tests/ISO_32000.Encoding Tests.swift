@@ -157,21 +157,21 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `detectEncoding UTF16BE`() {
-            let utf16Data = Data([0xFE, 0xFF, 0x00, 0x48])  // BOM + "H"
+            let utf16Data: [Byte] = [0xFE, 0xFF, 0x00, 0x48]  // BOM + "H"
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(utf16Data)
             #expect(detected == .utf16BE)
         }
 
         @Test
         func `detectEncoding UTF8`() {
-            let utf8Data = Data([0xEF, 0xBB, 0xBF, 0x48])  // BOM + "H"
+            let utf8Data: [Byte] = [0xEF, 0xBB, 0xBF, 0x48]  // BOM + "H"
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(utf8Data)
             #expect(detected == .utf8)
         }
 
         @Test
         func `detectEncoding PDFDocEncoding`() {
-            let pdfDocData = Data([0x48, 0x65, 0x6C, 0x6C, 0x6F])  // "Hello"
+            let pdfDocData: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(pdfDocData)
             #expect(detected == .pdfDocEncoding)
         }
