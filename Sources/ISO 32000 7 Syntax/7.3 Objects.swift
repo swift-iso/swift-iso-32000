@@ -1130,11 +1130,11 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     /// Get the uppercase hex ASCII character for a nibble (0–15).
     ///
     /// Adopts the ecosystem nibble→hex primitive
-    /// (`ASCII.Serialization.hexDigitUppercase`) rather than hand-rolling the
+    /// (`ASCII.Hexadecimal.code(_:case:)`) rather than hand-rolling the
     /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
     /// so the result is never nil.
     private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
-        ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30
+        ASCII.Hexadecimal.code(nibble, case: .upper) ?? 0x30
     }
 }
 
@@ -1261,7 +1261,7 @@ extension ISO_32000.`7`.`3`.`3` {
             // Check if value is effectively an integer
             let rounded = number.value.rounded()
             if number.value == rounded && abs(number.value) < Double(Int64.max) {
-                ASCII.Serialization.serializeDecimal(Int64(number.value), into: &buffer)
+                ASCII.Decimal.serialize(Int64(number.value), into: &buffer)
                 return
             }
 
@@ -1279,7 +1279,7 @@ extension ISO_32000.`7`.`3`.`3` {
             let fracPart = absValue - Double(intPart)
 
             // Serialize integer part
-            ASCII.Serialization.serializeDecimal(intPart, into: &buffer)
+            ASCII.Decimal.serialize(intPart, into: &buffer)
 
             // Calculate fractional digits (up to 5 decimal places)
             let fracDigits = Int64((fracPart * Self.multiplier).rounded())
@@ -1289,13 +1289,13 @@ extension ISO_32000.`7`.`3`.`3` {
                 // Emit fractional digits with leading zeros, then strip trailing
                 // zeros. InlineArray gives fixed-size stack storage (no heap
                 // allocation); digits are ASCII.Code via the ecosystem
-                // decimal-digit primitive (`ASCII.Serialization.digit`).
+                // decimal-digit primitive (`ASCII.Decimal.code`).
                 var fracValue = fracDigits
                 let zero = ASCII.Code.`0`
 
                 func digit(_ value: Int64) -> ASCII.Code {
                     // value % 10 is always 0–9, so `digit(_:)` never returns nil.
-                    ASCII.Code(ASCII.Serialization.digit(UInt8(value % 10)) ?? 0x30)
+                    ASCII.Decimal.code(UInt8(value % 10)) ?? 0x30
                 }
 
                 // Build digits in reverse order (most significant at index 0).

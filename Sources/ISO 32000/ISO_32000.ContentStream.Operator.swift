@@ -435,11 +435,11 @@ extension ISO_32000.ContentStream.Operator {
             buffer.append(contentsOf: [.ascii.space, .ascii.w])
 
         case .setLineCap(let cap):
-            ASCII.Serialization.serializeDecimal(cap.rawValue, into: &buffer)
+            ASCII.Decimal.serialize(cap.rawValue, into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.J])
 
         case .setLineJoin(let join):
-            ASCII.Serialization.serializeDecimal(join.rawValue, into: &buffer)
+            ASCII.Decimal.serialize(join.rawValue, into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.j])
 
         case .setMiterLimit(let limit):

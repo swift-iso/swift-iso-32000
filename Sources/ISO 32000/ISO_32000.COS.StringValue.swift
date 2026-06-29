@@ -122,11 +122,11 @@ extension ISO_32000.COS.StringValue {
     /// Get the uppercase hex digit for a nibble (0–15).
     ///
     /// Adopts the ecosystem nibble→hex primitive
-    /// (`ASCII.Serialization.hexDigitUppercase`) rather than hand-rolling the
+    /// (`ASCII.Hexadecimal.code(_:case:)`) rather than hand-rolling the
     /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
     /// so the result is never nil.
     private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
-        ASCII.Serialization.hexDigitUppercase(nibble) ?? 0x30
+        ASCII.Hexadecimal.code(nibble, case: .upper) ?? 0x30
     }
 
     /// Preferred serialization format based on content
