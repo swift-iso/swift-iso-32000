@@ -45,11 +45,11 @@ extension ISO_32000.`9`.`6` {
     ///
     /// ISO 32000-2:2020, Section 9.6.2.2 — Standard Type 1 fonts (standard 14 fonts)
     public struct Font: Sendable {
-        /// Font storage is boxed behind `Ownership.Shared` for two reasons:
+        /// Font storage is boxed behind `Ownership.Immutable` for two reasons:
         /// 1. `Embedded` is a large immutable resource — shared, not copied
         /// 2. Nested @CoW `_modify` coroutines in the rendering pipeline
         ///    produce dangling pointers to large inline structs in debug mode
-        private let _storage: Ownership.Shared<Storage>
+        private let _storage: Ownership.Immutable<Storage>
 
         public var baseFontName: ISO_32000.`7`.`3`.COS.Name { _storage.value.baseFontName }
         public var resourceName: ISO_32000.`7`.`3`.COS.Name { _storage.value.resourceName }
@@ -71,7 +71,7 @@ extension ISO_32000.`9`.`6` {
             family: Family,
             embeddedSource: Embedded? = nil
         ) {
-            self._storage = Ownership.Shared(Storage(
+            self._storage = Ownership.Immutable(Storage(
                 baseFontName: baseFontName,
                 resourceName: resourceName,
                 metrics: metrics,
