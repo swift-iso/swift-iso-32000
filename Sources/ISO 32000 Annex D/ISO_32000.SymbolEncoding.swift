@@ -4,8 +4,8 @@
 // The built-in encoding for the Symbol font, containing Greek letters,
 // mathematical symbols, and other special characters.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000 {
     /// SymbolEncoding - Symbol Font Built-in Encoding

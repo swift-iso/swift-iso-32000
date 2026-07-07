@@ -1,3 +1,5 @@
+// swift-format-ignore-file: AlwaysUseLowerCamelCase
+// Reason: version enum cases (v1_4 … v2_0) are spec-mirroring names (ISO 32000-2 PDF version identifiers, API-NAME-003).
 // ISO 32000-2:2020, 7.5 File structure
 //
 // Sections:
@@ -11,8 +13,8 @@
 //   7.5.8  Compatibility with applications that do not support compressed
 //          cross-reference streams and object streams
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000.`7` {
     /// ISO 32000-2:2020, 7.5 File structure
@@ -65,7 +67,7 @@ extension ISO_32000.`7`.`5`.`2` {
         /// Default version for new documents
         public static let `default`: Version = .v1_7
 
-        /// Header string for this version (e.g., "%PDF-1.7")
+        /// Header string for this version (for example, "%PDF-1.7")
         public var header: String {
             "%PDF-\(rawValue)"
         }

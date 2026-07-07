@@ -1,7 +1,7 @@
 // PDFOutput.swift
 
-import Foundation
 import Byte_Primitives
+import Foundation
 
 enum PDFOutput {
     static let directory = "/tmp/pdf-tests"

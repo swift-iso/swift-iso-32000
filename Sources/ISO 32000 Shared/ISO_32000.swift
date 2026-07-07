@@ -1,8 +1,8 @@
 // ISO 32000-2:2020 — Document management — Portable document format — Part 2: PDF 2.0
 
 public import Dimension_Primitives
-import Numeric_Primitives
 @_exported public import Geometry_Primitives
+import Numeric_Primitives
 
 /// The root namespace for ISO 32000-2:2020 (PDF 2.0) definitions.
 ///
@@ -55,9 +55,9 @@ public enum UserSpace: Numeric.Quantized {
 // - Opacity<Scalar> for 0-1 alpha values
 
 extension ISO_32000.UserSpace {
-    /// User space unit (1/72 inch) - Double tagged with UserSpace
-    ///
-    /// Per ISO 32000-2:2020, Section 8.3.2.3, the default unit is 1/72 inch.
+    // User space unit (1/72 inch) - Double tagged with UserSpace
+    //
+    // Per ISO 32000-2:2020, Section 8.3.2.3, the default unit is 1/72 inch.
     //    public typealias Unit = Tagged<ISO_32000_Shared.UserSpace, Double>
 
     /// Coordinate in user space (2D point)

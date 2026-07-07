@@ -5,9 +5,9 @@
 //   9.8.2  Font descriptor flags
 //   9.8.3  Font metrics
 
+public import Byte_Primitives
 import ISO_32000_8_Graphics
 import ISO_32000_Annex_D
-public import Byte_Primitives
 public import ISO_32000_Shared
 
 extension ISO_32000.`9` {
@@ -433,7 +433,8 @@ extension ISO_32000.`9`.`8`.Metrics {
         /// recommended leading (from the Leading entry in the font descriptor).
         public var normal: Multiplier {
             let h =
-                metrics.ascender.underlying - metrics.descender.underlying + metrics.leading.underlying
+                metrics.ascender.underlying - metrics.descender.underlying
+                + metrics.leading.underlying
             return Multiplier(Double(h) / Double(metrics.unitsPerEm))
         }
 

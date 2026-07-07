@@ -6,8 +6,8 @@
 //   9.4.3  Text-showing operators
 //   9.4.4  Text space details
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000.`9` {
     /// ISO 32000-2:2020, 9.4 Text objects

@@ -1,3 +1,5 @@
+// swift-format-ignore-file: AlwaysUseLowerCamelCase
+// Reason: devDepGS_* constants are spec-mirroring names (ISO 32000-2 device-dependent graphics state parameter mnemonics, API-NAME-003).
 // ISO 32000-2:2020, 12.8 Digital signatures
 //
 // Sections:
@@ -18,9 +20,9 @@
 //   12.8.6  Permissions (Table 263)
 //   12.8.7  Legal content attestations (Table 264)
 
+public import Byte_Primitives
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
-public import Byte_Primitives
 
 extension ISO_32000.`12` {
     /// ISO 32000-2:2020, 12.8 Digital signatures

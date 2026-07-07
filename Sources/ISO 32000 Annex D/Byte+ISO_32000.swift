@@ -1,3 +1,5 @@
+// swift-format-ignore-file: AlwaysUseLowerCamelCase
+// Reason: glyph-name enum cases (Aacute, Ccedilla, …) are spec-mirroring PDF encoding glyph names (API-NAME-003).
 // Byte+ISO_32000.swift
 // ISO 32000-2:2020 Annex D - Byte-level encoding protocols and accessors
 //
@@ -14,8 +16,8 @@
 // Type → [Byte] (bytes) → String     (serialization)
 // ```
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 // MARK: - UInt8 Encoding Wrapper
 

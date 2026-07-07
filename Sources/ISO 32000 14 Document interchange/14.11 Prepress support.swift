@@ -436,16 +436,16 @@ import ISO_32000_Shared
 // (CGATS TR 001) from the ICC Characterization Data Registry. Example 2 shows one for a custom production
 // condition.
 // << /Type /OutputIntent %Output intent dictionary
-/// S /GTS_PDFX
-/// OutputCondition (CGATS TR 001 (SWOP))
-/// OutputConditionIdentifier (CGATS TR 001)
-/// RegistryName (http://www.color.org)
-/// DestOutputProfile 100 0 R
+// S /GTS_PDFX
+// OutputCondition (CGATS TR 001 (SWOP))
+// OutputConditionIdentifier (CGATS TR 001)
+// RegistryName (http://www.color.org)
+// DestOutputProfile 100 0 R
 // >>
 // 100 0 obj %ICC profile stream
 // <</N 4
-/// Length 1605
-/// Filter /ASCIIHexDecode
+// Length 1605
+// Filter /ASCIIHexDecode
 // >>
 // stream
 // 00 00 02 0C 61 70 … >
@@ -453,11 +453,11 @@ import ISO_32000_Shared
 // endobj
 // EXAMPLE 2
 // << /Type /OutputIntent %Output intent dictionary
-/// S /GTS_PDFX
-/// OutputCondition (Coated)
-/// OutputConditionIdentifier (Custom)
-/// Info (Coated 150lpi)
-/// DestOutputProfile 100 0 R
+// S /GTS_PDFX
+// OutputCondition (Coated)
+// OutputConditionIdentifier (Custom)
+// Info (Coated 150lpi)
+// DestOutputProfile 100 0 R
 // >>
 // 824 © ISO 2020 – All rights reserved
 // Sold by the PDF Association to 17781 | December 3, 2025 |
@@ -465,8 +465,8 @@ import ISO_32000_Shared
 // ISO 32000-2:2020(E)
 // 100 0 obj %ICC profile stream
 // << /N 4
-/// Length 1605
-/// Filter /ASCIIHexDecode
+// Length 1605
+// Filter /ASCIIHexDecode
 // >>
 // stream
 // 00 00 02 0C 61 70…>

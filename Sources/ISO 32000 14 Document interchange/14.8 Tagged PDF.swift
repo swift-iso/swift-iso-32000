@@ -8,12 +8,12 @@
 //   14.8.5  Standard structure attributes
 //   14.8.6  Standard structure namespaces
 
-public import ISO_32000_7_Syntax
-public import ISO_32000_Shared
-public import Standard_Library_Extensions
 public import Binary_Primitives
 public import Binary_Serializable_Primitives
 public import Byte_Primitives
+public import ISO_32000_7_Syntax
+public import ISO_32000_Shared
+public import Standard_Library_Extensions
 
 // MARK: - 14.8 Tagged PDF
 
@@ -520,10 +520,10 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`4`.Caption: Binary.Serializable {
 // the following methods:
 // • By enclosing it in a marked-content sequence with the tag Artifact:
 // EXAMPLE 1
-/// Artifact BMC
+// Artifact BMC
 // EMC
 // EXAMPLE 2 (marked-content sequence Artifact with a property list entry)
-/// Artifact <<propertyList>> BDC
+// Artifact <<propertyList>> BDC
 // EMC
 // • By inclusion in the logical structure tree through the use of the Artifact structure element type
 // (see "Table 375 — standard structure type Artifact").
@@ -680,7 +680,7 @@ extension ISO_32000.`14`.`8`.`4`.`8`.`4`.Caption: Binary.Serializable {
 // opportunity to realign the typography without visible effect, and it serves the valuable purpose
 // of limiting the scope of reversals for word-processing interactive PDF processors.
 // EXAMPLE The sequence
-/// ReversedChars
+// ReversedChars
 // BMC
 // ( olleH) Tj
 // -200 0 Td

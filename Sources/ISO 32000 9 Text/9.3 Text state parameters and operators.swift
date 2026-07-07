@@ -151,7 +151,7 @@ extension ISO_32000.Text.Font {
     /// References a font by its resource name as used in the page's
     /// Font subdictionary.
     public struct Reference: Sendable, Equatable, Hashable {
-        /// The font resource name (e.g., "F1", "F2")
+        /// The font resource name (for example, "F1", "F2")
         public var name: String
 
         /// Create a font reference

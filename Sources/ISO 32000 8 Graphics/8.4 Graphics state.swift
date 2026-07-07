@@ -1,3 +1,5 @@
+// swift-format-ignore-file: AlwaysUseLowerCamelCase
+// Reason: single-letter enum cases (Q, J, M, …) are spec-mirroring PDF content-stream operator mnemonics (API-NAME-003).
 // ISO 32000-2:2020, 8.4 Graphics state
 //
 // A PDF processor shall maintain an internal data structure called the graphics state
@@ -1004,7 +1006,9 @@ extension ISO_32000.`8`.`4`.Graphics.State {
         ///
         /// - Parameter body: The closure to execute with saved state
         /// - Returns: The result of the closure
-        public mutating func withSavedState<T, E: Swift.Error>(_ body: (inout Self) throws(E) -> T) throws(E) -> T {
+        public mutating func withSavedState<T, E: Swift.Error>(
+            _ body: (inout Self) throws(E) -> T
+        ) throws(E) -> T {
             save()
             defer { restore() }
             return try body(&self)

@@ -4,8 +4,8 @@
 // Provides typed wrappers for byte collections in specific PDF encodings,
 // following the pattern established by INCITS_4_1986.ASCII<Source>.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 // MARK: - WinAnsi Collection Wrapper
 

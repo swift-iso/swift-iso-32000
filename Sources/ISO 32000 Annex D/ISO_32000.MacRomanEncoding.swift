@@ -4,8 +4,8 @@
 // Mac OS standard encoding for Latin text in Western writing systems.
 // Used for cross-platform compatibility with older Mac documents.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000 {
     /// MacRomanEncoding - Mac OS Latin Text Encoding

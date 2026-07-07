@@ -10,10 +10,10 @@
 // PDFDocEncoding and forces the UTF-16BE fallback).
 
 import Binary_Primitives
+import ISO_32000_7_Syntax
 import Testing
 
 @testable import ISO_32000
-import ISO_32000_7_Syntax
 
 @Suite
 struct `ISO_32000.COS.StringValue NonASCII Tests` {
@@ -54,13 +54,15 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         // ( C l i ë n t n u m m e r )
-        #expect(bytes == [
-            0x28,                            // (
-            0x43, 0x6C, 0x69, 0xEB,          // Clië
-            0x6E, 0x74, 0x6E, 0x75,          // ntnu
-            0x6D, 0x6D, 0x65, 0x72,          // mmer
-            0x29                             // )
-        ])
+        #expect(
+            bytes == [
+                0x28,  // (
+                0x43, 0x6C, 0x69, 0xEB,  // Clië
+                0x6E, 0x74, 0x6E, 0x75,  // ntnu
+                0x6D, 0x6D, 0x65, 0x72,  // mmer
+                0x29,  // )
+            ]
+        )
     }
 
     // MARK: - serialize(_:into:): UTF-16BE fallback
@@ -83,18 +85,20 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{20AC}\u{00A0}150,12")
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
-        #expect(bytes == [
-            0x28, 0xFE, 0xFF,                // ( BOM
-            0x20, 0xAC,                      // €
-            0x00, 0xA0,                      // NBSP
-            0x00, 0x31,                      // 1
-            0x00, 0x35,                      // 5
-            0x00, 0x30,                      // 0
-            0x00, 0x2C,                      // ,
-            0x00, 0x31,                      // 1
-            0x00, 0x32,                      // 2
-            0x29                             // )
-        ])
+        #expect(
+            bytes == [
+                0x28, 0xFE, 0xFF,  // ( BOM
+                0x20, 0xAC,  // €
+                0x00, 0xA0,  // NBSP
+                0x00, 0x31,  // 1
+                0x00, 0x35,  // 5
+                0x00, 0x30,  // 0
+                0x00, 0x2C,  // ,
+                0x00, 0x31,  // 1
+                0x00, 0x32,  // 2
+                0x29,  // )
+            ]
+        )
     }
 
     @Test
@@ -104,12 +108,14 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{1F600}")
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
-        #expect(bytes == [
-            0x28, 0xFE, 0xFF,                // ( BOM
-            0xD8, 0x3D,                      // high surrogate
-            0xDE, 0x00,                      // low surrogate
-            0x29                             // )
-        ])
+        #expect(
+            bytes == [
+                0x28, 0xFE, 0xFF,  // ( BOM
+                0xD8, 0x3D,  // high surrogate
+                0xDE, 0x00,  // low surrogate
+                0x29,  // )
+            ]
+        )
     }
 
     // MARK: - Escape table preserved across both paths

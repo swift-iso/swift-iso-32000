@@ -1,7 +1,7 @@
 // ISO_32000.Font Tests.swift
 
-import Testing
 import Byte_Primitives
+import Testing
 
 @testable import ISO_32000
 

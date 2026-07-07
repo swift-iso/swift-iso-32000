@@ -4,8 +4,8 @@
 // Encoding for text strings in a PDF document outside content streams.
 // Used for document metadata, annotations, bookmarks, and other text strings.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000 {
     /// PDFDocEncoding - Text strings outside content streams

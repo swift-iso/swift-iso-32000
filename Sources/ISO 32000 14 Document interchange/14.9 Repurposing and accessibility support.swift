@@ -97,7 +97,7 @@ import ISO_32000_Shared
 // sequence with the value es-MX, meaning Mexican Spanish.
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -106,7 +106,7 @@ import ISO_32000_Shared
 // stream
 // BT
 // (See you later, or as Arnold would say, ) Tj
-/// Span <</Lang (es-MX)>> %Start of marked-content sequence
+// Span <</Lang (es-MX)>> %Start of marked-content sequence
 // BDC
 // ("Hasta la vista.
 // ") Tj
@@ -123,18 +123,18 @@ import ISO_32000_Shared
 // "Finding structure elements from content items").
 // 1 0 obj %Structure element
 // <</Type /StructElem
-/// S /P %Structure type
-/// P … %Parent in structure hierarchy
-/// K <</Type /MCR
-/// Pg 2 0 R %Page containing marked-content sequence
-/// MCID 0 %Marked-content identifier
+// S /P %Structure type
+// P … %Parent in structure hierarchy
+// K <</Type /MCR
+// Pg 2 0 R %Page containing marked-content sequence
+// MCID 0 %Marked-content identifier
 // >>
-/// Lang (en-US) %Language specification for this element
+// Lang (en-US) %Language specification for this element
 // >>
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -142,10 +142,10 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // BT
-/// P <</MCID 0 …>> %Start of marked-content sequence
+// P <</MCID 0 …>> %Start of marked-content sequence
 // BDC
 // (See you later, or in Spanish you would say, ) Tj
-/// Span <</Lang (es-MX)>> %Start of nested marked-content sequence
+// Span <</Lang (es-MX)>> %Start of nested marked-content sequence
 // BDC
 // (Hasta la vista.) Tj
 // EMC %End of nested marked-content sequence
@@ -165,28 +165,28 @@ import ISO_32000_Shared
 // "Finding structure elements from content items").
 // 1 0 obj %Structure element
 // <</Type /StructElem
-/// S /P %Structure type
-/// P … %Parent in structure hierarchy
-/// K <</Type /MCR
-/// Pg 2 0 R %Page containing marked-content sequence
-/// MCID 0 %Marked-content identifier
+// S /P %Structure type
+// P … %Parent in structure hierarchy
+// K <</Type /MCR
+// Pg 2 0 R %Page containing marked-content sequence
+// MCID 0 %Marked-content identifier
 // >>
-/// Lang (en-US) %Language specification for this element
+// Lang (en-US) %Language specification for this element
 // >>
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
 // 3 0 obj %Page's content stream
 // <</Length …>>
 // stream
-/// Span <</Lang (es-MX)>> %Start of marked-content sequence
+// Span <</Lang (es-MX)>> %Start of marked-content sequence
 // BDC
 // (Hasta la vista, ) Tj
-/// P <</MCID 0 …>> %Start of structured marked-content
+// P <</MCID 0 …>> %Start of structured marked-content
 // sequence,
 // applies
 // BDC %to which structure element's language
@@ -244,7 +244,7 @@ import ISO_32000_Shared
 // present between them. The same applies to consecutive marked-content sequences.
 // The Alt entry in property lists may be combined with other entries.
 // EXAMPLE This example shows the Alt entry combined with a Lang entry.
-/// Span <</Lang (en-us) /Alt (six-point star)>> BDC (A) Tj EMC
+// Span <</Lang (en-us) /Alt (six-point star)>> BDC (A) Tj EMC
 // 14.9.4 Replacement text
 // Replacement text may be specified for the following items:
 // • A structure element (see 14.7.2, "Structure hierarchy"), by means of the optional ActualText
@@ -272,7 +272,7 @@ import ISO_32000_Shared
 // hyphenated was rendered as "Druk-
 // " and "ker").
 // (Dru) Tj
-/// Span
+// Span
 // <</Actual Text (c)>>
 // BDC
 // (k-) Tj
@@ -295,12 +295,12 @@ import ISO_32000_Shared
 // .
 // EXAMPLE
 // BT
-/// Span <</E (Doctor)>>
+// Span <</E (Doctor)>>
 // BDC
 // (Dr.) Tj
 // EMC
 // (Healwell works at 123 Industrial ) Tj
-/// Span <</E (Drive)>>
+// Span <</E (Drive)>>
 // BDC
 // (Dr.) Tj
 // EMC

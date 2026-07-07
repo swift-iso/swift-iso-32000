@@ -114,7 +114,7 @@ extension ISO_32000.Measurement.Measure {
     ///
     /// ISO 32000-2:2020, Table 267 — Additional entries in a rectilinear measure dictionary
     public struct Rectilinear: Sendable, Hashable {
-        /// Scale ratio text (e.g., "1/4 in = 1 ft"). Required.
+        /// Scale ratio text, for example "1/4 in = 1 ft" (required).
         public var scaleRatio: String
 
         /// Number format array for x-axis measurement. Required.

@@ -104,7 +104,7 @@ extension ISO_32000.Article {
         /// The beads in this thread (in order)
         public var beads: [Bead]
 
-        /// Thread information (title, author, etc.)
+        /// Thread information (title, author, and similar metadata)
         public var info: Info?
 
         public init(beads: [Bead] = [], info: Info? = nil) {

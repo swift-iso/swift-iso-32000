@@ -1,7 +1,7 @@
 // ISO 32000-2:2020, 9.1 General
 
-import ISO_32000_Annex_D
 public import Byte_Primitives
+import ISO_32000_Annex_D
 public import ISO_32000_Shared
 
 // 9 Text

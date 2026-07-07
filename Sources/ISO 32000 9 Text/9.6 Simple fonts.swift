@@ -71,16 +71,18 @@ extension ISO_32000.`9`.`6` {
             family: Family,
             embeddedSource: Embedded? = nil
         ) {
-            self._storage = Ownership.Immutable(Storage(
-                baseFontName: baseFontName,
-                resourceName: resourceName,
-                metrics: metrics,
-                isMonospaced: isMonospaced,
-                weight: weight,
-                style: style,
-                family: family,
-                embeddedSource: embeddedSource
-            ))
+            self._storage = Ownership.Immutable(
+                Storage(
+                    baseFontName: baseFontName,
+                    resourceName: resourceName,
+                    metrics: metrics,
+                    isMonospaced: isMonospaced,
+                    weight: weight,
+                    style: style,
+                    family: family,
+                    embeddedSource: embeddedSource
+                )
+            )
         }
 
         struct Storage: Sendable {

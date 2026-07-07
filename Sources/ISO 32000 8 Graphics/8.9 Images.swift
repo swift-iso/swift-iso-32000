@@ -1,11 +1,11 @@
 // ISO 32000-2:2020, 8.9 Images
 
-public import ISO_32000_7_Syntax
-public import ISO_32000_Shared
+internal import Binary_Endianness_Primitives
+internal import Binary_Primitives_Standard_Library_Integration
 public import Byte_Primitives
 internal import Byte_Primitives_Standard_Library_Integration
-internal import Binary_Primitives_Standard_Library_Integration
-internal import Binary_Endianness_Primitives
+public import ISO_32000_7_Syntax
+public import ISO_32000_Shared
 import Synchronization
 
 // MARK: - Section Namespace
@@ -174,7 +174,7 @@ extension ISO_32000.`8`.`9`.Image {
             /// Image data truncated
             case truncatedData
 
-            /// Missing required marker (e.g., JPEG SOF)
+            /// Missing required marker (for example, JPEG SOF)
             case missingMarker
 
             /// Unsupported image format

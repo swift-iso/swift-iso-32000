@@ -4,8 +4,8 @@
 // An encoding for expert fonts containing small capitals, ligatures,
 // fractions, and other sophisticated typographic characters.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000 {
     /// MacExpertEncoding - Expert Font Encoding

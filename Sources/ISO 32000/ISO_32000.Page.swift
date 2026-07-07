@@ -59,10 +59,10 @@ extension ISO_32000 {
         /// Page content streams
         public var contents: [ISO_32000.ContentStream]
 
-        /// Page resources (fonts, etc.)
+        /// Page resources (fonts and similar objects)
         public var resources: ISO_32000.Resources
 
-        /// Page annotations (links, text, etc.)
+        /// Page annotations (links, text, and similar objects)
         public var annotations: [ISO_32000.Annotation]
 
         // MARK: - Initializers

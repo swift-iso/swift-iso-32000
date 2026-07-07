@@ -3,10 +3,10 @@
 // This file adds encoding-aware extensions using Annex D.
 
 public import ASCII_Primitives
-public import Byte_Primitives
-import Binary_Serializable_Primitives
-import Binary_Primitives_Standard_Library_Integration
 import Binary_Endianness_Primitives
+import Binary_Primitives_Standard_Library_Integration
+import Binary_Serializable_Primitives
+public import Byte_Primitives
 import Byte_Primitives_Standard_Library_Integration
 import ISO_32000_7_Syntax
 import ISO_32000_Annex_D

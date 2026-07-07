@@ -367,7 +367,7 @@ import ISO_32000_Shared
 // EXAMPLE 1
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -375,7 +375,7 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// P <</MCID 0>> %Start of marked-content sequence
+// P <</MCID 0>> %Start of marked-content sequence
 // BDC
 // …
 // (Here is some text) Tj
@@ -432,11 +432,11 @@ import ISO_32000_Shared
 // EXAMPLE 2
 // 1 0 obj %Structure element
 // <</Type /StructElem
-/// S /P %Structure type
-/// P … %Parent in structure hierarchy
-/// K <</Type /MCR
-/// Pg 2 0 R %Page containing marked-content sequence
-/// MCID 0 %Marked-content identifier
+// S /P %Structure type
+// P … %Parent in structure hierarchy
+// K <</Type /MCR
+// Pg 2 0 R %Page containing marked-content sequence
+// MCID 0 %Marked-content identifier
 // >>
 // >>
 // endobj
@@ -447,10 +447,10 @@ import ISO_32000_Shared
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
 // <</Type /StructElem
-/// S /MixedContainer %Structure type
-/// P … %Parent in structure hierarchy
-/// Pg 2 0 R %Page containing marked-content sequence
-/// K [4 0 R %Three children: a structure element
+// S /MixedContainer %Structure type
+// P … %Parent in structure hierarchy
+// Pg 2 0 R %Page containing marked-content sequence
+// K [4 0 R %Three children: a structure element
 // 0 %a marked-content identifier
 // 5 0 R %another structure element
 // ]
@@ -458,7 +458,7 @@ import ISO_32000_Shared
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -466,7 +466,7 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// P <</MCID 0>> %Start of marked-content sequence
+// P <</MCID 0>> %Start of marked-content sequence
 // BDC
 // ( Here is some text ) Tj
 // …
@@ -493,10 +493,10 @@ import ISO_32000_Shared
 // EXAMPLE 4
 // 1 0 obj %Structure element
 // <</Type /StructElem
-/// S /P %Structure type
-/// P … %Parent in structure hierarchy
-/// Pg 2 0 R %Page containing marked-content sequence
-/// K 0 %Marked-content identifier
+// S /P %Structure type
+// P … %Parent in structure hierarchy
+// Pg 2 0 R %Page containing marked-content sequence
+// K 0 %Marked-content identifier
 // >>
 // endobj
 // 732 © ISO 2020 – All rights reserved
@@ -505,9 +505,9 @@ import ISO_32000_Shared
 // ISO 32000-2:2020(E)
 // 2 0 obj %Page object
 // <</Type /Page
-/// Resources <</XObject <</Fm4 4 0 R>> %Resource dictionary
+// Resources <</XObject <</Fm4 4 0 R>> %Resource dictionary
 // >> %containing form XObject
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -515,17 +515,17 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// P <</MCID 0>> %Start of marked-content sequence
+// P <</MCID 0>> %Start of marked-content sequence
 // BDC
-/// Fm4 Do %Paint form XObject
+// Fm4 Do %Paint form XObject
 // EMC %End of marked-content sequence
 // …
 // endstream
 // endobj
 // 4 0 obj %Form XObject
 // <</Type /XObject
-/// Subtype /Form
-/// Length …
+// Subtype /Form
+// Length …
 // >>
 // stream
 // …
@@ -536,20 +536,20 @@ import ISO_32000_Shared
 // EXAMPLE 5
 // 1 0 obj %Structure element
 // <</Type /StructElem
-/// S /P %Structure type
-/// P … %Parent in structure hierarchy
-/// K <</Type /MCR
-/// Pg 2 0 R %Page containing marked-content sequence
-/// Stm 4 0 R %Stream containing marked-content sequence
-/// MCID 0 %Marked-content identifier
+// S /P %Structure type
+// P … %Parent in structure hierarchy
+// K <</Type /MCR
+// Pg 2 0 R %Page containing marked-content sequence
+// Stm 4 0 R %Stream containing marked-content sequence
+// MCID 0 %Marked-content identifier
 // >>
 // >>
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Resources <</XObject <</Fm4 4 0 R>> %Resource dictionary
+// Resources <</XObject <</Fm4 4 0 R>> %Resource dictionary
 // >> %containing form XObject
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -557,7 +557,7 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// Fm4 Do %Paint form XObject
+// Fm4 Do %Paint form XObject
 // …
 // endstream
 // endobj
@@ -567,12 +567,12 @@ import ISO_32000_Shared
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
 // <</Type /XObject
-/// Subtype /Form
-/// Length …
+// Subtype /Form
+// Length …
 // >>
 // stream
 // …
-/// P <</MCID 0>> %Start of marked-content sequence
+// P <</MCID 0>> %Start of marked-content sequence
 // BDC
 // …
 // (Here is some text) Tj
@@ -663,17 +663,17 @@ import ISO_32000_Shared
 // ISO 32000-2:2020(E)
 // <</Type /StructElem
 // …
-/// K <</Type /OBJR %Object reference
-/// Pg 2 0 R %Page containing form XObject
-/// Obj 4 0 R %Reference to form XObject
+// K <</Type /OBJR %Object reference
+// Pg 2 0 R %Page containing form XObject
+// Obj 4 0 R %Reference to form XObject
 // >>
 // >>
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Resources <</XObject <</Fm4 4 0 R>>%Resource dictionary
+// Resources <</XObject <</Fm4 4 0 R>>%Resource dictionary
 // >> %containing form XObject
-/// Contents 3 0 R %Content stream
+// Contents 3 0 R %Content stream
 // …
 // >>
 // endobj
@@ -681,15 +681,15 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// Fm4 Do %Paint form XObject
+// Fm4 Do %Paint form XObject
 // …
 // endstream
 // endobj
 // 4 0 obj %Form XObject
 // <</Type /XObject
-/// Subtype /Form
-/// Length …
-/// StructParent 6 %Parent tree key
+// Subtype /Form
+// Length …
+// StructParent 6 %Parent tree key
 // >>
 // stream
 // …
@@ -715,8 +715,8 @@ import ISO_32000_Shared
 // 1 0 obj %Parent structure element
 // <</Type /StructElem
 // …
-/// Pg 2 0 R %Page containing marked-content sequence
-/// K 0 %Marked-content identifier
+// Pg 2 0 R %Page containing marked-content sequence
+// K 0 %Marked-content identifier
 // 736 © ISO 2020 – All rights reserved
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
@@ -725,8 +725,8 @@ import ISO_32000_Shared
 // endobj
 // 2 0 obj %Page object
 // <</Type /Page
-/// Contents 3 0 R %Content stream
-/// StructParents 6 %Parent tree key
+// Contents 3 0 R %Content stream
+// StructParents 6 %Parent tree key
 // …
 // >>
 // endobj
@@ -734,7 +734,7 @@ import ISO_32000_Shared
 // <</Length …>>
 // stream
 // …
-/// P <</MCID 0>> %Start of marked-content sequence
+// P <</MCID 0>> %Start of marked-content sequence
 // BDC
 // (Here is some text) TJ
 // …
@@ -909,10 +909,10 @@ import ISO_32000_Shared
 // Number, Supplier, and Price.
 // 100 0 obj
 // <</Type /StructElem
-/// S /Figure %Structure type
-/// P 50 0 R %Parent in structure tree
-/// A << /O /UserProperties %Attribute object
-/// P [ %Array of user properties
+// S /Figure %Structure type
+// P 50 0 R %Parent in structure tree
+// A << /O /UserProperties %Attribute object
+// P [ %Array of user properties
 // <</N (Part Name) /V (Framostat) >>
 // <</N (Part Number) /V 11603 >>
 // <</N (Supplier) /V (Just Framostats) /H true >> %Hidden attribute
@@ -936,32 +936,32 @@ import ISO_32000_Shared
 // EXAMPLE
 // 1 0 obj %Document catalog
 // <</Type /Catalog
-/// Pages 100 0 R %Page tree
-/// StructTreeRoot 300 0 R %Structure tree root
+// Pages 100 0 R %Page tree
+// StructTreeRoot 300 0 R %Structure tree root
 // >>
 // endobj
 // 100 0 obj %Page tree
 // <</Type /Pages
-/// Kids [101 1 R %First page object
+// Kids [101 1 R %First page object
 // © ISO 2020 – All rights reserved 741
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
 // 102 0 R %Second page object
 // ]
-/// Count 2 %Page count
+// Count 2 %Page count
 // >>
 // endobj
 // 101 1 obj %First page object
 // <</Type /Page
-/// Parent 100 0 R %Parent is the page tree
-/// Resources <</Font <</F1 6 0 R %Font resources
-/// F12 7 0 R
+// Parent 100 0 R %Parent is the page tree
+// Resources <</Font <</F1 6 0 R %Font resources
+// F12 7 0 R
 // >>
 // >>
-/// MediaBox [0 0 612 792] %Media box
-/// Contents 201 0 R %Content stream
-/// StructParents 0 %Parent tree key
+// MediaBox [0 0 612 792] %Media box
+// Contents 201 0 R %Content stream
+// StructParents 0 %Parent tree key
 // >>
 // endobj
 // 201 0 obj %Content stream for first page
@@ -970,18 +970,18 @@ import ISO_32000_Shared
 // 1 1 1 rg
 // 0 0 612 792 re f
 // BT %Start of text object
-/// Span <</MCID 0>> %Start of marked-content sequence 0
+// Span <</MCID 0>> %Start of marked-content sequence 0
 // BDC
 // 0 0 0 rg
-/// F1 1 Tf
+// F1 1 Tf
 // 30 0 0 30 18 732 Tm
 // (This is a first level heading. Hello world: ) Tj
 // 1.1333 TL T*
 // (goodbye universe.) Tj
 // EMC %End of marked-content sequence 0
-/// Span <</MCID 1>> %Start of marked-content sequence1
+// Span <</MCID 1>> %Start of marked-content sequence1
 // BDC
-/// F12 1 Tf
+// F12 1 Tf
 // 14 0 0 14 18 660.8 Tm
 // (This is the first paragraph, which spans pages. It has four fairly short and \
 // concise sentences. This is the next to last ) Tj
@@ -991,14 +991,14 @@ import ISO_32000_Shared
 // endobj
 // 102 0 obj %Second page object
 // <</Type /Page
-/// Parent 100 0 R %Parent is the page tree
-/// Resources <</Font <</F1 6 0 R %Font resources
-/// F12 7 0 R
+// Parent 100 0 R %Parent is the page tree
+// Resources <</Font <</F1 6 0 R %Font resources
+// F12 7 0 R
 // >>
 // >>
-/// MediaBox [0 0 612 792] %Media box
-/// Contents 202 0 R %Content stream
-/// StructParents 1 %Parent tree key
+// MediaBox [0 0 612 792] %Media box
+// Contents 202 0 R %Content stream
+// StructParents 1 %Parent tree key
 // 742 >>
 // endobj
 // 202 0 obj %Content stream for second page
@@ -1007,25 +1007,25 @@ import ISO_32000_Shared
 // 1 1 1 rg
 // 0 0 612 792 re f
 // BT %Start of text object
-/// Para <</MCID 0>> %Start of marked-content sequence 0
+// Para <</MCID 0>> %Start of marked-content sequence 0
 // © ISO 2020 – All rights reserved
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
 // BDC
 // 0 0 0 rg
-/// F12 1 Tf
+// F12 1 Tf
 // 14 0 0 14 18 732 Tm
 // (sentence. This is the very last sentence of the first paragraph.) Tj
 // EMC %End of marked-content sequence 0
-/// Span <</MCID 1>> %Start of marked-content sequence 1
+// Span <</MCID 1>> %Start of marked-content sequence 1
 // BDC
-/// F12 1 Tf
+// F12 1 Tf
 // 14 0 0 14 18 570.8 Tm
 // ( This is the second paragraph. It has four fairly short and concise sentences
 // . \ This is the next to last ) Tj
 // EMC %End of marked-content sequence 1
-/// Span <</MCID 2>> %Start of marked-content sequence 2
+// Span <</MCID 2>> %Start of marked-content sequence 2
 // BDC
 // 1.1429 TL
 // T*
@@ -1036,82 +1036,82 @@ import ISO_32000_Shared
 // endobj
 // 300 0 obj %Structure tree root
 // <</Type /StructTreeRoot
-/// K [301 0 R %Two children: a chapter
+// K [301 0 R %Two children: a chapter
 // 304 0 R %and a paragraph
 // ]
-/// RoleMap <</Chap /Sect %Mapping to standard structure types
-/// Head1 /H
-/// Para /P
+// RoleMap <</Chap /Sect %Mapping to standard structure types
+// Head1 /H
+// Para /P
 // >>
-/// ClassMap <</Normal 305 0 R>> %Class map containing one attribute class
-/// ParentTree 400 0 R %Number tree for parent elements
-/// ParentTreeNextKey 2 %Next key to use in parent tree
-/// IDTree 403 0 R %Name tree for element identifiers
+// ClassMap <</Normal 305 0 R>> %Class map containing one attribute class
+// ParentTree 400 0 R %Number tree for parent elements
+// ParentTreeNextKey 2 %Next key to use in parent tree
+// IDTree 403 0 R %Name tree for element identifiers
 // >>
 // endobj
 // 301 0 obj %Structure element for a chapter
 // <</Type /StructElem
-/// S /Chap
-/// ID (Chap1) %Element identifier
-/// T (Chapter 1) %Human-readable title
-/// P 300 0 R %Parent is the structure tree root
-/// K [302 0 R %Two children: a section head
+// S /Chap
+// ID (Chap1) %Element identifier
+// T (Chapter 1) %Human-readable title
+// P 300 0 R %Parent is the structure tree root
+// K [302 0 R %Two children: a section head
 // 303 0 R %and a paragraph
 // ]
 // >>
 // endobj
 // 302 0 obj %Structure element for a section head
 // <</Type /StructElem
-/// S /Head1
-/// ID (Sec1.1) %Element identifier
-/// T (Section 1.1) %Human-readable title
-/// P 301 0 R %Parent is the chapter
-/// Pg 101 1 R %Page containing content items
-/// A <</O /Layout %Attribute owned by Layout
-/// SpaceAfter 25
-/// SpaceBefore 0
+// S /Head1
+// ID (Sec1.1) %Element identifier
+// T (Section 1.1) %Human-readable title
+// P 301 0 R %Parent is the chapter
+// Pg 101 1 R %Page containing content items
+// A <</O /Layout %Attribute owned by Layout
+// SpaceAfter 25
+// SpaceBefore 0
 // © ISO 2020 – All rights reserved 743
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
-/// TextIndent 12.5
+// TextIndent 12.5
 // >>
-/// K 0 %Marked-content sequence 0
+// K 0 %Marked-content sequence 0
 // >>
 // endobj
 // 303 0 obj %Structure element for a paragraph
 // <</Type /StructElem
-/// S /Para
-/// ID (Para1) %Element identifier
-/// P 301 0 R %Parent is the chapter
-/// Pg 101 1 R %Page containing first content item
-/// C /Normal %Class containing this element’s attributes
-/// K [1 %Marked-content sequence 1
+// S /Para
+// ID (Para1) %Element identifier
+// P 301 0 R %Parent is the chapter
+// Pg 101 1 R %Page containing first content item
+// C /Normal %Class containing this element’s attributes
+// K [1 %Marked-content sequence 1
 // <</Type /MCR %Marked-content reference to 2nd item
-/// Pg 102 0 R %Page containing second item
-/// MCID 0 %Marked-content sequence 0
+// Pg 102 0 R %Page containing second item
+// MCID 0 %Marked-content sequence 0
 // >>
 // ]
 // >>
 // endobj
 // 304 0 obj %Structure element for another paragraph
 // << /Type /StructElem
-/// S /Para
-/// P 300 0 R %Parent is the structure tree root
-/// Pg 102 0 R %Page containing content items
-/// C /Normal %Class containing this element’s attributes
-/// A << /O /Layout
-/// TextAlign /Justify %Overrides attribute provided by classmap
+// S /Para
+// P 300 0 R %Parent is the structure tree root
+// Pg 102 0 R %Page containing content items
+// C /Normal %Class containing this element’s attributes
+// A << /O /Layout
+// TextAlign /Justify %Overrides attribute provided by classmap
 // >>
-/// K [1 2] %Marked-content sequences 1 and 2
+// K [1 2] %Marked-content sequences 1 and 2
 // >>
 // endobj
 // 305 0 obj %Attribute class
 // << /O /Layout %Owned by Layout
-/// EndIndent 0
-/// StartIndent 0
-/// WritingMode /LrTb
-/// TextAlign /Start
+// EndIndent 0
+// StartIndent 0
+// WritingMode /LrTb
+// TextAlign /Start
 // >>
 // endobj
 // 400 0 obj %Parent tree (number tree)
@@ -1140,7 +1140,7 @@ import ISO_32000_Shared
 // ISO 32000-2:2020(E)
 // 404 0 obj %ID tree leaf node
 // <</Limits [(Chap1) (Sec1.3)] %Least and greatest keys in tree
-/// Names [(Chap1) 301 0 R %Mapping from element identifiers
+// Names [(Chap1) 301 0 R %Mapping from element identifiers
 // (Sec1.1) 302 0 R %to structure elements
 // (Sec1.2) 303 0 R
 // (Sec1.3) 304 0 R

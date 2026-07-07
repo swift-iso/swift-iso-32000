@@ -1,7 +1,7 @@
 // ISO 32000-2:2020, 3.7 byte
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000.`3` {
     /// A group of 8 binary digits (an 8-bit value) which collectively can be

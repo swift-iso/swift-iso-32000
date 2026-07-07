@@ -1,12 +1,14 @@
+// swift-format-ignore-file: AlwaysUseLowerCamelCase
+// Reason: glyph-name enum cases (Aacute, Ccedilla, …) are spec-mirroring PDF encoding glyph names (API-NAME-003).
 // ISO_32000.Encoding.swift
 // ISO 32000-2:2020 Annex D - Character sets and encodings
 //
 // This file defines the PDFEncoding protocol and common types for PDF character encodings.
 // Per ISO 32000-2 Section D.1, these encodings shall be predefined in any PDF processor.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
 public import Byte_Primitives_Standard_Library_Integration
+public import ISO_32000_Shared
 
 // MARK: - Encoding Protocol
 
@@ -47,7 +49,7 @@ extension ISO_32000 {
     ///
     /// ISO 32000-2:2020, Annex D (normative) - Character sets and encodings
     public protocol Encoding: Sendable {
-        /// The encoding name as used in PDF (e.g., "WinAnsiEncoding")
+        /// The encoding name as used in PDF (for example, "WinAnsiEncoding")
         ///
         /// This name is used in PDF encoding dictionaries:
         /// ```

@@ -26,8 +26,8 @@
 //     12.5.6.23 Redaction annotations (Table 195)
 
 public import Geometry_Primitives
-public import ISO_32000_8_Graphics
 public import ISO_32000_7_Syntax
+public import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 
 extension ISO_32000.`12` {
@@ -363,6 +363,8 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// All annotation subtype raw values are valid PDF name objects
         /// (non-empty, no whitespace, no null bytes, within length limits).
         public var name: ISO_32000.`7`.`3`.COS.Name {
+            // Provably-valid literal: all subtype raw values are valid PDF name objects (see doc comment above).
+            // swiftlint:disable:next force_try
             try! ISO_32000.`7`.`3`.COS.Name(rawValue)
         }
     }

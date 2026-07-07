@@ -4,8 +4,8 @@
 // Windows Code Page 1252, the standard Windows encoding for Latin text.
 // This is the most commonly used encoding for PDF content streams.
 
-public import ISO_32000_Shared
 public import Byte_Primitives
+public import ISO_32000_Shared
 
 extension ISO_32000 {
     /// WinAnsiEncoding - Windows Code Page 1252

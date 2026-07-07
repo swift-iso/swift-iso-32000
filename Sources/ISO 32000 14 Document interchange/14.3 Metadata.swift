@@ -236,13 +236,13 @@ extension ISO_32000.`14`.`3`.`3` {
 // and several other document level metadata fields.
 // 101 0 obj %document information dictionary
 // <</CreationDate (D:20140314124211+01'00)
-/// ModDate (D:20140924212303+02'00)
+// ModDate (D:20140924212303+02'00)
 // >>
 // endobj
 // 102 0 obj %document level metadata stream
 // << /Type /Metadata
-/// Subtype /XML
-/// Length 103 0 R
+// Subtype /XML
+// Length 103 0 R
 // >>
 // stream
 // <?xpacket begin="Ôªø" id="W5M0MpCehiHzreSzNTczkc9d"?>

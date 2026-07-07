@@ -1,9 +1,9 @@
 // ISO_32000.Encoding Tests.swift
 // Unit tests for ISO 32000-2:2020 Annex D - Character sets and encodings
 
+import Byte_Primitives
 import Foundation
 import ISO_32000_Shared
-import Byte_Primitives
 import Testing
 
 @testable import ISO_32000_Annex_D
@@ -95,8 +95,10 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `canEncode returns false for non-encodable scalars`() {
-            #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x4F60)!))  // Chinese character
-            #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x1F389)!))  // Emoji
+            // Chinese character
+            #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x4F60)!))
+            // Emoji
+            #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x1F389)!))
         }
 
         @Test
@@ -368,7 +370,8 @@ struct `ISO_32000.Encoding Tests` {
         func `Logic symbols`() {
             // 0xD9 = logicaland (∧), 0xDB = arrowdblboth (⇔)
             #expect(ISO_32000.SymbolEncoding.decode(0xD9) == "\u{2227}")  // logicaland
-            #expect(ISO_32000.SymbolEncoding.decode(0xDB) == "\u{21D4}")  // arrowdblboth / equivalence
+            // arrowdblboth / equivalence
+            #expect(ISO_32000.SymbolEncoding.decode(0xDB) == "\u{21D4}")
         }
 
         @Test
@@ -397,8 +400,10 @@ struct `ISO_32000.Encoding Tests` {
         @Test
         func `Scissors and pointing hands`() {
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x21) == "\u{2701}")  // a1 - scissors
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2A) == "\u{261B}")  // a11 - pointing hand
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2D) == "\u{270D}")  // a14 - writing hand
+            // a11 - pointing hand
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2A) == "\u{261B}")
+            // a14 - writing hand
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2D) == "\u{270D}")
         }
 
         @Test
@@ -409,8 +414,10 @@ struct `ISO_32000.Encoding Tests` {
 
         @Test
         func `Stars`() {
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x48) == "\u{2605}")  // a35 - black star ★
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x49) == "\u{2729}")  // a36 - stress outlined white star ✩
+            // a35 - black star ★
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x48) == "\u{2605}")
+            // a36 - stress outlined white star ✩
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x49) == "\u{2729}")
         }
 
         @Test
@@ -425,14 +432,17 @@ struct `ISO_32000.Encoding Tests` {
         @Test
         func `Circled numbers`() {
             // Circled numbers exist in ZapfDingbats
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAC) != nil)  // Should have some characters
+            // Should have some characters
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAC) != nil)
         }
 
         @Test
         func `Arrows`() {
             // Arrow characters per ISO 32000-2 Table D.6
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD4) == "\u{2794}")  // a160 - heavy right arrow ➔
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD5) == "\u{2192}")  // a161 - rightward arrow →
+            // a160 - heavy right arrow ➔
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD4) == "\u{2794}")
+            // a161 - rightward arrow →
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD5) == "\u{2192}")
         }
 
         @Test

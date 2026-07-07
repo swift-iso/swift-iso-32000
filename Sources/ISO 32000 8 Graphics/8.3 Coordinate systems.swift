@@ -115,13 +115,28 @@ extension ISO_32000.UserSpace.Height {
 
 extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
     /// A4 paper size (210mm × 297mm)
-    public static let a4 = Self(x: .init(0), y: .init(0), width: .init(595.276), height: .init(841.890))
+    public static let a4 = Self(
+        x: .init(0),
+        y: .init(0),
+        width: .init(595.276),
+        height: .init(841.890)
+    )
 
     /// A3 paper size (297mm × 420mm)
-    public static let a3 = Self(x: .init(0), y: .init(0), width: .init(841.890), height: .init(1190.551))
+    public static let a3 = Self(
+        x: .init(0),
+        y: .init(0),
+        width: .init(841.890),
+        height: .init(1190.551)
+    )
 
     /// A5 paper size (148mm × 210mm)
-    public static let a5 = Self(x: .init(0), y: .init(0), width: .init(419.528), height: .init(595.276))
+    public static let a5 = Self(
+        x: .init(0),
+        y: .init(0),
+        width: .init(419.528),
+        height: .init(595.276)
+    )
 
     /// US Letter size (8.5" × 11")
     public static let letter = Self(x: .init(0), y: .init(0), width: .init(612), height: .init(792))
@@ -130,7 +145,12 @@ extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
     public static let legal = Self(x: .init(0), y: .init(0), width: .init(612), height: .init(1008))
 
     /// US Tabloid size (11" × 17")
-    public static let tabloid = Self(x: .init(0), y: .init(0), width: .init(792), height: .init(1224))
+    public static let tabloid = Self(
+        x: .init(0),
+        y: .init(0),
+        width: .init(792),
+        height: .init(1224)
+    )
 }
 
 // MARK: - Rectangle Orientation

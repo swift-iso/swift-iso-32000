@@ -435,7 +435,7 @@ import ISO_32000_Shared
 // conversion engine are not found in the dictionary, default settings shall be used.
 // Each key in the C dictionary represents the internal name of a conversion engine, which shall be a
 // name object of the following form (without any spaces):
-/// company:product:version:contentType
+// company:product:version:contentType
 // where
 // © ISO 2020 – All rights reserved 813
 // Sold by the PDF Association to 17781 | December 3, 2025 |

@@ -7,10 +7,10 @@
 //
 // This file provides integration between ISO 14496-22 (Open Font Format) and ISO 32000 (PDF).
 
+public import Byte_Primitives
 public import ISO_14496_22
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
-public import Byte_Primitives
 import Ownership_Primitives
 
 // MARK: - Embedded TrueType Font
@@ -258,7 +258,12 @@ extension ISO_32000.`9`.`6`.Font {
             throw .parsing(error)
         }
         do {
-            try self.init(embedded: embedded, resourceName: resourceName, weight: weight, style: style)
+            try self.init(
+                embedded: embedded,
+                resourceName: resourceName,
+                weight: weight,
+                style: style
+            )
         } catch {
             throw .name(error)
         }

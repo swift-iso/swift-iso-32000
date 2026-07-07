@@ -1,11 +1,11 @@
 // ISO_32000.Image+PNG.swift
 // PNG support for ISO_32000.Image using W3C PNG and RFC 1950
 
+public import Byte_Primitives
+internal import Byte_Primitives_Standard_Library_Integration
 public import ISO_32000
 public import RFC_1950
 public import W3C_PNG
-public import Byte_Primitives
-internal import Byte_Primitives_Standard_Library_Integration
 
 extension ISO_32000.Image {
     /// Create an image from PNG data

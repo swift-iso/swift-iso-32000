@@ -12,16 +12,16 @@
 //   7.3.9  Null object
 //   7.3.10 Indirect objects
 
+public import ASCII_Primitives
+internal import Binary_Endianness_Primitives
+public import Binary_Primitives
+internal import Binary_Primitives_Standard_Library_Integration
+public import Binary_Serializable_Primitives
 public import Format_Primitives
 public import Formatter_Primitives
-public import Binary_Primitives
-public import Binary_Serializable_Primitives
-internal import Binary_Primitives_Standard_Library_Integration
-internal import Binary_Endianness_Primitives
 import IEEE_754
-public import ASCII_Primitives
-public import ISO_32000_Shared
 import ISO_32000_Annex_D
+public import ISO_32000_Shared
 import Standard_Library_Extensions
 
 extension ISO_32000.`7` {
@@ -574,6 +574,8 @@ extension ISO_32000.`7`.`3`.`5`.Name {
 
     // Font descriptor entries (Table 121, Table 122)
     public static let fontDescriptor = Self(__unchecked: (), rawValue: "FontDescriptor")
+    // swift-format-ignore: DontRepeatTypeInStaticProperties
+    // Reason: mirrors the distinct PDF spec key "/FontName" (Table 122); `.font` already exists for "/Font" (line 524), so shortening to `.font` would collide/ambiguate.
     public static let fontName = Self(__unchecked: (), rawValue: "FontName")
     public static let fontFlags = Self(__unchecked: (), rawValue: "Flags")
     public static let fontBBox = Self(__unchecked: (), rawValue: "FontBBox")
@@ -685,7 +687,7 @@ extension ISO_32000.`7`.`3`.`8` {
     ///
     /// ISO 32000-2:2020, Section 7.3.8 — Stream objects
     public struct Stream: Sendable, Hashable {
-        /// Stream dictionary (contains /Length, /Filter, etc.)
+        /// Stream dictionary (contains /Length, /Filter, and similar entries)
         public var dictionary: ISO_32000.`7`.`3`.COS.Dictionary
 
         /// Raw stream data (may be compressed)
@@ -1102,7 +1104,7 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     ) where Buffer.Element == Byte {
         buffer.append(.ascii.solidus)
 
-        for byte in Array<Byte>(name.rawValue.utf8) {
+        for byte in [Byte](name.rawValue.utf8) {
             let raw = byte.underlying
             if shouldEscapeNameByte(raw) {
                 buffer.append(.ascii.numberSign)

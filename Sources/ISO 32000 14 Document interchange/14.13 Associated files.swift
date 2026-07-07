@@ -140,33 +140,33 @@ import ISO_32000_Shared
 // EXAMPLE 1 Associated file linked to the PDF document as a whole
 // 19 0 obj %Document Catalog
 // <<
-/// Type /Catalog
-/// Pages 6 0 R
-/// Names 30 0 R
-/// Metadata 11 0 R
-/// AF [20 0 R]
+// Type /Catalog
+// Pages 6 0 R
+// Names 30 0 R
+// Metadata 11 0 R
+// AF [20 0 R]
 // >>
 // 20 0 obj %File Specification Dictionary
 // <<
-/// Type /Filespec
-/// F (My Presentation.ppt)
-/// UF (My Presentation.ppt)
-/// AFRelationship /Source
-/// EF <</F 21 0 R>>
+// Type /Filespec
+// F (My Presentation.ppt)
+// UF (My Presentation.ppt)
+// AFRelationship /Source
+// EF <</F 21 0 R>>
 // >>
 // endobj
 // 21 0 obj %embedded file stream
 // <<
-/// Filter /FlateDecode
-/// Length 1975
-/// Type /EmbeddedFile
-/// Subtype /application#2Fvnd.ms-powerpoint
-/// Params
+// Filter /FlateDecode
+// Length 1975
+// Type /EmbeddedFile
+// Subtype /application#2Fvnd.ms-powerpoint
+// Params
 // <<
-/// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
-/// Size 3979
-/// CreationDate (D:20010727133719)
-/// ModDate (D:20010727133720)
+// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
+// Size 3979
+// CreationDate (D:20010727133719)
+// ModDate (D:20010727133720)
 // >>
 // >>
 // stream
@@ -176,17 +176,17 @@ import ISO_32000_Shared
 // EXAMPLE 2 Associated file linked to a Content Stream
 // 10 0 obj
 // <<
-/// Type /Page
-/// Resources
+// Type /Page
+// Resources
 // << % This dictionary maps the name AF1 to an
-/// Properties <</NamedAF [12 0 R]>> % embedded file specification (object 12)
+// Properties <</NamedAF [12 0 R]>> % embedded file specification (object 12)
 // …
 // >> % End of Resources dictionary
 // © ISO 2020 – All rights reserved 841
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
 // ISO 32000-2:2020(E)
-/// Contents 11 0 R
+// Contents 11 0 R
 // …
 // >> % End of Page dictionary
 // endobj
@@ -194,9 +194,9 @@ import ISO_32000_Shared
 // << /Length 165 >>
 // stream
 // … % Within a content stream
-/// AF /NamedAF BDC % Begin content marked with an associated file
+// AF /NamedAF BDC % Begin content marked with an associated file
 // BT
-/// F1 1 Tf
+// F1 1 Tf
 // 12 0 0 12 100 600 Tm
 // (Hello) Tj
 // ET
@@ -206,25 +206,25 @@ import ISO_32000_Shared
 // endobj
 // 12 0 obj % File specification dictionary
 // <<
-/// Type /Filespec
-/// F (datatable.doc)
-/// UF (datatable.doc)
-/// AFRelationship /Data
-/// EF <</F 5 0 R>>
+// Type /Filespec
+// F (datatable.doc)
+// UF (datatable.doc)
+// AFRelationship /Data
+// EF <</F 5 0 R>>
 // >>
 // endobj
 // <<
 // 5 0 obj % Embedded file stream
-/// Filter /FlateDecode
-/// Length 20000
-/// Type /EmbeddedFile
-/// Subtype /application#2Fvnd.ms-word
-/// Params
+// Filter /FlateDecode
+// Length 20000
+// Type /EmbeddedFile
+// Subtype /application#2Fvnd.ms-word
+// Params
 // <<
-/// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
-/// Size 32000
-/// CreationDate (D:200504 16133719)
-/// ModDate (D:20050908133720)
+// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
+// Size 32000
+// CreationDate (D:200504 16133719)
+// ModDate (D:20050908133720)
 // >>
 // >>
 // stream
@@ -234,18 +234,18 @@ import ISO_32000_Shared
 // EXAMPLE 3 Associated file linked to an XObject
 // 19 0 obj %some XObject
 // <<
-/// Type /XObject
-/// Subtype /Form
+// Type /XObject
+// Subtype /Form
 // …
-/// AF [20 0 R]
+// AF [20 0 R]
 // >>
 // <<
 // 20 0 obj %File Specification Dictionary
-/// Type /Filespec
-/// F (equation.mathml)
-/// UF (equation.mathml)
-/// AFRelationship /Supplement
-/// EF <</F 21 0 R>>
+// Type /Filespec
+// F (equation.mathml)
+// UF (equation.mathml)
+// AFRelationship /Supplement
+// EF <</F 21 0 R>>
 // 842 © ISO 2020 – All rights reserved
 // Sold by the PDF Association to 17781 | December 3, 2025 |
 // Single user only, copying and networking prohibited.
@@ -254,16 +254,16 @@ import ISO_32000_Shared
 // endobj
 // 21 0 obj %embedded file stream
 // <<
-/// Filter /FlateDecode
-/// Length 1975
-/// Type /EmbeddedFile
-/// Subtype /application#2Fxhtml+xml
-/// Params
+// Filter /FlateDecode
+// Length 1975
+// Type /EmbeddedFile
+// Subtype /application#2Fxhtml+xml
+// Params
 // <<
-/// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
-/// Size 3979
-/// CreationDate (D:20010727133719)
-/// ModDate (D:20010727133720)
+// CheckSum <ad032d7a6ea930489df4bfd6acb585b9>
+// Size 3979
+// CreationDate (D:20010727133719)
+// ModDate (D:20010727133720)
 // >>
 // >>
 // stream

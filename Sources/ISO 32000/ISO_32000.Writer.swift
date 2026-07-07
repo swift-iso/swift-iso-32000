@@ -1,12 +1,12 @@
 // ISO_32000.Writer.swift
 
+public import Binary_Primitives
+public import Binary_Serializable_Primitives
+public import Byte_Primitives
 import ISO_32000_9_Text
 import Ownership_Primitives
 import RFC_4648
 import Standard_Library_Extensions
-public import Binary_Primitives
-public import Binary_Serializable_Primitives
-public import Byte_Primitives
 public import Witness_Primitives
 
 extension ISO_32000 {
@@ -856,7 +856,7 @@ extension ISO_32000 {
                 var unicodeHex: [ASCII.Code] = []
                 RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
                 cmap +=
-                    "<\(String(decoding: Array<UInt8>(charCodeHex), as: UTF8.self))> <\(String(decoding: Array<UInt8>(unicodeHex), as: UTF8.self))>\n"
+                    "<\(String(decoding: [UInt8](charCodeHex), as: UTF8.self))> <\(String(decoding: [UInt8](unicodeHex), as: UTF8.self))>\n"
             }
             cmap += "endbfchar\n"
 
