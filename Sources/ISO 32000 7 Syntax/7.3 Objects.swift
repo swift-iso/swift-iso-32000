@@ -188,68 +188,70 @@ extension ISO_32000.`7`.`3`.`3` {
     ///
     /// ISO 32000-2:2020, Section 7.3.3 — Numeric objects
     public struct RealFormatStyle: Formatter.`Protocol`, Sendable {
-        public typealias Input = Double
-        public typealias Output = String
-        public typealias Failure = Never
-
-        /// Maximum decimal places for real numbers (per Annex C recommendations)
-        private static let maxDecimalPlaces = 5
-
-        /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
-        private static let multiplier: Double = 100_000
-
         public init() {}
+    }
+}
 
-        public func format(_ value: Double) -> String {
-            // Handle special cases per IEEE 754 classification (Annex C references IEEE 754)
-            guard IEEE_754.Classification.isFinite(value) else {
-                // PDF doesn't support infinity/NaN - output 0 as fallback
-                return "0"
-            }
+extension ISO_32000.`7`.`3`.`3`.RealFormatStyle {
+    public typealias Input = Double
+    public typealias Output = String
+    public typealias Failure = Never
 
-            // Check if value is effectively an integer
-            // Per spec: "it is not necessary to write the number 1.0 in real format"
-            let rounded = value.rounded()
-            if value == rounded && abs(value) < Double(Int64.max) {
-                return String(Int64(value))
-            }
+    /// Maximum decimal places for real numbers (per Annex C recommendations)
+    private static let maxDecimalPlaces = 5
 
-            // Format as real number without exponential notation
-            // Per spec: "shall not use... exponential format (such as 6.02E23)"
-            return formatReal(value)
+    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
+    private static let multiplier: Double = 100_000
+
+    public func format(_ value: Double) -> String {
+        // Handle special cases per IEEE 754 classification (Annex C references IEEE 754)
+        guard IEEE_754.Classification.isFinite(value) else {
+            // PDF doesn't support infinity/NaN - output 0 as fallback
+            return "0"
         }
 
-        /// Format a real number without exponential notation
-        private func formatReal(_ value: Double) -> String {
-            let isNegative = value < 0
-            let absValue = abs(value)
-
-            // Split into integer and fractional parts
-            let intPart = Int64(absValue)
-            let fracPart = absValue - Double(intPart)
-
-            // Calculate fractional digits (up to maxDecimalPlaces)
-            let fracDigits = Int64((fracPart * Self.multiplier).rounded())
-
-            var result = isNegative ? "-" : ""
-            result += String(intPart)
-
-            if fracDigits != 0 {
-                result += "."
-                var fracStr = String(fracDigits)
-                // Pad with leading zeros if needed
-                while fracStr.count < Self.maxDecimalPlaces {
-                    fracStr = "0" + fracStr
-                }
-                // Strip trailing zeros
-                while fracStr.hasSuffix("0") {
-                    fracStr.removeLast()
-                }
-                result += fracStr
-            }
-
-            return result
+        // Check if value is effectively an integer
+        // Per spec: "it is not necessary to write the number 1.0 in real format"
+        let rounded = value.rounded()
+        if value == rounded && abs(value) < Double(Int64.max) {
+            return String(Int64(value))
         }
+
+        // Format as real number without exponential notation
+        // Per spec: "shall not use... exponential format (such as 6.02E23)"
+        return formatReal(value)
+    }
+
+    /// Format a real number without exponential notation
+    private func formatReal(_ value: Double) -> String {
+        let isNegative = value < 0
+        let absValue = abs(value)
+
+        // Split into integer and fractional parts
+        let intPart = Int64(absValue)
+        let fracPart = absValue - Double(intPart)
+
+        // Calculate fractional digits (up to maxDecimalPlaces)
+        let fracDigits = Int64((fracPart * Self.multiplier).rounded())
+
+        var result = isNegative ? "-" : ""
+        result += String(intPart)
+
+        if fracDigits != 0 {
+            result += "."
+            var fracStr = String(fracDigits)
+            // Pad with leading zeros if needed
+            while fracStr.count < Self.maxDecimalPlaces {
+                fracStr = "0" + fracStr
+            }
+            // Strip trailing zeros
+            while fracStr.hasSuffix("0") {
+                fracStr.removeLast()
+            }
+            result += fracStr
+        }
+
+        return result
     }
 }
 
@@ -300,12 +302,6 @@ extension ISO_32000.`7`.`3`.`5` {
         /// The raw string value of the name
         public let rawValue: String
 
-        /// Package-internal limits
-        package enum Limits {
-            /// Maximum name length in UTF-8 bytes (ISO 32000-2 Annex C)
-            static let maxLength = 127
-        }
-
         /// Creates a name without validation (internal use only)
         @usableFromInline
         init(
@@ -340,6 +336,16 @@ extension ISO_32000.`7`.`3`.`5` {
             self.init(__unchecked: (), rawValue: rawValue)
         }
     }
+}
+
+extension ISO_32000.`7`.`3`.`5`.Name {
+    /// Package-internal limits
+    package enum Limits {}
+}
+
+extension ISO_32000.`7`.`3`.`5`.Name.Limits {
+    /// Maximum name length in UTF-8 bytes (ISO 32000-2 Annex C)
+    static let maxLength = 127
 }
 
 #if !hasFeature(Embedded)
@@ -827,32 +833,34 @@ extension ISO_32000.`7`.`3`.COS {
         public init(_ storage: [Name: Object]) {
             self.storage = storage
         }
+    }
+}
 
-        public subscript(key: Name) -> Object? {
-            get { storage[key] }
-            set { storage[key] = newValue }
-        }
+extension ISO_32000.`7`.`3`.COS.Dictionary {
+    public subscript(key: ISO_32000.`7`.`3`.COS.Name) -> ISO_32000.`7`.`3`.COS.Object? {
+        get { storage[key] }
+        set { storage[key] = newValue }
+    }
 
-        public var keys: Swift.Dictionary<Name, Object>.Keys {
-            storage.keys
-        }
+    public var keys: Swift.Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys {
+        storage.keys
+    }
 
-        public var values: Swift.Dictionary<Name, Object>.Values {
-            storage.values
-        }
+    public var values: Swift.Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values {
+        storage.values
+    }
 
-        public var count: Int {
-            storage.count
-        }
+    public var count: Int {
+        storage.count
+    }
 
-        public var isEmpty: Bool {
-            storage.isEmpty
-        }
+    public var isEmpty: Bool {
+        storage.isEmpty
+    }
 
-        /// Iterate over entries in a consistent order (sorted by key)
-        public var sortedEntries: [(key: Name, value: Object)] {
-            storage.sorted { $0.key.rawValue < $1.key.rawValue }
-        }
+    /// Iterate over entries in a consistent order (sorted by key)
+    public var sortedEntries: [(key: ISO_32000.`7`.`3`.COS.Name, value: ISO_32000.`7`.`3`.COS.Object)] {
+        storage.sorted { $0.key.rawValue < $1.key.rawValue }
     }
 }
 
@@ -1250,87 +1258,89 @@ extension ISO_32000.`7`.`3`.`3` {
     /// - Maximum 5 decimal places
     /// - Non-finite values (infinity, NaN) output as `0`
     public struct PDFNumber: Sendable, Binary.Serializable {
-        public static func serialize<Buffer>(
-            _ number: ISO_32000_Shared.ISO_32000.`7`.`3`.`3`.PDFNumber,
-            into buffer: inout Buffer
-        ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
-            // Handle special cases (PDF doesn't support infinity/NaN)
-            guard number.value.isFinite else {
-                buffer.append(.ascii.0)
-                return
-            }
+        public let value: Double
+    }
+}
 
-            // Check if value is effectively an integer
-            let rounded = number.value.rounded()
-            if number.value == rounded && abs(number.value) < Double(Int64.max) {
-                ASCII.Decimal.serialize(Int64(number.value), into: &buffer)
-                return
-            }
-
-            // Handle negative numbers
-            let absValue: Double
-            if number.value < 0 {
-                buffer.append(.ascii.hyphen)
-                absValue = -number.value
-            } else {
-                absValue = number.value
-            }
-
-            // Split into integer and fractional parts
-            let intPart = Int64(absValue)
-            let fracPart = absValue - Double(intPart)
-
-            // Serialize integer part
-            ASCII.Decimal.serialize(intPart, into: &buffer)
-
-            // Calculate fractional digits (up to 5 decimal places)
-            let fracDigits = Int64((fracPart * Self.multiplier).rounded())
-
-            if fracDigits != 0 {
-                buffer.append(.ascii.period)
-                // Emit fractional digits with leading zeros, then strip trailing
-                // zeros. InlineArray gives fixed-size stack storage (no heap
-                // allocation); digits are ASCII.Code via the ecosystem
-                // decimal-digit primitive (`ASCII.Decimal.code`).
-                var fracValue = fracDigits
-                let zero = ASCII.Code.`0`
-
-                func digit(_ value: Int64) -> ASCII.Code {
-                    // value % 10 is always 0–9, so `digit(_:)` never returns nil.
-                    ASCII.Decimal.code(UInt8(value % 10)) ?? 0x30
-                }
-
-                // Build digits in reverse order (most significant at index 0).
-                var digits = InlineArray<5, ASCII.Code>(repeating: zero)
-                digits[4] = digit(fracValue)
-                fracValue /= 10
-                digits[3] = digit(fracValue)
-                fracValue /= 10
-                digits[2] = digit(fracValue)
-                fracValue /= 10
-                digits[1] = digit(fracValue)
-                fracValue /= 10
-                digits[0] = digit(fracValue)
-
-                // Find last non-zero digit (strip trailing zeros)
-                var count = 5
-                while count > 1 && digits[count - 1] == zero {
-                    count -= 1
-                }
-
-                // Append digits (ASCII.Code → Byte buffer, direct).
-                for i in 0..<count {
-                    buffer.append(digits[i])
-                }
-            }
+extension ISO_32000.`7`.`3`.`3`.PDFNumber {
+    public static func serialize<Buffer>(
+        _ number: ISO_32000_Shared.ISO_32000.`7`.`3`.`3`.PDFNumber,
+        into buffer: inout Buffer
+    ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
+        // Handle special cases (PDF doesn't support infinity/NaN)
+        guard number.value.isFinite else {
+            buffer.append(.ascii.0)
+            return
         }
 
-        public let value: Double
+        // Check if value is effectively an integer
+        let rounded = number.value.rounded()
+        if number.value == rounded && abs(number.value) < Double(Int64.max) {
+            ASCII.Decimal.serialize(Int64(number.value), into: &buffer)
+            return
+        }
 
-        /// Maximum decimal places for real numbers (per Annex C recommendations)
-        private static let maxDecimalPlaces = 5
+        // Handle negative numbers
+        let absValue: Double
+        if number.value < 0 {
+            buffer.append(.ascii.hyphen)
+            absValue = -number.value
+        } else {
+            absValue = number.value
+        }
 
-        /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
-        private static let multiplier: Double = 100_000
+        // Split into integer and fractional parts
+        let intPart = Int64(absValue)
+        let fracPart = absValue - Double(intPart)
+
+        // Serialize integer part
+        ASCII.Decimal.serialize(intPart, into: &buffer)
+
+        // Calculate fractional digits (up to 5 decimal places)
+        let fracDigits = Int64((fracPart * Self.multiplier).rounded())
+
+        if fracDigits != 0 {
+            buffer.append(.ascii.period)
+            // Emit fractional digits with leading zeros, then strip trailing
+            // zeros. InlineArray gives fixed-size stack storage (no heap
+            // allocation); digits are ASCII.Code via the ecosystem
+            // decimal-digit primitive (`ASCII.Decimal.code`).
+            var fracValue = fracDigits
+            let zero = ASCII.Code.`0`
+
+            func digit(_ value: Int64) -> ASCII.Code {
+                // value % 10 is always 0–9, so `digit(_:)` never returns nil.
+                ASCII.Decimal.code(UInt8(value % 10)) ?? 0x30
+            }
+
+            // Build digits in reverse order (most significant at index 0).
+            var digits = InlineArray<5, ASCII.Code>(repeating: zero)
+            digits[4] = digit(fracValue)
+            fracValue /= 10
+            digits[3] = digit(fracValue)
+            fracValue /= 10
+            digits[2] = digit(fracValue)
+            fracValue /= 10
+            digits[1] = digit(fracValue)
+            fracValue /= 10
+            digits[0] = digit(fracValue)
+
+            // Find last non-zero digit (strip trailing zeros)
+            var count = 5
+            while count > 1 && digits[count - 1] == zero {
+                count -= 1
+            }
+
+            // Append digits (ASCII.Code → Byte buffer, direct).
+            for i in 0..<count {
+                buffer.append(digits[i])
+            }
+        }
     }
+
+    /// Maximum decimal places for real numbers (per Annex C recommendations)
+    private static let maxDecimalPlaces = 5
+
+    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
+    private static let multiplier: Double = 100_000
 }

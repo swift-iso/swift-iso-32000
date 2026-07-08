@@ -422,65 +422,75 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams {
     public struct DocumentRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
-
-        /// Permit saving with modified form/annotation data
-        public static let fullSave = DocumentRights(rawValue: 1 << 0)
     }
 
     /// Annotation rights (Table 258, Annots entry)
     public struct AnnotRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
-
-        public static let create = AnnotRights(rawValue: 1 << 0)
-        public static let delete = AnnotRights(rawValue: 1 << 1)
-        public static let modify = AnnotRights(rawValue: 1 << 2)
-        public static let copy = AnnotRights(rawValue: 1 << 3)
-        public static let `import` = AnnotRights(rawValue: 1 << 4)
-        public static let export = AnnotRights(rawValue: 1 << 5)
-        /// PDF 1.6: Online commenting
-        public static let online = AnnotRights(rawValue: 1 << 6)
-        /// PDF 1.6: Summary view
-        public static let summaryView = AnnotRights(rawValue: 1 << 7)
     }
 
     /// Form rights (Table 258, Form entry)
     public struct FormRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
-
-        public static let add = FormRights(rawValue: 1 << 0)
-        public static let delete = FormRights(rawValue: 1 << 1)
-        public static let fillIn = FormRights(rawValue: 1 << 2)
-        public static let `import` = FormRights(rawValue: 1 << 3)
-        public static let export = FormRights(rawValue: 1 << 4)
-        public static let submitStandalone = FormRights(rawValue: 1 << 5)
-        public static let spawnTemplate = FormRights(rawValue: 1 << 6)
-        /// PDF 1.6
-        public static let barcodePlaintext = FormRights(rawValue: 1 << 7)
-        /// PDF 1.6
-        public static let online = FormRights(rawValue: 1 << 8)
     }
 
     /// Signature rights (Table 258, Signature entry)
     public struct SignatureRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
-
-        /// Permit applying/clearing digital signatures
-        public static let modify = SignatureRights(rawValue: 1 << 0)
     }
 
     /// Embedded file rights (Table 258, EF entry)
     public struct EmbeddedFileRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
-
-        public static let create = EmbeddedFileRights(rawValue: 1 << 0)
-        public static let delete = EmbeddedFileRights(rawValue: 1 << 1)
-        public static let modify = EmbeddedFileRights(rawValue: 1 << 2)
-        public static let `import` = EmbeddedFileRights(rawValue: 1 << 3)
     }
+}
+
+extension ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights {
+    /// Permit saving with modified form/annotation data
+    public static let fullSave = ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights(rawValue: 1 << 0)
+}
+
+extension ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights {
+    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 0)
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 1)
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 2)
+    public static let copy = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 3)
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 4)
+    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 5)
+    /// PDF 1.6: Online commenting
+    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 6)
+    /// PDF 1.6: Summary view
+    public static let summaryView = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 7)
+}
+
+extension ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights {
+    public static let add = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 0)
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 1)
+    public static let fillIn = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 2)
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 3)
+    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 4)
+    public static let submitStandalone = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 5)
+    public static let spawnTemplate = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 6)
+    /// PDF 1.6
+    public static let barcodePlaintext = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 7)
+    /// PDF 1.6
+    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 8)
+}
+
+extension ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights {
+    /// Permit applying/clearing digital signatures
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights(rawValue: 1 << 0)
+}
+
+extension ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights {
+    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 0)
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 1)
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 2)
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 3)
 }
 
 // MARK: - 12.8.2.4 FieldMDP Transform Parameters (Table 259)
@@ -575,17 +585,6 @@ extension ISO_32000.DigitalSignature {
     ///
     /// ISO 32000-2:2020, Table 262 — Entries in the signature validation-related information (VRI) dictionary
     public struct VRI: Sendable, Hashable {
-        /// PDF key mappings for serialization (Table 262 field names)
-        ///
-        /// Use these keys when serializing to/from PDF format.
-        public enum PDFKey: String, CodingKey {
-            case cert = "Cert"
-            case crl = "CRL"
-            case ocsp = "OCSP"
-            case createdTime = "TU"  // PDF uses "TU" for creation time (TimeStamp Unix)
-            case timestamp = "TS"  // PDF uses "TS" for timestamp stream
-        }
-
         /// Certificate streams used for validation. Optional.
         public var cert: [Int]?  // Indirect references to streams
 
@@ -614,6 +613,19 @@ extension ISO_32000.DigitalSignature {
             self.createdTime = createdTime
             self.timestamp = timestamp
         }
+    }
+}
+
+extension ISO_32000.DigitalSignature.VRI {
+    /// PDF key mappings for serialization (Table 262 field names)
+    ///
+    /// Use these keys when serializing to/from PDF format.
+    public enum PDFKey: String, CodingKey {
+        case cert = "Cert"
+        case crl = "CRL"
+        case ocsp = "OCSP"
+        case createdTime = "TU"  // PDF uses "TU" for creation time (TimeStamp Unix)
+        case timestamp = "TS"  // PDF uses "TS" for timestamp stream
     }
 }
 

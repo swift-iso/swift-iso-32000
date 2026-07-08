@@ -84,12 +84,14 @@ extension ISO_32000 {
             self.content = bytes
             self.state = state
         }
+    }
+}
 
-        /// The text content as a String, if decodable from WinAnsi.
-        ///
-        /// Returns `nil` if the bytes cannot be decoded to a valid String.
-        public var string: String? {
-            String(winAnsi: content)
-        }
+extension ISO_32000.Text {
+    /// The text content as a String, if decodable from WinAnsi.
+    ///
+    /// Returns `nil` if the bytes cannot be decoded to a valid String.
+    public var string: String? {
+        String(winAnsi: content)
     }
 }

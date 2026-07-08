@@ -117,20 +117,22 @@ extension ISO_32000 {
         /// may be referred to indirectly by means of a name object (PDF 1.1) or
         /// a byte string (PDF 1.2).
         case named(String)
+    }
+}
 
-        /// The page index for this destination (nil for named destinations).
-        public var pageIndex: Int? {
-            switch self {
-            case .xyz(let page, _, _, _): return page
-            case .fit(let page): return page
-            case .fitH(let page, _): return page
-            case .fitV(let page, _): return page
-            case .fitR(let page, _, _, _, _): return page
-            case .fitB(let page): return page
-            case .fitBH(let page, _): return page
-            case .fitBV(let page, _): return page
-            case .named: return nil
-            }
+extension ISO_32000.Destination {
+    /// The page index for this destination (nil for named destinations).
+    public var pageIndex: Int? {
+        switch self {
+        case .xyz(let page, _, _, _): return page
+        case .fit(let page): return page
+        case .fitH(let page, _): return page
+        case .fitV(let page, _): return page
+        case .fitR(let page, _, _, _, _): return page
+        case .fitB(let page): return page
+        case .fitBH(let page, _): return page
+        case .fitBV(let page, _): return page
+        case .named: return nil
         }
     }
 }
@@ -168,21 +170,23 @@ extension ISO_32000.Outline {
         /// The outline items at the top level.
         public var items: [Item]
 
-        /// Total count of all visible outline items at all levels.
-        ///
-        /// Per the spec: "Total number of visible outline items at all levels
-        /// of the outline. The value cannot be negative."
-        public var count: Int {
-            items.reduce(0) { $0 + $1.visibleDescendantCount }
-        }
-
         public init(items: [Item] = []) {
             self.items = items
         }
-
-        /// Check if the outline has any items.
-        public var isEmpty: Bool { items.isEmpty }
     }
+}
+
+extension ISO_32000.Outline.Root {
+    /// Total count of all visible outline items at all levels.
+    ///
+    /// Per the spec: "Total number of visible outline items at all levels
+    /// of the outline. The value cannot be negative."
+    public var count: Int {
+        items.reduce(0) { $0 + $1.visibleDescendantCount }
+    }
+
+    /// Check if the outline has any items.
+    public var isEmpty: Bool { items.isEmpty }
 }
 
 // MARK: - Outline Item Target
@@ -245,23 +249,6 @@ extension ISO_32000.Outline {
         /// See Table 152 — Outline item flags. Default: 0.
         public var flags: ItemFlags
 
-        // MARK: - Computed Properties
-
-        /// Number of visible descendants (used for PDF Count entry).
-        ///
-        /// If the outline item is open, Count is the sum of the number of visible
-        /// descendent outline items at all levels. If closed, Count is negative
-        /// and its absolute value is the number of descendants that would be
-        /// visible if the outline item were opened.
-        public var visibleDescendantCount: Int {
-            guard !children.isEmpty else { return 1 }
-            if isOpen {
-                return 1 + children.reduce(0) { $0 + $1.visibleDescendantCount }
-            } else {
-                return 1
-            }
-        }
-
         // MARK: - Initialization
 
         public init(
@@ -320,6 +307,25 @@ extension ISO_32000.Outline {
     }
 }
 
+extension ISO_32000.Outline.Item {
+    // MARK: - Computed Properties
+
+    /// Number of visible descendants (used for PDF Count entry).
+    ///
+    /// If the outline item is open, Count is the sum of the number of visible
+    /// descendent outline items at all levels. If closed, Count is negative
+    /// and its absolute value is the number of descendants that would be
+    /// visible if the outline item were opened.
+    public var visibleDescendantCount: Int {
+        guard !children.isEmpty else { return 1 }
+        if isOpen {
+            return 1 + children.reduce(0) { $0 + $1.visibleDescendantCount }
+        } else {
+            return 1
+        }
+    }
+}
+
 // MARK: - Table 152: Outline Item Flags
 
 extension ISO_32000.Outline {
@@ -339,13 +345,15 @@ extension ISO_32000.Outline {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// Bit 1: If set to 1, display the item in italic.
-        public static let italic = ItemFlags(rawValue: 1 << 0)
-
-        /// Bit 2: If set to 1, display the item in bold.
-        public static let bold = ItemFlags(rawValue: 1 << 1)
     }
+}
+
+extension ISO_32000.Outline.ItemFlags {
+    /// Bit 1: If set to 1, display the item in italic.
+    public static let italic = ISO_32000.Outline.ItemFlags(rawValue: 1 << 0)
+
+    /// Bit 2: If set to 1, display the item in bold.
+    public static let bold = ISO_32000.Outline.ItemFlags(rawValue: 1 << 1)
 }
 
 // MARK: - 12.3.5 Collections (Table 153)

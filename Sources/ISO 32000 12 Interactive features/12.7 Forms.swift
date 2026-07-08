@@ -105,14 +105,16 @@ extension ISO_32000.Form {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// The document contains at least one signature field.
-        public static let signaturesExist = SigFlags(rawValue: 1 << 0)
-
-        /// The document contains signatures that may be invalidated if the file
-        /// is saved in a way that alters its previous contents (vs. incremental update).
-        public static let appendOnly = SigFlags(rawValue: 1 << 1)
     }
+}
+
+extension ISO_32000.Form.SigFlags {
+    /// The document contains at least one signature field.
+    public static let signaturesExist = ISO_32000.Form.SigFlags(rawValue: 1 << 0)
+
+    /// The document contains signatures that may be invalidated if the file
+    /// is saved in a way that alters its previous contents (vs. incremental update).
+    public static let appendOnly = ISO_32000.Form.SigFlags(rawValue: 1 << 1)
 }
 
 // MARK: - Form.Quadding
@@ -280,16 +282,18 @@ extension ISO_32000.Form.Field {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// The user may not change the value of the field.
-        public static let readOnly = FieldFlags(rawValue: 1 << 0)
-
-        /// The field shall have a value before the form can be submitted.
-        public static let required = FieldFlags(rawValue: 1 << 1)
-
-        /// The field shall not be exported by a submit-form action.
-        public static let noExport = FieldFlags(rawValue: 1 << 2)
     }
+}
+
+extension ISO_32000.Form.Field.FieldFlags {
+    /// The user may not change the value of the field.
+    public static let readOnly = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 0)
+
+    /// The field shall have a value before the form can be submitted.
+    public static let required = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 1)
+
+    /// The field shall not be exported by a submit-form action.
+    public static let noExport = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 2)
 }
 
 // MARK: - 12.7.5.2 Button Fields (Tables 229-232)
@@ -374,22 +378,24 @@ extension ISO_32000.Form.Field.Button {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// (Radio buttons only) Exactly one button shall be selected at all times.
-        /// Selecting a button automatically deselects others.
-        public static let noToggleToOff = ButtonFlags(rawValue: 1 << 14)
-
-        /// The field is a set of radio buttons. If clear and Pushbutton is also clear,
-        /// the field is a checkbox.
-        public static let radio = ButtonFlags(rawValue: 1 << 15)
-
-        /// The field is a pushbutton that does not retain a permanent value.
-        public static let pushbutton = ButtonFlags(rawValue: 1 << 16)
-
-        /// (PDF 1.5) A group of radio buttons within a radio button field that
-        /// use the same value for the on state will turn on and off in unison.
-        public static let radiosInUnison = ButtonFlags(rawValue: 1 << 25)
     }
+}
+
+extension ISO_32000.Form.Field.Button.ButtonFlags {
+    /// (Radio buttons only) Exactly one button shall be selected at all times.
+    /// Selecting a button automatically deselects others.
+    public static let noToggleToOff = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 14)
+
+    /// The field is a set of radio buttons. If clear and Pushbutton is also clear,
+    /// the field is a checkbox.
+    public static let radio = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 15)
+
+    /// The field is a pushbutton that does not retain a permanent value.
+    public static let pushbutton = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 16)
+
+    /// (PDF 1.5) A group of radio buttons within a radio button field that
+    /// use the same value for the on state will turn on and off in unison.
+    public static let radiosInUnison = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 25)
 }
 
 // MARK: - Button.TextPosition (Table 230)
@@ -434,18 +440,6 @@ extension ISO_32000.Form.Field.Button {
         /// Whether to take border width into account.
         public var fitToBounds: Bool
 
-        /// Scaling modes
-        public enum ScaleMode: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Always scale
-            case always = "A"
-            /// Scale only when icon is bigger than annotation rectangle
-            case bigger = "B"
-            /// Scale only when icon is smaller than annotation rectangle
-            case smaller = "S"
-            /// Never scale
-            case never = "N"
-        }
-
         public init(
             scaleMode: ScaleMode = .always,
             proportional: Bool = true,
@@ -459,6 +453,20 @@ extension ISO_32000.Form.Field.Button {
             self.verticalAlignment = verticalAlignment
             self.fitToBounds = fitToBounds
         }
+    }
+}
+
+extension ISO_32000.Form.Field.Button.IconFit {
+    /// Scaling modes
+    public enum ScaleMode: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Always scale
+        case always = "A"
+        /// Scale only when icon is bigger than annotation rectangle
+        case bigger = "B"
+        /// Scale only when icon is smaller than annotation rectangle
+        case smaller = "S"
+        /// Never scale
+        case never = "N"
     }
 }
 
@@ -523,28 +531,30 @@ extension ISO_32000.Form.Field.Text {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// The field may contain multiple lines of text.
-        public static let multiline = TextFlags(rawValue: 1 << 12)
-
-        /// The field is intended for entering a secure password.
-        public static let password = TextFlags(rawValue: 1 << 13)
-
-        /// (PDF 1.4) The field is a file-select field.
-        public static let fileSelect = TextFlags(rawValue: 1 << 20)
-
-        /// (PDF 1.4) Text entered shall not be spell-checked.
-        public static let doNotSpellCheck = TextFlags(rawValue: 1 << 22)
-
-        /// (PDF 1.4) The field shall not scroll if text exceeds boundaries.
-        public static let doNotScroll = TextFlags(rawValue: 1 << 23)
-
-        /// (PDF 1.5) The field shall be divided into positions for n characters.
-        public static let comb = TextFlags(rawValue: 1 << 24)
-
-        /// (PDF 1.5) The value shall be a rich text string.
-        public static let richText = TextFlags(rawValue: 1 << 25)
     }
+}
+
+extension ISO_32000.Form.Field.Text.TextFlags {
+    /// The field may contain multiple lines of text.
+    public static let multiline = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 12)
+
+    /// The field is intended for entering a secure password.
+    public static let password = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 13)
+
+    /// (PDF 1.4) The field is a file-select field.
+    public static let fileSelect = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 20)
+
+    /// (PDF 1.4) Text entered shall not be spell-checked.
+    public static let doNotSpellCheck = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 22)
+
+    /// (PDF 1.4) The field shall not scroll if text exceeds boundaries.
+    public static let doNotScroll = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 23)
+
+    /// (PDF 1.5) The field shall be divided into positions for n characters.
+    public static let comb = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 24)
+
+    /// (PDF 1.5) The value shall be a rich text string.
+    public static let richText = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 25)
 }
 
 // MARK: - 12.7.5.4 Choice Fields (Tables 234-235)
@@ -575,19 +585,6 @@ extension ISO_32000.Form.Field {
         /// Quadding. Default: .left.
         public var quadding: ISO_32000.Form.Quadding
 
-        /// Choice field option
-        public struct Option: Sendable, Hashable {
-            /// The export value (used when exporting form data).
-            public var exportValue: String
-            /// The display value (shown to the user).
-            public var displayValue: String
-
-            public init(exportValue: String, displayValue: String? = nil) {
-                self.exportValue = exportValue
-                self.displayValue = displayValue ?? exportValue
-            }
-        }
-
         public init(
             flags: ChoiceFlags = [],
             options: [Option] = [],
@@ -600,6 +597,21 @@ extension ISO_32000.Form.Field {
             self.topIndex = topIndex
             self.defaultAppearance = defaultAppearance
             self.quadding = quadding
+        }
+    }
+}
+
+extension ISO_32000.Form.Field.Choice {
+    /// Choice field option
+    public struct Option: Sendable, Hashable {
+        /// The export value (used when exporting form data).
+        public var exportValue: String
+        /// The display value (shown to the user).
+        public var displayValue: String
+
+        public init(exportValue: String, displayValue: String? = nil) {
+            self.exportValue = exportValue
+            self.displayValue = displayValue ?? exportValue
         }
     }
 }
@@ -618,25 +630,27 @@ extension ISO_32000.Form.Field.Choice {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// The field is a combo box; if clear, it's a list box.
-        public static let combo = ChoiceFlags(rawValue: 1 << 17)
-
-        /// (Combo boxes only) The combo box includes an editable text box.
-        public static let edit = ChoiceFlags(rawValue: 1 << 18)
-
-        /// The field's options shall be sorted alphabetically.
-        public static let sort = ChoiceFlags(rawValue: 1 << 19)
-
-        /// (PDF 1.4) More than one item may be selected simultaneously.
-        public static let multiSelect = ChoiceFlags(rawValue: 1 << 21)
-
-        /// (PDF 1.4) Text shall not be spell-checked.
-        public static let doNotSpellCheck = ChoiceFlags(rawValue: 1 << 22)
-
-        /// (PDF 1.5) New value commits immediately on selection.
-        public static let commitOnSelChange = ChoiceFlags(rawValue: 1 << 26)
     }
+}
+
+extension ISO_32000.Form.Field.Choice.ChoiceFlags {
+    /// The field is a combo box; if clear, it's a list box.
+    public static let combo = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 17)
+
+    /// (Combo boxes only) The combo box includes an editable text box.
+    public static let edit = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 18)
+
+    /// The field's options shall be sorted alphabetically.
+    public static let sort = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 19)
+
+    /// (PDF 1.4) More than one item may be selected simultaneously.
+    public static let multiSelect = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 21)
+
+    /// (PDF 1.4) Text shall not be spell-checked.
+    public static let doNotSpellCheck = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 22)
+
+    /// (PDF 1.5) New value commits immediately on selection.
+    public static let commitOnSelChange = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 26)
 }
 
 // MARK: - 12.7.5.5 Signature Fields (Tables 236-237)
@@ -703,54 +717,6 @@ extension ISO_32000.Form.Field.Signature {
         /// Timestamp server URL (PDF 2.0).
         public var timeStampServer: String?
 
-        /// Seed value flags
-        public struct SeedFlags: OptionSet, Sendable, Hashable {
-            public let rawValue: Int
-
-            public init(rawValue: Int) {
-                self.rawValue = rawValue
-            }
-
-            /// Filter is a required constraint.
-            public static let filter = SeedFlags(rawValue: 1 << 0)
-            /// SubFilter is a required constraint.
-            public static let subFilter = SeedFlags(rawValue: 1 << 1)
-            /// V (version) is a required constraint.
-            public static let version = SeedFlags(rawValue: 1 << 2)
-            /// Reasons is a required constraint.
-            public static let reasons = SeedFlags(rawValue: 1 << 3)
-            /// LegalAttestation is a required constraint.
-            public static let legalAttestation = SeedFlags(rawValue: 1 << 4)
-            /// AddRevInfo is a required constraint.
-            public static let addRevInfo = SeedFlags(rawValue: 1 << 5)
-            /// DigestMethod is a required constraint.
-            public static let digestMethod = SeedFlags(rawValue: 1 << 6)
-        }
-
-        /// Certificate constraints
-        public struct CertConstraints: Sendable, Hashable {
-            /// Required certificate subject distinguished names.
-            public var subject: [String]?
-            /// Required certificate issuer distinguished names.
-            public var issuer: [String]?
-            /// Required certificate OIDs.
-            public var oid: [String]?
-            /// URL for additional certificate info.
-            public var url: String?
-
-            public init(
-                subject: [String]? = nil,
-                issuer: [String]? = nil,
-                oid: [String]? = nil,
-                url: String? = nil
-            ) {
-                self.subject = subject
-                self.issuer = issuer
-                self.oid = oid
-                self.url = url
-            }
-        }
-
         public init(
             flags: SeedFlags = [],
             filter: String? = nil,
@@ -773,6 +739,58 @@ extension ISO_32000.Form.Field.Signature {
     }
 }
 
+extension ISO_32000.Form.Field.Signature.SeedValue {
+    /// Seed value flags
+    public struct SeedFlags: OptionSet, Sendable, Hashable {
+        public let rawValue: Int
+
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+    }
+
+    /// Certificate constraints
+    public struct CertConstraints: Sendable, Hashable {
+        /// Required certificate subject distinguished names.
+        public var subject: [String]?
+        /// Required certificate issuer distinguished names.
+        public var issuer: [String]?
+        /// Required certificate OIDs.
+        public var oid: [String]?
+        /// URL for additional certificate info.
+        public var url: String?
+
+        public init(
+            subject: [String]? = nil,
+            issuer: [String]? = nil,
+            oid: [String]? = nil,
+            url: String? = nil
+        ) {
+            self.subject = subject
+            self.issuer = issuer
+            self.oid = oid
+            self.url = url
+        }
+    }
+}
+
+extension ISO_32000.Form.Field.Signature.SeedValue.SeedFlags {
+    /// Filter is a required constraint.
+    public static let filter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 0)
+    /// SubFilter is a required constraint.
+    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 1)
+    /// V (version) is a required constraint.
+    public static let version = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 2)
+    /// Reasons is a required constraint.
+    public static let reasons = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 3)
+    /// LegalAttestation is a required constraint.
+    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 4)
+    /// AddRevInfo is a required constraint.
+    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 5)
+    /// DigestMethod is a required constraint.
+    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 6)
+}
+
 // MARK: - Signature.Lock (Table 238)
 
 extension ISO_32000.Form.Field.Signature {
@@ -786,20 +804,22 @@ extension ISO_32000.Form.Field.Signature {
         /// Fields to include or exclude (depending on action).
         public var fields: [String]?
 
-        /// Lock actions
-        public enum Action: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Lock all fields in the document.
-            case all = "All"
-            /// Lock only the specified fields.
-            case include = "Include"
-            /// Lock all fields except the specified ones.
-            case exclude = "Exclude"
-        }
-
         public init(action: Action, fields: [String]? = nil) {
             self.action = action
             self.fields = fields
         }
+    }
+}
+
+extension ISO_32000.Form.Field.Signature.Lock {
+    /// Lock actions
+    public enum Action: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Lock all fields in the document.
+        case all = "All"
+        /// Lock only the specified fields.
+        case include = "Include"
+        /// Lock all fields except the specified ones.
+        case exclude = "Exclude"
     }
 }
 
@@ -823,42 +843,6 @@ extension ISO_32000.Form {
 
         /// Submit flags.
         public var flags: SubmitFlags
-
-        /// Submit-form flags (Table 240)
-        public struct SubmitFlags: OptionSet, Sendable, Hashable {
-            public let rawValue: Int
-
-            public init(rawValue: Int) {
-                self.rawValue = rawValue
-            }
-
-            /// Fields array specifies fields to exclude (not include).
-            public static let exclude = SubmitFlags(rawValue: 1 << 0)
-            /// Include fields without values.
-            public static let includeNoValueFields = SubmitFlags(rawValue: 1 << 1)
-            /// Submit as HTML form (application/x-www-form-urlencoded).
-            public static let exportFormat = SubmitFlags(rawValue: 1 << 2)
-            /// Field names and values submitted as HTTP GET (not POST).
-            public static let getMethod = SubmitFlags(rawValue: 1 << 3)
-            /// Coordinates of mouse click submitted.
-            public static let submitCoordinates = SubmitFlags(rawValue: 1 << 4)
-            /// (PDF 1.4) Submit as XFDF.
-            public static let xfdf = SubmitFlags(rawValue: 1 << 5)
-            /// (PDF 1.4) Include annotations in FDF.
-            public static let includeAppendSaves = SubmitFlags(rawValue: 1 << 6)
-            /// (PDF 1.4) Include annotations.
-            public static let includeAnnotations = SubmitFlags(rawValue: 1 << 7)
-            /// (PDF 1.4) Submit as PDF.
-            public static let submitPDF = SubmitFlags(rawValue: 1 << 8)
-            /// (PDF 1.4) Convert dates to standard format.
-            public static let canonicalFormat = SubmitFlags(rawValue: 1 << 9)
-            /// (PDF 1.4) Exclude non-user annotations.
-            public static let excludeNonUserAnnots = SubmitFlags(rawValue: 1 << 10)
-            /// (PDF 1.4) Exclude F entry.
-            public static let excludeFKey = SubmitFlags(rawValue: 1 << 11)
-            /// (PDF 1.5) Include empty text fields.
-            public static let embedForm = SubmitFlags(rawValue: 1 << 13)
-        }
 
         public init(url: String, fields: [String]? = nil, flags: SubmitFlags = []) {
             self.url = url
@@ -904,6 +888,46 @@ extension ISO_32000.Form {
     }
 }
 
+extension ISO_32000.Form.SubmitForm {
+    /// Submit-form flags (Table 240)
+    public struct SubmitFlags: OptionSet, Sendable, Hashable {
+        public let rawValue: Int
+
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+    }
+}
+
+extension ISO_32000.Form.SubmitForm.SubmitFlags {
+    /// Fields array specifies fields to exclude (not include).
+    public static let exclude = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 0)
+    /// Include fields without values.
+    public static let includeNoValueFields = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 1)
+    /// Submit as HTML form (application/x-www-form-urlencoded).
+    public static let exportFormat = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 2)
+    /// Field names and values submitted as HTTP GET (not POST).
+    public static let getMethod = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 3)
+    /// Coordinates of mouse click submitted.
+    public static let submitCoordinates = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 4)
+    /// (PDF 1.4) Submit as XFDF.
+    public static let xfdf = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 5)
+    /// (PDF 1.4) Include annotations in FDF.
+    public static let includeAppendSaves = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 6)
+    /// (PDF 1.4) Include annotations.
+    public static let includeAnnotations = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 7)
+    /// (PDF 1.4) Submit as PDF.
+    public static let submitPDF = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 8)
+    /// (PDF 1.4) Convert dates to standard format.
+    public static let canonicalFormat = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 9)
+    /// (PDF 1.4) Exclude non-user annotations.
+    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 10)
+    /// (PDF 1.4) Exclude F entry.
+    public static let excludeFKey = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 11)
+    /// (PDF 1.5) Include empty text fields.
+    public static let embedForm = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 13)
+}
+
 // MARK: - 12.5.6.19 Widget Annotation (Tables 191-192)
 
 extension ISO_32000.`12`.`5`.Annotation {
@@ -931,20 +955,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Border style dictionary.
         public var borderStyle: ISO_32000.`12`.`5`.Border.Style?
 
-        /// Widget highlighting modes
-        public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
-            /// No highlighting
-            case none = "N"
-            /// Invert the annotation
-            case invert = "I"
-            /// Invert the border
-            case outline = "O"
-            /// Push effect
-            case push = "P"
-            /// Toggle highlighting (used with T in appearance dictionary)
-            case toggle = "T"
-        }
-
         public init(
             highlightMode: HighlightMode = .invert,
             appearanceCharacteristics: AppearanceCharacteristics? = nil,
@@ -958,6 +968,22 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.additionalActions = additionalActions
             self.borderStyle = borderStyle
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Widget {
+    /// Widget highlighting modes
+    public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
+        /// No highlighting
+        case none = "N"
+        /// Invert the annotation
+        case invert = "I"
+        /// Invert the border
+        case outline = "O"
+        /// Push effect
+        case push = "P"
+        /// Toggle highlighting (used with T in appearance dictionary)
+        case toggle = "T"
     }
 }
 

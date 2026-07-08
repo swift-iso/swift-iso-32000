@@ -110,103 +110,105 @@ extension ISO_32000.`9`.`4` {
             self.e = e
             self.f = f
         }
+    }
+}
 
-        /// The identity matrix [1 0 0 1 0 0]
-        public static let identity = Matrix()
+extension ISO_32000.`9`.`4`.Matrix {
+    /// The identity matrix [1 0 0 1 0 0]
+    public static let identity = Self()
 
-        /// Create a translation matrix
-        ///
-        /// - Parameters:
-        ///   - tx: Horizontal translation
-        ///   - ty: Vertical translation
-        /// - Returns: A translation matrix
-        public static func translation(tx: Double, ty: Double) -> Matrix {
-            Matrix(a: 1, b: 0, c: 0, d: 1, e: tx, f: ty)
-        }
+    /// Create a translation matrix
+    ///
+    /// - Parameters:
+    ///   - tx: Horizontal translation
+    ///   - ty: Vertical translation
+    /// - Returns: A translation matrix
+    public static func translation(tx: Double, ty: Double) -> Self {
+        Self(a: 1, b: 0, c: 0, d: 1, e: tx, f: ty)
+    }
 
-        /// Create a scaling matrix
-        ///
-        /// - Parameters:
-        ///   - sx: Horizontal scale factor
-        ///   - sy: Vertical scale factor
-        /// - Returns: A scaling matrix
-        public static func scaling(sx: Double, sy: Double) -> Matrix {
-            Matrix(a: sx, b: 0, c: 0, d: sy, e: 0, f: 0)
-        }
+    /// Create a scaling matrix
+    ///
+    /// - Parameters:
+    ///   - sx: Horizontal scale factor
+    ///   - sy: Vertical scale factor
+    /// - Returns: A scaling matrix
+    public static func scaling(sx: Double, sy: Double) -> Self {
+        Self(a: sx, b: 0, c: 0, d: sy, e: 0, f: 0)
+    }
 
-        /// Concatenate two matrices (lhs × rhs)
-        ///
-        /// - Parameters:
-        ///   - lhs: Left matrix
-        ///   - rhs: Right matrix
-        /// - Returns: The resulting matrix
-        public static func concatenating(_ lhs: Matrix, _ rhs: Matrix) -> Matrix {
-            Matrix(
-                a: lhs.a * rhs.a + lhs.b * rhs.c,
-                b: lhs.a * rhs.b + lhs.b * rhs.d,
-                c: lhs.c * rhs.a + lhs.d * rhs.c,
-                d: lhs.c * rhs.b + lhs.d * rhs.d,
-                e: lhs.e * rhs.a + lhs.f * rhs.c + rhs.e,
-                f: lhs.e * rhs.b + lhs.f * rhs.d + rhs.f
-            )
-        }
+    /// Concatenate two matrices (lhs × rhs)
+    ///
+    /// - Parameters:
+    ///   - lhs: Left matrix
+    ///   - rhs: Right matrix
+    /// - Returns: The resulting matrix
+    public static func concatenating(_ lhs: Self, _ rhs: Self) -> Self {
+        Self(
+            a: lhs.a * rhs.a + lhs.b * rhs.c,
+            b: lhs.a * rhs.b + lhs.b * rhs.d,
+            c: lhs.c * rhs.a + lhs.d * rhs.c,
+            d: lhs.c * rhs.b + lhs.d * rhs.d,
+            e: lhs.e * rhs.a + lhs.f * rhs.c + rhs.e,
+            f: lhs.e * rhs.b + lhs.f * rhs.d + rhs.f
+        )
+    }
 
-        /// Apply the Td operator: move to next line offset by (tx, ty)
-        ///
-        /// Per ISO 32000-2:2020, Section 9.4.2 (Td operator):
-        /// > Tm = Tlm = [1 0 0; 0 1 0; tx ty 1] × Tlm
-        ///
-        /// - Parameters:
-        ///   - tx: Horizontal offset
-        ///   - ty: Vertical offset
-        ///   - lineMatrix: The current text line matrix (Tlm)
-        /// - Returns: The new text matrix (also becomes new Tlm)
-        public static func td(tx: Double, ty: Double, lineMatrix: Matrix) -> Matrix {
-            .concatenating(.translation(tx: tx, ty: ty), lineMatrix)
-        }
+    /// Apply the Td operator: move to next line offset by (tx, ty)
+    ///
+    /// Per ISO 32000-2:2020, Section 9.4.2 (Td operator):
+    /// > Tm = Tlm = [1 0 0; 0 1 0; tx ty 1] × Tlm
+    ///
+    /// - Parameters:
+    ///   - tx: Horizontal offset
+    ///   - ty: Vertical offset
+    ///   - lineMatrix: The current text line matrix (Tlm)
+    /// - Returns: The new text matrix (also becomes new Tlm)
+    public static func td(tx: Double, ty: Double, lineMatrix: Self) -> Self {
+        .concatenating(.translation(tx: tx, ty: ty), lineMatrix)
+    }
 
-        /// Compute the text rendering matrix (Trm)
-        ///
-        /// The complete transformation from text space to device space.
-        ///
-        /// Per ISO 32000-2:2020, Section 9.4.4:
-        /// > Trm = [Tfs×Th  0      0  ]
-        /// >       [0       Tfs    0  ] × Tm × CTM
-        /// >       [0       Trise  1  ]
-        ///
-        /// - Parameters:
-        ///   - textMatrix: Current text matrix (Tm)
-        ///   - fontSize: Text font size (Tfs)
-        ///   - horizontalScaling: Horizontal scaling as percentage (Th)
-        ///   - rise: Text rise (Trise)
-        ///   - ctm: Current transformation matrix (CTM)
-        /// - Returns: The text rendering matrix (Trm)
-        ///
-        /// ## Reference
-        ///
-        /// ISO 32000-2:2020, Section 9.4.4 — Text space details
-        public static func rendering(
-            textMatrix: Matrix,
-            fontSize: Double,
-            horizontalScaling: Double,
-            rise: Double,
-            ctm: Matrix
-        ) -> Matrix {
-            let th = horizontalScaling / 100.0
+    /// Compute the text rendering matrix (Trm)
+    ///
+    /// The complete transformation from text space to device space.
+    ///
+    /// Per ISO 32000-2:2020, Section 9.4.4:
+    /// > Trm = [Tfs×Th  0      0  ]
+    /// >       [0       Tfs    0  ] × Tm × CTM
+    /// >       [0       Trise  1  ]
+    ///
+    /// - Parameters:
+    ///   - textMatrix: Current text matrix (Tm)
+    ///   - fontSize: Text font size (Tfs)
+    ///   - horizontalScaling: Horizontal scaling as percentage (Th)
+    ///   - rise: Text rise (Trise)
+    ///   - ctm: Current transformation matrix (CTM)
+    /// - Returns: The text rendering matrix (Trm)
+    ///
+    /// ## Reference
+    ///
+    /// ISO 32000-2:2020, Section 9.4.4 — Text space details
+    public static func rendering(
+        textMatrix: Self,
+        fontSize: Double,
+        horizontalScaling: Double,
+        rise: Double,
+        ctm: Self
+    ) -> Self {
+        let th = horizontalScaling / 100.0
 
-            // Build the font size/scaling matrix
-            let fontMatrix = Matrix(
-                a: fontSize * th,
-                b: 0,
-                c: 0,
-                d: fontSize,
-                e: 0,
-                f: rise
-            )
+        // Build the font size/scaling matrix
+        let fontMatrix = Self(
+            a: fontSize * th,
+            b: 0,
+            c: 0,
+            d: fontSize,
+            e: 0,
+            f: rise
+        )
 
-            // Concatenate: fontMatrix × Tm × CTM
-            return .concatenating(.concatenating(fontMatrix, textMatrix), ctm)
-        }
+        // Concatenate: fontMatrix × Tm × CTM
+        return .concatenating(.concatenating(fontMatrix, textMatrix), ctm)
     }
 }
 
@@ -226,53 +228,55 @@ extension ISO_32000.`9`.`4` {
     /// - Th: horizontal scaling
     /// - Tc: character spacing
     /// - Tw: word spacing (only for space character)
-    public enum Displacement {
-        /// Calculate horizontal displacement for a glyph
-        ///
-        /// - Parameters:
-        ///   - glyphWidth: The glyph's width (w0) in text space units
-        ///   - adjustment: Position adjustment from TJ array (in thousandths)
-        ///   - fontSize: Text font size (Tfs)
-        ///   - characterSpacing: Character spacing (Tc)
-        ///   - wordSpacing: Word spacing (Tw), applied only for space
-        ///   - horizontalScaling: Horizontal scaling percentage (Th)
-        ///   - isSpace: Whether this is a space character (0x20)
-        /// - Returns: The horizontal displacement (tx)
-        public static func horizontal(
-            glyphWidth: Double,
-            adjustment: Double = 0,
-            fontSize: Double,
-            characterSpacing: Double,
-            wordSpacing: Double,
-            horizontalScaling: Double,
-            isSpace: Bool
-        ) -> Double {
-            let th = horizontalScaling / 100.0
-            let tw = isSpace ? wordSpacing : 0
-            return ((glyphWidth - adjustment / 1000.0) * fontSize + characterSpacing + tw) * th
-        }
+    public enum Displacement {}
+}
 
-        /// Calculate vertical displacement for a glyph (vertical writing mode)
-        ///
-        /// - Parameters:
-        ///   - glyphHeight: The glyph's height (w1) in text space units
-        ///   - adjustment: Position adjustment from TJ array (in thousandths)
-        ///   - fontSize: Text font size (Tfs)
-        ///   - characterSpacing: Character spacing (Tc)
-        ///   - wordSpacing: Word spacing (Tw), applied only for space
-        ///   - isSpace: Whether this is a space character (0x20)
-        /// - Returns: The vertical displacement (ty)
-        public static func vertical(
-            glyphHeight: Double,
-            adjustment: Double = 0,
-            fontSize: Double,
-            characterSpacing: Double,
-            wordSpacing: Double,
-            isSpace: Bool
-        ) -> Double {
-            let tw = isSpace ? wordSpacing : 0
-            return (glyphHeight - adjustment / 1000.0) * fontSize + characterSpacing + tw
-        }
+extension ISO_32000.`9`.`4`.Displacement {
+    /// Calculate horizontal displacement for a glyph
+    ///
+    /// - Parameters:
+    ///   - glyphWidth: The glyph's width (w0) in text space units
+    ///   - adjustment: Position adjustment from TJ array (in thousandths)
+    ///   - fontSize: Text font size (Tfs)
+    ///   - characterSpacing: Character spacing (Tc)
+    ///   - wordSpacing: Word spacing (Tw), applied only for space
+    ///   - horizontalScaling: Horizontal scaling percentage (Th)
+    ///   - isSpace: Whether this is a space character (0x20)
+    /// - Returns: The horizontal displacement (tx)
+    public static func horizontal(
+        glyphWidth: Double,
+        adjustment: Double = 0,
+        fontSize: Double,
+        characterSpacing: Double,
+        wordSpacing: Double,
+        horizontalScaling: Double,
+        isSpace: Bool
+    ) -> Double {
+        let th = horizontalScaling / 100.0
+        let tw = isSpace ? wordSpacing : 0
+        return ((glyphWidth - adjustment / 1000.0) * fontSize + characterSpacing + tw) * th
+    }
+
+    /// Calculate vertical displacement for a glyph (vertical writing mode)
+    ///
+    /// - Parameters:
+    ///   - glyphHeight: The glyph's height (w1) in text space units
+    ///   - adjustment: Position adjustment from TJ array (in thousandths)
+    ///   - fontSize: Text font size (Tfs)
+    ///   - characterSpacing: Character spacing (Tc)
+    ///   - wordSpacing: Word spacing (Tw), applied only for space
+    ///   - isSpace: Whether this is a space character (0x20)
+    /// - Returns: The vertical displacement (ty)
+    public static func vertical(
+        glyphHeight: Double,
+        adjustment: Double = 0,
+        fontSize: Double,
+        characterSpacing: Double,
+        wordSpacing: Double,
+        isSpace: Bool
+    ) -> Double {
+        let tw = isSpace ? wordSpacing : 0
+        return (glyphHeight - adjustment / 1000.0) * fontSize + characterSpacing + tw
     }
 }
 

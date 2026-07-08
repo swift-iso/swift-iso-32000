@@ -63,18 +63,20 @@ extension ISO_32000.`7`.`5`.`2` {
 
         /// PDF 2.0 (ISO 32000-2:2017)
         case v2_0 = "2.0"
+    }
+}
 
-        /// Default version for new documents
-        public static let `default`: Version = .v1_7
+extension ISO_32000.`7`.`5`.`2`.Version {
+    /// Default version for new documents
+    public static let `default`: ISO_32000.`7`.`5`.`2`.Version = .v1_7
 
-        /// Header string for this version (for example, "%PDF-1.7")
-        public var header: String {
-            "%PDF-\(rawValue)"
-        }
+    /// Header string for this version (for example, "%PDF-1.7")
+    public var header: String {
+        "%PDF-\(rawValue)"
+    }
 
-        /// Header bytes for this version
-        public var headerBytes: [Byte] {
-            header.utf8.map(Byte.init)
-        }
+    /// Header bytes for this version
+    public var headerBytes: [Byte] {
+        header.utf8.map(Byte.init)
     }
 }

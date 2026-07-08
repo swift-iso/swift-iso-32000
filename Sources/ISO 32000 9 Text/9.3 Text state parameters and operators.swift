@@ -212,41 +212,43 @@ extension ISO_32000.Text.Rendering {
 
         /// Add text to path for clipping (mode 7)
         case clip = 7
+    }
+}
 
-        /// Whether this mode fills the glyph outlines
-        public var fills: Bool {
-            switch self {
-            case .fill, .fillStroke, .fillClip, .fillStrokeClip:
-                true
-            case .stroke, .invisible, .strokeClip, .clip:
-                false
-            }
+extension ISO_32000.Text.Rendering.Mode {
+    /// Whether this mode fills the glyph outlines
+    public var fills: Bool {
+        switch self {
+        case .fill, .fillStroke, .fillClip, .fillStrokeClip:
+            true
+        case .stroke, .invisible, .strokeClip, .clip:
+            false
         }
+    }
 
-        /// Whether this mode strokes the glyph outlines
-        public var strokes: Bool {
-            switch self {
-            case .stroke, .fillStroke, .strokeClip, .fillStrokeClip:
-                true
-            case .fill, .invisible, .fillClip, .clip:
-                false
-            }
+    /// Whether this mode strokes the glyph outlines
+    public var strokes: Bool {
+        switch self {
+        case .stroke, .fillStroke, .strokeClip, .fillStrokeClip:
+            true
+        case .fill, .invisible, .fillClip, .clip:
+            false
         }
+    }
 
-        /// Whether this mode adds to the clipping path
-        public var clips: Bool {
-            switch self {
-            case .fillClip, .strokeClip, .fillStrokeClip, .clip:
-                true
-            case .fill, .stroke, .fillStroke, .invisible:
-                false
-            }
+    /// Whether this mode adds to the clipping path
+    public var clips: Bool {
+        switch self {
+        case .fillClip, .strokeClip, .fillStrokeClip, .clip:
+            true
+        case .fill, .stroke, .fillStroke, .invisible:
+            false
         }
+    }
 
-        /// Whether this mode renders anything visible
-        public var isVisible: Bool {
-            self != .invisible && self != .clip
-        }
+    /// Whether this mode renders anything visible
+    public var isVisible: Bool {
+        self != .invisible && self != .clip
     }
 }
 

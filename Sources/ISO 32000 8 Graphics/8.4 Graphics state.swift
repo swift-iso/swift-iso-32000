@@ -178,12 +178,14 @@ extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash {
             self.array = array
             self.phase = phase
         }
-
-        /// A solid line (no dashes).
-        ///
-        /// Initial value per Table 51.
-        public static let solid = Pattern(array: [], phase: 0)
     }
+}
+
+extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern {
+    /// A solid line (no dashes).
+    ///
+    /// Initial value per Table 51.
+    public static let solid = ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern(array: [], phase: 0)
 }
 
 // MARK: - 8.6.5.8 Rendering Intent
@@ -911,13 +913,15 @@ extension ISO_32000.`8`.`4`.Graphics.State {
 
         /// CMYK values (each 0-1).
         case cmyk(c: Double, m: Double, y: Double, k: Double)
-
-        /// Black (gray 0).
-        public static let black = Color.gray(0)
-
-        /// White (gray 1).
-        public static let white = Color.gray(1)
     }
+}
+
+extension ISO_32000.`8`.`4`.Graphics.State.Color {
+    /// Black (gray 0).
+    public static let black = ISO_32000.`8`.`4`.Graphics.State.Color.gray(0)
+
+    /// White (gray 1).
+    public static let white = ISO_32000.`8`.`4`.Graphics.State.Color.gray(1)
 }
 
 // MARK: - 8.4.2 Graphics State Stack

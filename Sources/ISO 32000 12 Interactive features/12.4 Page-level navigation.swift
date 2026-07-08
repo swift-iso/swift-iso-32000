@@ -34,28 +34,6 @@ extension ISO_32000.PageLabel {
     ///
     /// ISO 32000-2:2020, Table 161 — Entries in a page label dictionary
     public struct Entry: Sendable, Equatable, Hashable, Codable {
-        /// Numbering style for the numeric portion of page labels.
-        ///
-        /// Per ISO 32000-2 Table 161:
-        /// > The numbering style that shall be used for the numeric portion
-        /// > of each page label.
-        public enum Style: String, Sendable, Codable, CaseIterable {
-            /// Decimal Arabic numerals (1, 2, 3, ...)
-            case decimal = "D"
-
-            /// Uppercase Roman numerals (I, II, III, ...)
-            case romanUpper = "R"
-
-            /// Lowercase Roman numerals (i, ii, iii, ...)
-            case romanLower = "r"
-
-            /// Uppercase letters (A, B, C, ... Z, AA, BB, ...)
-            case letterUpper = "A"
-
-            /// Lowercase letters (a, b, c, ... z, aa, bb, ...)
-            case letterLower = "a"
-        }
-
         /// The numbering style (nil means no numeric portion)
         public var style: Style?
 
@@ -75,6 +53,30 @@ extension ISO_32000.PageLabel {
             self.prefix = prefix
             self.start = start
         }
+    }
+}
+
+extension ISO_32000.PageLabel.Entry {
+    /// Numbering style for the numeric portion of page labels.
+    ///
+    /// Per ISO 32000-2 Table 161:
+    /// > The numbering style that shall be used for the numeric portion
+    /// > of each page label.
+    public enum Style: String, Sendable, Codable, CaseIterable {
+        /// Decimal Arabic numerals (1, 2, 3, ...)
+        case decimal = "D"
+
+        /// Uppercase Roman numerals (I, II, III, ...)
+        case romanUpper = "R"
+
+        /// Lowercase Roman numerals (i, ii, iii, ...)
+        case romanLower = "r"
+
+        /// Uppercase letters (A, B, C, ... Z, AA, BB, ...)
+        case letterUpper = "A"
+
+        /// Lowercase letters (a, b, c, ... z, aa, bb, ...)
+        case letterLower = "a"
     }
 }
 
@@ -269,17 +271,19 @@ extension ISO_32000.Transition {
 
         /// No direction (Fly transition only, when scale ≠ 1.0)
         case none
+    }
+}
 
-        /// The raw degree value
-        public var degrees: Int? {
-            switch self {
-            case .leftToRight: return 0
-            case .bottomToTop: return 90
-            case .rightToLeft: return 180
-            case .topToBottom: return 270
-            case .diagonal: return 315
-            case .none: return nil
-            }
+extension ISO_32000.Transition.Direction {
+    /// The raw degree value
+    public var degrees: Int? {
+        switch self {
+        case .leftToRight: return 0
+        case .bottomToTop: return 90
+        case .rightToLeft: return 180
+        case .topToBottom: return 270
+        case .diagonal: return 315
+        case .none: return nil
         }
     }
 }

@@ -237,18 +237,6 @@ extension ISO_32000.Action {
     ///
     /// ISO 32000-2:2020, Table 214 — Additional entries specific to a hide action
     public struct Hide: Sendable, Equatable, Hashable, Codable {
-        /// The target specification for annotations to hide/show.
-        public enum Target: Sendable, Equatable, Hashable, Codable {
-            /// A single annotation reference
-            case annotation(Int)
-
-            /// A field name
-            case field(String)
-
-            /// Multiple targets
-            case multiple([Target])
-        }
-
         /// The annotation(s) to hide or show.
         ///
         /// Per ISO 32000-2 Table 214:
@@ -274,6 +262,20 @@ extension ISO_32000.Action {
     }
 }
 
+extension ISO_32000.Action.Hide {
+    /// The target specification for annotations to hide/show.
+    public enum Target: Sendable, Equatable, Hashable, Codable {
+        /// A single annotation reference
+        case annotation(Int)
+
+        /// A field name
+        case field(String)
+
+        /// Multiple targets
+        case multiple([Target])
+    }
+}
+
 // MARK: - 12.6.4.12 Named Action (Table 215, 216)
 
 extension ISO_32000.Action {
@@ -288,21 +290,6 @@ extension ISO_32000.Action {
     /// ISO 32000-2:2020, Table 215 — Named actions
     /// ISO 32000-2:2020, Table 216 — Additional entries specific to named actions
     public struct Named: Sendable, Equatable, Hashable, Codable {
-        /// Predefined named action types (Table 215).
-        public enum Name: String, Sendable, Codable, CaseIterable {
-            /// Go to the next page of the document
-            case nextPage = "NextPage"
-
-            /// Go to the previous page of the document
-            case prevPage = "PrevPage"
-
-            /// Go to the first page of the document
-            case firstPage = "FirstPage"
-
-            /// Go to the last page of the document
-            case lastPage = "LastPage"
-        }
-
         /// The name of the action to perform.
         ///
         /// Per ISO 32000-2 Table 216:
@@ -315,6 +302,23 @@ extension ISO_32000.Action {
         public init(name: Name) {
             self.name = name
         }
+    }
+}
+
+extension ISO_32000.Action.Named {
+    /// Predefined named action types (Table 215).
+    public enum Name: String, Sendable, Codable, CaseIterable {
+        /// Go to the next page of the document
+        case nextPage = "NextPage"
+
+        /// Go to the previous page of the document
+        case prevPage = "PrevPage"
+
+        /// Go to the first page of the document
+        case firstPage = "FirstPage"
+
+        /// Go to the last page of the document
+        case lastPage = "LastPage"
     }
 }
 
@@ -388,46 +392,6 @@ extension ISO_32000.Action {
         /// > if false, the destination document shall replace the current document.
         public var newWindow: Bool?
 
-        /// Target dictionary for embedded go-to action
-        public struct Target: Sendable, Hashable {
-            /// The relationship between the current document and the target.
-            public enum Relation: String, Sendable, Hashable, Codable, CaseIterable {
-                /// The target is the parent of the current document.
-                case parent = "P"
-                /// The target is a child of the current document.
-                case child = "C"
-            }
-
-            /// The relationship to the target.
-            public var relation: Relation
-
-            /// The name of the file in the EmbeddedFiles name tree (for child relation).
-            public var name: String?
-
-            /// The page number in a PDF Portfolio (PDF 2.0).
-            public var pageNumber: Int?
-
-            /// The annotation index on the page (for child relation).
-            public var annotationIndex: Int?
-
-            /// Further target specification for multi-level embedding.
-            public var next: Box<Target>?
-
-            public init(
-                relation: Relation,
-                name: String? = nil,
-                pageNumber: Int? = nil,
-                annotationIndex: Int? = nil,
-                next: Target? = nil
-            ) {
-                self.relation = relation
-                self.name = name
-                self.pageNumber = pageNumber
-                self.annotationIndex = annotationIndex
-                self.next = next.map { Box($0) }
-            }
-        }
-
         public init(
             destination: ISO_32000.Destination,
             file: String? = nil,
@@ -449,13 +413,60 @@ extension ISO_32000.Action {
             self.value = value
         }
 
+        // API-IMPL-008: SKIP — Box<T> is a generic type; static members cannot
+        // be extracted from a generic type's extension without ambiguity risk.
         public static func == (lhs: Box<T>, rhs: Box<T>) -> Bool {
             lhs.value == rhs.value
         }
 
+        // API-IMPL-008: SKIP — Box<T> is a generic type; see note above.
         public func hash(into hasher: inout Hasher) {
             hasher.combine(value)
         }
+    }
+}
+
+extension ISO_32000.Action.GoToE {
+    /// Target dictionary for embedded go-to action
+    public struct Target: Sendable, Hashable {
+        /// The relationship to the target.
+        public var relation: Relation
+
+        /// The name of the file in the EmbeddedFiles name tree (for child relation).
+        public var name: String?
+
+        /// The page number in a PDF Portfolio (PDF 2.0).
+        public var pageNumber: Int?
+
+        /// The annotation index on the page (for child relation).
+        public var annotationIndex: Int?
+
+        /// Further target specification for multi-level embedding.
+        public var next: ISO_32000.Action.Box<Target>?
+
+        public init(
+            relation: Relation,
+            name: String? = nil,
+            pageNumber: Int? = nil,
+            annotationIndex: Int? = nil,
+            next: Target? = nil
+        ) {
+            self.relation = relation
+            self.name = name
+            self.pageNumber = pageNumber
+            self.annotationIndex = annotationIndex
+            self.next = next.map { ISO_32000.Action.Box($0) }
+        }
+    }
+}
+
+extension ISO_32000.Action.GoToE.Target {
+    /// The relationship between the current document and the target.
+    public enum Relation: String, Sendable, Hashable, Codable, CaseIterable {
+        /// The target is the parent of the current document.
+        case parent = "P"
+        /// The target is a child of the current document.
+        case child = "C"
     }
 }
 
@@ -519,41 +530,6 @@ extension ISO_32000.Action {
         /// > window. Default value: false.
         public var newWindow: Bool?
 
-        /// Windows-specific launch parameters (Table 207)
-        public struct WindowsLaunch: Sendable, Hashable {
-            /// The file name of the application or document.
-            public var file: String
-
-            /// The default directory.
-            public var directory: String?
-
-            /// The operation to perform: "open" or "print".
-            public var operation: Operation?
-
-            /// The parameter string to pass to the application.
-            public var parameters: String?
-
-            /// Windows launch operations
-            public enum Operation: String, Sendable, Hashable, Codable, CaseIterable {
-                /// Open the document.
-                case open
-                /// Print the document.
-                case print
-            }
-
-            public init(
-                file: String,
-                directory: String? = nil,
-                operation: Operation? = nil,
-                parameters: String? = nil
-            ) {
-                self.file = file
-                self.directory = directory
-                self.operation = operation
-                self.parameters = parameters
-            }
-        }
-
         public init(
             file: String? = nil,
             win: WindowsLaunch? = nil,
@@ -563,6 +539,45 @@ extension ISO_32000.Action {
             self.win = win
             self.newWindow = newWindow
         }
+    }
+}
+
+extension ISO_32000.Action.Launch {
+    /// Windows-specific launch parameters (Table 207)
+    public struct WindowsLaunch: Sendable, Hashable {
+        /// The file name of the application or document.
+        public var file: String
+
+        /// The default directory.
+        public var directory: String?
+
+        /// The operation to perform: "open" or "print".
+        public var operation: Operation?
+
+        /// The parameter string to pass to the application.
+        public var parameters: String?
+
+        public init(
+            file: String,
+            directory: String? = nil,
+            operation: Operation? = nil,
+            parameters: String? = nil
+        ) {
+            self.file = file
+            self.directory = directory
+            self.operation = operation
+            self.parameters = parameters
+        }
+    }
+}
+
+extension ISO_32000.Action.Launch.WindowsLaunch {
+    /// Windows launch operations
+    public enum Operation: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Open the document.
+        case open
+        /// Print the document.
+        case print
     }
 }
 
@@ -601,24 +616,6 @@ extension ISO_32000.Action {
         /// > into the thread's B array or an indirect reference to a bead dictionary.
         public var bead: BeadSpec?
 
-        /// Thread specification (index, name, or reference)
-        public enum ThreadSpec: Sendable, Hashable {
-            /// Index into the Threads array.
-            case index(Int)
-            /// Thread title.
-            case title(String)
-            /// Indirect reference to thread dictionary.
-            case reference(Int)
-        }
-
-        /// Bead specification (index or reference)
-        public enum BeadSpec: Sendable, Hashable {
-            /// Index into the thread's B array.
-            case index(Int)
-            /// Indirect reference to bead dictionary.
-            case reference(Int)
-        }
-
         public init(
             thread: ThreadSpec,
             file: String? = nil,
@@ -628,6 +625,26 @@ extension ISO_32000.Action {
             self.file = file
             self.bead = bead
         }
+    }
+}
+
+extension ISO_32000.Action.Thread {
+    /// Thread specification (index, name, or reference)
+    public enum ThreadSpec: Sendable, Hashable {
+        /// Index into the Threads array.
+        case index(Int)
+        /// Thread title.
+        case title(String)
+        /// Indirect reference to thread dictionary.
+        case reference(Int)
+    }
+
+    /// Bead specification (index or reference)
+    public enum BeadSpec: Sendable, Hashable {
+        /// Index into the thread's B array.
+        case index(Int)
+        /// Indirect reference to bead dictionary.
+        case reference(Int)
     }
 }
 
@@ -659,32 +676,34 @@ extension ISO_32000.Action {
         /// > be preserved when setting states. Default value: true.
         public var preserveRB: Bool
 
-        /// State change command
-        public enum Command: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Set the OCG to ON.
-            case on = "ON"
-            /// Set the OCG to OFF.
-            case off = "OFF"
-            /// Toggle the OCG state.
-            case toggle = "Toggle"
-        }
-
-        /// A state change entry (command + OCG references)
-        public struct StateChange: Sendable, Hashable {
-            /// The command to apply.
-            public var command: Command
-            /// Object references to OCG dictionaries.
-            public var ocgs: [Int]
-
-            public init(command: Command, ocgs: [Int]) {
-                self.command = command
-                self.ocgs = ocgs
-            }
-        }
-
         public init(state: [StateChange], preserveRB: Bool = true) {
             self.state = state
             self.preserveRB = preserveRB
+        }
+    }
+}
+
+extension ISO_32000.Action.SetOCGState {
+    /// State change command
+    public enum Command: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Set the OCG to ON.
+        case on = "ON"
+        /// Set the OCG to OFF.
+        case off = "OFF"
+        /// Toggle the OCG state.
+        case toggle = "Toggle"
+    }
+
+    /// A state change entry (command + OCG references)
+    public struct StateChange: Sendable, Hashable {
+        /// The command to apply.
+        public var command: Command
+        /// Object references to OCG dictionaries.
+        public var ocgs: [Int]
+
+        public init(command: Command, ocgs: [Int]) {
+            self.command = command
+            self.ocgs = ocgs
         }
     }
 }
@@ -728,20 +747,6 @@ extension ISO_32000.Action {
         /// > (Optional) A text string or stream containing an ECMAScript script.
         public var javaScript: String?
 
-        /// Rendition operations (Table 218)
-        public enum Operation: Int, Sendable, Hashable, Codable, CaseIterable {
-            /// Associate rendition with annotation and play.
-            case play = 0
-            /// Stop any rendition playing in the annotation.
-            case stop = 1
-            /// Pause any rendition playing in the annotation.
-            case pause = 2
-            /// Resume any paused rendition.
-            case resume = 3
-            /// Play the rendition designated by the AN entry.
-            case playFromAnnotation = 4
-        }
-
         public init(
             operation: Operation? = nil,
             annotation: Int? = nil,
@@ -753,6 +758,22 @@ extension ISO_32000.Action {
             self.rendition = rendition
             self.javaScript = javaScript
         }
+    }
+}
+
+extension ISO_32000.Action.Rendition {
+    /// Rendition operations (Table 218)
+    public enum Operation: Int, Sendable, Hashable, Codable, CaseIterable {
+        /// Associate rendition with annotation and play.
+        case play = 0
+        /// Stop any rendition playing in the annotation.
+        case stop = 1
+        /// Pause any rendition playing in the annotation.
+        case pause = 2
+        /// Resume any paused rendition.
+        case resume = 3
+        /// Play the rendition designated by the AN entry.
+        case playFromAnnotation = 4
     }
 }
 
@@ -776,51 +797,55 @@ extension ISO_32000.Action {
         /// > (see 14.11.3, "Transitions").
         public var trans: TransitionDict
 
-        /// Transition dictionary (simplified representation)
-        public struct TransitionDict: Sendable, Hashable {
-            /// Transition style
-            public var style: Style
-
-            /// Duration of the transition in seconds. Default: 1.
-            public var duration: Double
-
-            /// Transition styles (Table 363)
-            public enum Style: String, Sendable, Hashable, Codable, CaseIterable {
-                /// Two lines sweep across the screen, split.
-                case split = "Split"
-                /// Multiple lines sweep across the screen, blinds.
-                case blinds = "Blinds"
-                /// The new page reveals from one box to four.
-                case box = "Box"
-                /// Single line sweeping across the screen.
-                case wipe = "Wipe"
-                /// Old page dissolves to reveal the new page.
-                case dissolve = "Dissolve"
-                /// Similar to Dissolve, pixels in two-direction sweep.
-                case glitter = "Glitter"
-                /// No transition effect.
-                case replace = "R"
-                /// Changes are flown in (PDF 1.5).
-                case fly = "Fly"
-                /// Old page pushes new page (PDF 1.5).
-                case push = "Push"
-                /// New page slides over old (PDF 1.5).
-                case cover = "Cover"
-                /// Old page slides off (PDF 1.5).
-                case uncover = "Uncover"
-                /// Old page fades out, new fades in (PDF 1.5).
-                case fade = "Fade"
-            }
-
-            public init(style: Style = .replace, duration: Double = 1) {
-                self.style = style
-                self.duration = duration
-            }
-        }
-
         public init(trans: TransitionDict) {
             self.trans = trans
         }
+    }
+}
+
+extension ISO_32000.Action.Transition {
+    /// Transition dictionary (simplified representation)
+    public struct TransitionDict: Sendable, Hashable {
+        /// Transition style
+        public var style: Style
+
+        /// Duration of the transition in seconds. Default: 1.
+        public var duration: Double
+
+        public init(style: Style = .replace, duration: Double = 1) {
+            self.style = style
+            self.duration = duration
+        }
+    }
+}
+
+extension ISO_32000.Action.Transition.TransitionDict {
+    /// Transition styles (Table 363)
+    public enum Style: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Two lines sweep across the screen, split.
+        case split = "Split"
+        /// Multiple lines sweep across the screen, blinds.
+        case blinds = "Blinds"
+        /// The new page reveals from one box to four.
+        case box = "Box"
+        /// Single line sweeping across the screen.
+        case wipe = "Wipe"
+        /// Old page dissolves to reveal the new page.
+        case dissolve = "Dissolve"
+        /// Similar to Dissolve, pixels in two-direction sweep.
+        case glitter = "Glitter"
+        /// No transition effect.
+        case replace = "R"
+        /// Changes are flown in (PDF 1.5).
+        case fly = "Fly"
+        /// Old page pushes new page (PDF 1.5).
+        case push = "Push"
+        /// New page slides over old (PDF 1.5).
+        case cover = "Cover"
+        /// Old page slides off (PDF 1.5).
+        case uncover = "Uncover"
+        /// Old page fades out, new fades in (PDF 1.5).
+        case fade = "Fade"
     }
 }
 
@@ -849,43 +874,47 @@ extension ISO_32000.Action {
         /// > (Required) An indirect reference to a rich media command dictionary.
         public var command: Command
 
-        /// Rich media command dictionary (Table 222)
-        public struct Command: Sendable, Hashable {
-            /// The type of command.
-            ///
-            /// Per ISO 32000-2 Table 222:
-            /// > (Required) Specifies the type of command.
-            public var type: CommandType
-
-            /// The command name.
-            ///
-            /// Per ISO 32000-2 Table 222:
-            /// > (Optional) The command name.
-            public var name: String?
-
-            /// The argument to pass.
-            ///
-            /// Per ISO 32000-2 Table 222:
-            /// > (Optional) The argument to pass to the command.
-            public var argument: String?
-
-            /// Command types
-            public enum CommandType: String, Sendable, Hashable, Codable, CaseIterable {
-                /// Call a JavaScript function in the instance.
-                case javaScript = "cycscript"
-            }
-
-            public init(type: CommandType, name: String? = nil, argument: String? = nil) {
-                self.type = type
-                self.name = name
-                self.argument = argument
-            }
-        }
-
         public init(annotation: Int, command: Command) {
             self.annotation = annotation
             self.command = command
         }
+    }
+}
+
+extension ISO_32000.Action.RichMediaExecute {
+    /// Rich media command dictionary (Table 222)
+    public struct Command: Sendable, Hashable {
+        /// The type of command.
+        ///
+        /// Per ISO 32000-2 Table 222:
+        /// > (Required) Specifies the type of command.
+        public var type: CommandType
+
+        /// The command name.
+        ///
+        /// Per ISO 32000-2 Table 222:
+        /// > (Optional) The command name.
+        public var name: String?
+
+        /// The argument to pass.
+        ///
+        /// Per ISO 32000-2 Table 222:
+        /// > (Optional) The argument to pass to the command.
+        public var argument: String?
+
+        public init(type: CommandType, name: String? = nil, argument: String? = nil) {
+            self.type = type
+            self.name = name
+            self.argument = argument
+        }
+    }
+}
+
+extension ISO_32000.Action.RichMediaExecute.Command {
+    /// Command types
+    public enum CommandType: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Call a JavaScript function in the instance.
+        case javaScript = "cycscript"
     }
 }
 

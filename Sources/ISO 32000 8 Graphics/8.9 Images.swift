@@ -75,16 +75,6 @@ extension ISO_32000.`8`.`9` {
         /// Unique identifier for resource naming
         public let id: UInt64
 
-        // MARK: - ID Generation
-
-        /// Thread-safe counter for generating unique IDs
-        private static let idCounter = Atomic<UInt64>(0)
-
-        /// Generate next unique ID
-        private static func nextID() -> UInt64 {
-            idCounter.wrappingAdd(1, ordering: .relaxed).newValue
-        }
-
         // MARK: - Initializers
 
         /// Create an image with explicit parameters
@@ -104,16 +94,30 @@ extension ISO_32000.`8`.`9` {
             self.data = data
             self.id = Self.nextID()
         }
+    }
+}
 
-        // MARK: - Hashable
+extension ISO_32000.`8`.`9`.Image {
+    // MARK: - ID Generation
 
-        public static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.id == rhs.id
-        }
+    /// Thread-safe counter for generating unique IDs
+    private static let idCounter = Atomic<UInt64>(0)
 
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-        }
+    /// Generate next unique ID
+    private static func nextID() -> UInt64 {
+        idCounter.wrappingAdd(1, ordering: .relaxed).newValue
+    }
+}
+
+extension ISO_32000.`8`.`9`.Image {
+    // MARK: - Hashable
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
@@ -121,26 +125,30 @@ extension ISO_32000.`8`.`9` {
 
 extension ISO_32000.`8`.`9`.Image {
     /// Image color namespace
-    public enum Color {
-        /// Image color spaces (ISO 32000-2:2020, 8.6)
-        public enum Space: Sendable, Hashable {
-            /// DeviceGray - single component grayscale
-            case deviceGray
+    public enum Color {}
+}
 
-            /// DeviceRGB - three component RGB
-            case deviceRGB
+extension ISO_32000.`8`.`9`.Image.Color {
+    /// Image color spaces (ISO 32000-2:2020, 8.6)
+    public enum Space: Sendable, Hashable {
+        /// DeviceGray - single component grayscale
+        case deviceGray
 
-            /// DeviceCMYK - four component CMYK
-            case deviceCMYK
+        /// DeviceRGB - three component RGB
+        case deviceRGB
 
-            /// Number of components for this color space
-            public var components: Int {
-                switch self {
-                case .deviceGray: 1
-                case .deviceRGB: 3
-                case .deviceCMYK: 4
-                }
-            }
+        /// DeviceCMYK - four component CMYK
+        case deviceCMYK
+    }
+}
+
+extension ISO_32000.`8`.`9`.Image.Color.Space {
+    /// Number of components for this color space
+    public var components: Int {
+        switch self {
+        case .deviceGray: 1
+        case .deviceRGB: 3
+        case .deviceCMYK: 4
         }
     }
 }
@@ -162,24 +170,26 @@ extension ISO_32000.`8`.`9`.Image {
 
 extension ISO_32000.`8`.`9`.Image {
     /// Image parsing namespace
-    public enum Parse {
-        /// Image parsing errors
-        public enum Error: Swift.Error, Sendable, Hashable {
-            /// Invalid image header (not recognized format)
-            case invalidHeader
+    public enum Parse {}
+}
 
-            /// Unsupported color space / component count
-            case unsupportedColorSpace(components: Int)
+extension ISO_32000.`8`.`9`.Image.Parse {
+    /// Image parsing errors
+    public enum Error: Swift.Error, Sendable, Hashable {
+        /// Invalid image header (not recognized format)
+        case invalidHeader
 
-            /// Image data truncated
-            case truncatedData
+        /// Unsupported color space / component count
+        case unsupportedColorSpace(components: Int)
 
-            /// Missing required marker (for example, JPEG SOF)
-            case missingMarker
+        /// Image data truncated
+        case truncatedData
 
-            /// Unsupported image format
-            case unsupportedFormat
-        }
+        /// Missing required marker (for example, JPEG SOF)
+        case missingMarker
+
+        /// Unsupported image format
+        case unsupportedFormat
     }
 }
 

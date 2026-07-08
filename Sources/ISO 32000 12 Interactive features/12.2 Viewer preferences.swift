@@ -215,10 +215,14 @@ extension ISO_32000.`12`.`2` {
             self.print = print
             self.enforce = enforce
         }
-
-        /// Default viewer preferences (all defaults per the spec).
-        public static let `default` = Viewer()
     }
+}
+
+// MARK: - Viewer.default
+
+extension ISO_32000.`12`.`2`.Viewer {
+    /// Default viewer preferences (all defaults per the spec).
+    public static let `default` = Self()
 }
 
 // MARK: - Viewer.View

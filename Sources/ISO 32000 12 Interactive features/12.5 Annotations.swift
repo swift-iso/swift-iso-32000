@@ -119,9 +119,6 @@ extension ISO_32000.`12`.`5` {
         /// The type-specific content (sum type over all annotation subtypes).
         public var content: Content
 
-        /// The subtype, derived from content.
-        public var subtype: Subtype { content.subtype }
-
         public init(
             rect: ISO_32000.UserSpace.Rectangle,
             content: Content,
@@ -156,6 +153,11 @@ extension ISO_32000.`12`.`5` {
             self.appearanceState = appearanceState
         }
     }
+}
+
+extension ISO_32000.`12`.`5`.Annotation {
+    /// The subtype, derived from content.
+    public var subtype: Subtype { content.subtype }
 }
 
 // MARK: - Annotation.Content (Sum Type)
@@ -210,31 +212,33 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         /// Widget annotation (Table 191) - for interactive forms
         case widget(Widget)
+    }
+}
 
-        /// The subtype for this content.
-        public var subtype: Subtype {
-            switch self {
-            case .link: return .link
-            case .text: return .text
-            case .freeText: return .freeText
-            case .line: return .line
-            case .shape(let s): return s.kind == .square ? .square : .circle
-            case .poly(let p): return p.kind == .polygon ? .polygon : .polyLine
-            case .textMarkup(let tm):
-                switch tm.kind {
-                case .highlight: return .highlight
-                case .underline: return .underline
-                case .strikeOut: return .strikeOut
-                case .squiggly: return .squiggly
-                }
-            case .caret: return .caret
-            case .stamp: return .stamp
-            case .ink: return .ink
-            case .popup: return .popup
-            case .fileAttachment: return .fileAttachment
-            case .redaction: return .redact
-            case .widget: return .widget
+extension ISO_32000.`12`.`5`.Annotation.Content {
+    /// The subtype for this content.
+    public var subtype: ISO_32000.`12`.`5`.Annotation.Subtype {
+        switch self {
+        case .link: return .link
+        case .text: return .text
+        case .freeText: return .freeText
+        case .line: return .line
+        case .shape(let s): return s.kind == .square ? .square : .circle
+        case .poly(let p): return p.kind == .polygon ? .polygon : .polyLine
+        case .textMarkup(let tm):
+            switch tm.kind {
+            case .highlight: return .highlight
+            case .underline: return .underline
+            case .strikeOut: return .strikeOut
+            case .squiggly: return .squiggly
             }
+        case .caret: return .caret
+        case .stamp: return .stamp
+        case .ink: return .ink
+        case .popup: return .popup
+        case .fileAttachment: return .fileAttachment
+        case .redaction: return .redact
+        case .widget: return .widget
         }
     }
 }
@@ -333,40 +337,42 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         /// RichMedia annotation (PDF 2.0). Not a markup annotation.
         case richMedia = "RichMedia"
+    }
+}
 
-        /// Whether this annotation type is a markup annotation.
-        public var isMarkup: Bool {
-            switch self {
-            case .text, .freeText, .line, .square, .circle,
-                .polygon, .polyLine, .highlight, .underline,
-                .squiggly, .strikeOut, .caret, .stamp, .ink,
-                .fileAttachment, .sound, .redact, .projection:
-                return true
-            case .link, .popup, .movie, .screen, .widget,
-                .printerMark, .trapNet, .watermark, .threeD, .richMedia:
-                return false
-            }
+extension ISO_32000.`12`.`5`.Annotation.Subtype {
+    /// Whether this annotation type is a markup annotation.
+    public var isMarkup: Bool {
+        switch self {
+        case .text, .freeText, .line, .square, .circle,
+            .polygon, .polyLine, .highlight, .underline,
+            .squiggly, .strikeOut, .caret, .stamp, .ink,
+            .fileAttachment, .sound, .redact, .projection:
+            return true
+        case .link, .popup, .movie, .screen, .widget,
+            .printerMark, .trapNet, .watermark, .threeD, .richMedia:
+            return false
         }
+    }
 
-        /// Whether this annotation type is a text markup annotation.
-        public var isTextMarkup: Bool {
-            switch self {
-            case .highlight, .underline, .squiggly, .strikeOut:
-                return true
-            default:
-                return false
-            }
+    /// Whether this annotation type is a text markup annotation.
+    public var isTextMarkup: Bool {
+        switch self {
+        case .highlight, .underline, .squiggly, .strikeOut:
+            return true
+        default:
+            return false
         }
+    }
 
-        /// The COS name representation of this subtype.
-        ///
-        /// All annotation subtype raw values are valid PDF name objects
-        /// (non-empty, no whitespace, no null bytes, within length limits).
-        public var name: ISO_32000.`7`.`3`.COS.Name {
-            // Provably-valid literal: all subtype raw values are valid PDF name objects (see doc comment above).
-            // swiftlint:disable:next force_try
-            try! ISO_32000.`7`.`3`.COS.Name(rawValue)
-        }
+    /// The COS name representation of this subtype.
+    ///
+    /// All annotation subtype raw values are valid PDF name objects
+    /// (non-empty, no whitespace, no null bytes, within length limits).
+    public var name: ISO_32000.`7`.`3`.COS.Name {
+        // Provably-valid literal: all subtype raw values are valid PDF name objects (see doc comment above).
+        // swiftlint:disable:next force_try
+        try! ISO_32000.`7`.`3`.COS.Name(rawValue)
     }
 }
 
@@ -387,37 +393,39 @@ extension ISO_32000.`12`.`5`.Annotation {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// Bit 1: Do not render unknown annotation types.
-        public static let invisible = Flags(rawValue: 1 << 0)
-
-        /// Bit 2: Do not render or allow interaction. (PDF 1.2)
-        public static let hidden = Flags(rawValue: 1 << 1)
-
-        /// Bit 3: Print when the page is printed. (PDF 1.2)
-        public static let print = Flags(rawValue: 1 << 2)
-
-        /// Bit 4: Do not scale with page magnification. (PDF 1.3)
-        public static let noZoom = Flags(rawValue: 1 << 3)
-
-        /// Bit 5: Do not rotate with page rotation. (PDF 1.3)
-        public static let noRotate = Flags(rawValue: 1 << 4)
-
-        /// Bit 6: Do not render on screen but may print. (PDF 1.3)
-        public static let noView = Flags(rawValue: 1 << 5)
-
-        /// Bit 7: Do not allow user interaction. (PDF 1.3)
-        public static let readOnly = Flags(rawValue: 1 << 6)
-
-        /// Bit 8: Do not allow deletion or property modification. (PDF 1.4)
-        public static let locked = Flags(rawValue: 1 << 7)
-
-        /// Bit 9: Invert NoView flag for hover and selection. (PDF 1.5)
-        public static let toggleNoView = Flags(rawValue: 1 << 8)
-
-        /// Bit 10: Do not allow content modification. (PDF 1.7)
-        public static let lockedContents = Flags(rawValue: 1 << 9)
     }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Flags {
+    /// Bit 1: Do not render unknown annotation types.
+    public static let invisible = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 0)
+
+    /// Bit 2: Do not render or allow interaction. (PDF 1.2)
+    public static let hidden = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 1)
+
+    /// Bit 3: Print when the page is printed. (PDF 1.2)
+    public static let print = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 2)
+
+    /// Bit 4: Do not scale with page magnification. (PDF 1.3)
+    public static let noZoom = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 3)
+
+    /// Bit 5: Do not rotate with page rotation. (PDF 1.3)
+    public static let noRotate = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 4)
+
+    /// Bit 6: Do not render on screen but may print. (PDF 1.3)
+    public static let noView = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 5)
+
+    /// Bit 7: Do not allow user interaction. (PDF 1.3)
+    public static let readOnly = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 6)
+
+    /// Bit 8: Do not allow deletion or property modification. (PDF 1.4)
+    public static let locked = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 7)
+
+    /// Bit 9: Invert NoView flag for hover and selection. (PDF 1.5)
+    public static let toggleNoView = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 8)
+
+    /// Bit 10: Do not allow content modification. (PDF 1.7)
+    public static let lockedContents = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 9)
 }
 
 // MARK: - Annotation.Color
@@ -438,11 +446,13 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         /// DeviceCMYK color space
         case cmyk(cyan: Double, magenta: Double, yellow: Double, black: Double)
+    }
+}
 
-        /// Creates an RGB color.
-        public static func rgb(_ red: Double, _ green: Double, _ blue: Double) -> Color {
-            .rgb(red: red, green: green, blue: blue)
-        }
+extension ISO_32000.`12`.`5`.Annotation.Color {
+    /// Creates an RGB color.
+    public static func rgb(_ red: Double, _ green: Double, _ blue: Double) -> ISO_32000.`12`.`5`.Annotation.Color {
+        .rgb(red: red, green: green, blue: blue)
     }
 }
 
@@ -476,13 +486,15 @@ extension ISO_32000.`12`.`5` {
             self.width = width
             self.dashArray = dashArray
         }
-
-        /// Default border: solid line, 1 point width, square corners.
-        public static let `default` = Border()
-
-        /// No border.
-        public static let none = Border(width: 0)
     }
+}
+
+extension ISO_32000.`12`.`5`.Border {
+    /// Default border: solid line, 1 point width, square corners.
+    public static let `default` = ISO_32000.`12`.`5`.Border()
+
+    /// No border.
+    public static let none = ISO_32000.`12`.`5`.Border(width: 0)
 }
 
 // MARK: - Border.Style (Table 168)
@@ -506,24 +518,6 @@ extension ISO_32000.`12`.`5`.Border {
         /// Dash array for dashed borders. Default: [3].
         public var dashArray: [Double]?
 
-        /// Border style kinds (Table 168, S entry)
-        public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Solid rectangle surrounding the annotation.
-            case solid = "S"
-
-            /// Dashed rectangle surrounding the annotation.
-            case dashed = "D"
-
-            /// Simulated embossed rectangle (raised appearance).
-            case beveled = "B"
-
-            /// Simulated engraved rectangle (recessed appearance).
-            case inset = "I"
-
-            /// Single line along the bottom of the annotation rectangle.
-            case underline = "U"
-        }
-
         public init(
             width: Double = 1,
             style: Kind = .solid,
@@ -533,10 +527,30 @@ extension ISO_32000.`12`.`5`.Border {
             self.style = style
             self.dashArray = dashArray
         }
-
-        /// Default border style.
-        public static let `default` = Style()
     }
+}
+
+extension ISO_32000.`12`.`5`.Border.Style {
+    /// Border style kinds (Table 168, S entry)
+    public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Solid rectangle surrounding the annotation.
+        case solid = "S"
+
+        /// Dashed rectangle surrounding the annotation.
+        case dashed = "D"
+
+        /// Simulated embossed rectangle (raised appearance).
+        case beveled = "B"
+
+        /// Simulated engraved rectangle (recessed appearance).
+        case inset = "I"
+
+        /// Single line along the bottom of the annotation rectangle.
+        case underline = "U"
+    }
+
+    /// Default border style.
+    public static let `default` = ISO_32000.`12`.`5`.Border.Style()
 }
 
 // MARK: - Border.Effect (Table 169)
@@ -556,19 +570,21 @@ extension ISO_32000.`12`.`5`.Border {
         /// Effect intensity (0 to 2). Default: 0.
         public var intensity: Double
 
-        /// Border effect kinds (Table 169, S entry)
-        public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
-            /// No effect: border as described by BS entry.
-            case none = "S"
-
-            /// Cloudy border: drawn as convex curved segments.
-            case cloudy = "C"
-        }
-
         public init(effect: Kind = .none, intensity: Double = 0) {
             self.effect = effect
             self.intensity = intensity
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Border.Effect {
+    /// Border effect kinds (Table 169, S entry)
+    public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
+        /// No effect: border as described by BS entry.
+        case none = "S"
+
+        /// Cloudy border: drawn as convex curved segments.
+        case cloudy = "C"
     }
 }
 
@@ -741,26 +757,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Each quadrilateral defines a region of interest on the page.
         public var quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]?
 
-        /// The target of the link
-        public enum Target: Sendable, Hashable {
-            /// URI action for external hyperlinks
-            case uri(String)
-            /// Internal destination within the document
-            case destination(ISO_32000.Destination)
-        }
-
-        /// Highlight mode for link annotations (H entry)
-        public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
-            /// No highlighting
-            case none = "N"
-            /// Invert the contents of the annotation rectangle
-            case invert = "I"
-            /// Invert the annotation's border
-            case outline = "O"
-            /// Display as if being pushed below the surface
-            case push = "P"
-        }
-
         public init(
             target: Target,
             highlightMode: HighlightMode = .invert,
@@ -782,6 +778,28 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.highlightMode = highlightMode
             self.quadPoints = nil
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Link {
+    /// The target of the link
+    public enum Target: Sendable, Hashable {
+        /// URI action for external hyperlinks
+        case uri(String)
+        /// Internal destination within the document
+        case destination(ISO_32000.Destination)
+    }
+
+    /// Highlight mode for link annotations (H entry)
+    public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
+        /// No highlighting
+        case none = "N"
+        /// Invert the contents of the annotation rectangle
+        case invert = "I"
+        /// Invert the annotation's border
+        case outline = "O"
+        /// Display as if being pushed below the surface
+        case push = "P"
     }
 }
 
@@ -807,22 +825,24 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Each quadrilateral specifies a marked-up region on the page.
         public var quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]
 
-        /// Text markup annotation kinds
-        public enum Kind: Sendable, Hashable {
-            /// Highlight annotation (PDF 1.3)
-            case highlight(Color)
-            /// Underline annotation (PDF 1.3)
-            case underline
-            /// Strikeout annotation (PDF 1.3)
-            case strikeOut
-            /// Squiggly-underline annotation (PDF 1.4)
-            case squiggly
-        }
-
         public init(kind: Kind, quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]) {
             self.kind = kind
             self.quadPoints = quadPoints
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.TextMarkup {
+    /// Text markup annotation kinds
+    public enum Kind: Sendable, Hashable {
+        /// Highlight annotation (PDF 1.3)
+        case highlight(ISO_32000.`12`.`5`.Annotation.Color)
+        /// Underline annotation (PDF 1.3)
+        case underline
+        /// Strikeout annotation (PDF 1.3)
+        case strikeOut
+        /// Squiggly-underline annotation (PDF 1.4)
+        case squiggly
     }
 }
 
@@ -874,28 +894,30 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         /// The user has indicated nothing about the change (default for Review model).
         case none
+    }
+}
 
-        /// The state model for this state.
-        public var stateModel: StateModel {
-            switch self {
-            case .marked, .unmarked:
-                return .marked
-            case .accepted, .rejected, .cancelled, .completed, .none:
-                return .review
-            }
+extension ISO_32000.`12`.`5`.Annotation.State {
+    /// The state model for this state.
+    public var stateModel: ISO_32000.`12`.`5`.Annotation.StateModel {
+        switch self {
+        case .marked, .unmarked:
+            return .marked
+        case .accepted, .rejected, .cancelled, .completed, .none:
+            return .review
         }
+    }
 
-        /// The PDF name value for this state.
-        public var rawValue: String {
-            switch self {
-            case .marked: return "Marked"
-            case .unmarked: return "Unmarked"
-            case .accepted: return "Accepted"
-            case .rejected: return "Rejected"
-            case .cancelled: return "Cancelled"
-            case .completed: return "Completed"
-            case .none: return "None"
-            }
+    /// The PDF name value for this state.
+    public var rawValue: String {
+        switch self {
+        case .marked: return "Marked"
+        case .unmarked: return "Unmarked"
+        case .accepted: return "Accepted"
+        case .rejected: return "Rejected"
+        case .cancelled: return "Cancelled"
+        case .completed: return "Completed"
+        case .none: return "None"
         }
     }
 }
@@ -966,17 +988,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// The state to which the original annotation shall be set. (PDF 1.5)
         public var state: State?
 
-        /// Icon names for text annotations (Table 175)
-        public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
-            case comment = "Comment"
-            case key = "Key"
-            case note = "Note"
-            case help = "Help"
-            case newParagraph = "NewParagraph"
-            case paragraph = "Paragraph"
-            case insert = "Insert"
-        }
-
         public init(
             isOpen: Bool = false,
             iconName: IconName = .note,
@@ -986,6 +997,19 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.iconName = iconName
             self.state = state
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Text {
+    /// Icon names for text annotations (Table 175)
+    public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
+        case comment = "Comment"
+        case key = "Key"
+        case note = "Note"
+        case help = "Help"
+        case newParagraph = "NewParagraph"
+        case paragraph = "Paragraph"
+        case insert = "Insert"
     }
 }
 
@@ -1018,26 +1042,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Line ending style for the callout line. Default: `.none`.
         public var lineEnding: ISO_32000.`12`.`5`.LineEnding
 
-        /// Text quadding (justification)
-        public enum Quadding: Int, Sendable, Hashable, Codable, CaseIterable {
-            /// Left-justified
-            case leftJustified = 0
-            /// Centered
-            case centered = 1
-            /// Right-justified
-            case rightJustified = 2
-        }
-
-        /// Free text annotation intents (Table 177)
-        public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Plain free-text annotation (text box comment).
-            case freeText = "FreeText"
-            /// Callout annotation with a line to an area on the page.
-            case freeTextCallout = "FreeTextCallout"
-            /// Click-to-type or typewriter object, no callout line.
-            case freeTextTypeWriter = "FreeTextTypeWriter"
-        }
-
         public init(
             defaultAppearance: String,
             quadding: Quadding = .leftJustified,
@@ -1051,6 +1055,28 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.calloutLine = calloutLine
             self.lineEnding = lineEnding
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.FreeText {
+    /// Text quadding (justification)
+    public enum Quadding: Int, Sendable, Hashable, Codable, CaseIterable {
+        /// Left-justified
+        case leftJustified = 0
+        /// Centered
+        case centered = 1
+        /// Right-justified
+        case rightJustified = 2
+    }
+
+    /// Free text annotation intents (Table 177)
+    public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Plain free-text annotation (text box comment).
+        case freeText = "FreeText"
+        /// Callout annotation with a line to an area on the page.
+        case freeTextCallout = "FreeTextCallout"
+        /// Click-to-type or typewriter object, no callout line.
+        case freeTextTypeWriter = "FreeTextTypeWriter"
     }
 }
 
@@ -1113,22 +1139,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// The intent of the line annotation. Optional.
         public var intent: Intent?
 
-        /// Caption positioning (Table 178, CP entry)
-        public enum CaptionPosition: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Caption centered inside the line.
-            case inline = "Inline"
-            /// Caption on top of the line.
-            case top = "Top"
-        }
-
-        /// Line annotation intents (Table 178)
-        public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
-            /// The annotation is intended to function as an arrow.
-            case lineArrow = "LineArrow"
-            /// The annotation is intended to function as a dimension line.
-            case lineDimension = "LineDimension"
-        }
-
         public init(
             startX: Double,
             startY: Double,
@@ -1165,6 +1175,24 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
+extension ISO_32000.`12`.`5`.Annotation.Line {
+    /// Caption positioning (Table 178, CP entry)
+    public enum CaptionPosition: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Caption centered inside the line.
+        case inline = "Inline"
+        /// Caption on top of the line.
+        case top = "Top"
+    }
+
+    /// Line annotation intents (Table 178)
+    public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
+        /// The annotation is intended to function as an arrow.
+        case lineArrow = "LineArrow"
+        /// The annotation is intended to function as a dimension line.
+        case lineDimension = "LineDimension"
+    }
+}
+
 // MARK: - Annotation.Shape (Table 180)
 
 extension ISO_32000.`12`.`5`.Annotation {
@@ -1188,27 +1216,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Rectangle differences between Rect and actual shape. Optional.
         public var rectangleDifferences: RectangleDifferences?
 
-        /// Shape kinds
-        public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
-            case square = "Square"
-            case circle = "Circle"
-        }
-
-        /// Rectangle differences (RD entry)
-        public struct RectangleDifferences: Sendable, Hashable {
-            public var left: Double
-            public var top: Double
-            public var right: Double
-            public var bottom: Double
-
-            public init(left: Double, top: Double, right: Double, bottom: Double) {
-                self.left = left
-                self.top = top
-                self.right = right
-                self.bottom = bottom
-            }
-        }
-
         public init(
             kind: Kind,
             interiorColor: Color? = nil,
@@ -1217,6 +1224,29 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.kind = kind
             self.interiorColor = interiorColor
             self.rectangleDifferences = rectangleDifferences
+        }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Shape {
+    /// Shape kinds
+    public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
+        case square = "Square"
+        case circle = "Circle"
+    }
+
+    /// Rectangle differences (RD entry)
+    public struct RectangleDifferences: Sendable, Hashable {
+        public var left: Double
+        public var top: Double
+        public var right: Double
+        public var bottom: Double
+
+        public init(left: Double, top: Double, right: Double, bottom: Double) {
+            self.left = left
+            self.top = top
+            self.right = right
+            self.bottom = bottom
         }
     }
 }
@@ -1253,22 +1283,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// The intent of the annotation. Optional.
         public var intent: Intent?
 
-        /// Shape kinds
-        public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
-            case polygon = "Polygon"
-            case polyLine = "PolyLine"
-        }
-
-        /// Polygon/Polyline annotation intents (Table 181)
-        public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Polygon annotation intended to function as a cloud object.
-            case polygonCloud = "PolygonCloud"
-            /// Polyline annotation intended to function as a dimension. (PDF 1.7)
-            case polyLineDimension = "PolyLineDimension"
-            /// Polygon annotation intended to function as a dimension. (PDF 1.7)
-            case polygonDimension = "PolygonDimension"
-        }
-
         public init(
             kind: Kind,
             vertices: [Double],
@@ -1284,6 +1298,24 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.interiorColor = interiorColor
             self.intent = intent
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Poly {
+    /// Shape kinds
+    public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
+        case polygon = "Polygon"
+        case polyLine = "PolyLine"
+    }
+
+    /// Polygon/Polyline annotation intents (Table 181)
+    public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Polygon annotation intended to function as a cloud object.
+        case polygonCloud = "PolygonCloud"
+        /// Polyline annotation intended to function as a dimension. (PDF 1.7)
+        case polyLineDimension = "PolyLineDimension"
+        /// Polygon annotation intended to function as a dimension. (PDF 1.7)
+        case polygonDimension = "PolygonDimension"
     }
 }
 
@@ -1306,14 +1338,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// Symbol associated with the caret. Default: `.none`.
         public var symbol: Symbol
 
-        /// Caret symbols (Table 183)
-        public enum Symbol: String, Sendable, Hashable, Codable, CaseIterable {
-            /// A new paragraph symbol (¶) shall be associated with the caret.
-            case paragraph = "P"
-            /// No symbol shall be associated with the caret.
-            case none = "None"
-        }
-
         public init(
             rectangleDifferences: Shape.RectangleDifferences? = nil,
             symbol: Symbol = .none
@@ -1321,6 +1345,16 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.rectangleDifferences = rectangleDifferences
             self.symbol = symbol
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Caret {
+    /// Caret symbols (Table 183)
+    public enum Symbol: String, Sendable, Hashable, Codable, CaseIterable {
+        /// A new paragraph symbol (¶) shall be associated with the caret.
+        case paragraph = "P"
+        /// No symbol shall be associated with the caret.
+        case none = "None"
     }
 }
 
@@ -1343,34 +1377,6 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// The intent of the stamp annotation. Default: `.stamp`. (PDF 2.0)
         public var intent: Intent
 
-        /// Standard stamp icon names (Table 184)
-        public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
-            case approved = "Approved"
-            case experimental = "Experimental"
-            case notApproved = "NotApproved"
-            case asIs = "AsIs"
-            case expired = "Expired"
-            case notForPublicRelease = "NotForPublicRelease"
-            case confidential = "Confidential"
-            case final = "Final"
-            case sold = "Sold"
-            case departmental = "Departmental"
-            case forComment = "ForComment"
-            case topSecret = "TopSecret"
-            case draft = "Draft"
-            case forPublicRelease = "ForPublicRelease"
-        }
-
-        /// Stamp annotation intents (Table 184, PDF 2.0)
-        public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
-            /// Appearance taken from preexisting PDF content.
-            case stampSnapshot = "StampSnapshot"
-            /// Appearance is an image.
-            case stampImage = "StampImage"
-            /// Appearance is a rubber stamp.
-            case stamp = "Stamp"
-        }
-
         public init(
             iconName: IconName = .draft,
             intent: Intent = .stamp
@@ -1378,6 +1384,36 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.iconName = iconName
             self.intent = intent
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.Stamp {
+    /// Standard stamp icon names (Table 184)
+    public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
+        case approved = "Approved"
+        case experimental = "Experimental"
+        case notApproved = "NotApproved"
+        case asIs = "AsIs"
+        case expired = "Expired"
+        case notForPublicRelease = "NotForPublicRelease"
+        case confidential = "Confidential"
+        case final = "Final"
+        case sold = "Sold"
+        case departmental = "Departmental"
+        case forComment = "ForComment"
+        case topSecret = "TopSecret"
+        case draft = "Draft"
+        case forPublicRelease = "ForPublicRelease"
+    }
+
+    /// Stamp annotation intents (Table 184, PDF 2.0)
+    public enum Intent: String, Sendable, Hashable, Codable, CaseIterable {
+        /// Appearance taken from preexisting PDF content.
+        case stampSnapshot = "StampSnapshot"
+        /// Appearance is an image.
+        case stampImage = "StampImage"
+        /// Appearance is a rubber stamp.
+        case stamp = "Stamp"
     }
 }
 
@@ -1442,17 +1478,19 @@ extension ISO_32000.`12`.`5`.Annotation {
         /// The name of the icon to display. Default: `.pushPin`.
         public var iconName: IconName
 
-        /// Standard file attachment icon names (Table 187)
-        public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
-            case graph = "Graph"
-            case pushPin = "PushPin"
-            case paperclip = "Paperclip"
-            case tag = "Tag"
-        }
-
         public init(iconName: IconName = .pushPin) {
             self.iconName = iconName
         }
+    }
+}
+
+extension ISO_32000.`12`.`5`.Annotation.FileAttachment {
+    /// Standard file attachment icon names (Table 187)
+    public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
+        case graph = "Graph"
+        case pushPin = "PushPin"
+        case paperclip = "Paperclip"
+        case tag = "Tag"
     }
 }
 
