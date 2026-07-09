@@ -61,57 +61,60 @@ extension ISO_32000.`9`.`6` {
             self.metrics = ISO_32000.`9`.`8`.Metrics(fontFile: fontFile)
         }
 
-        /// Create a font descriptor for this embedded font.
-        ///
-        /// - Parameter fontName: The sanitized PostScript name for PDF
-        /// - Returns: A font descriptor suitable for PDF embedding
-        public func descriptor(fontName: ISO_32000.`7`.`3`.COS.Name) -> ISO_32000.`9`.`8`.Descriptor
-        {
-            ISO_32000.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
+    }
+}
+
+extension ISO_32000.`9`.`6`.Embedded {
+    /// Create a font descriptor for this embedded font.
+    ///
+    /// - Parameter fontName: The sanitized PostScript name for PDF
+    /// - Returns: A font descriptor suitable for PDF embedding
+    public func descriptor(fontName: ISO_32000.`7`.`3`.COS.Name) -> ISO_32000.`9`.`8`.Descriptor
+    {
+        ISO_32000.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
+    }
+
+    /// Errors that can occur during font subsetting.
+    public enum SubsettingError: Swift.Error, Sendable {
+        /// The font subsetter failed.
+        case subset(ISO_14496_22.FontSubsetter.SubsetError)
+        /// The subset font data could not be parsed.
+        case parsing(ISO_14496_22.FontFile.ParsingError)
+    }
+
+    /// Create a subset of this font containing only the specified characters.
+    ///
+    /// Font subsetting significantly reduces PDF file size by including only
+    /// the glyphs that are actually used. A typical font is 200KB+ but a subset
+    /// with just ASCII characters might be 5-20KB.
+    ///
+    /// - Parameter characters: The characters to include in the subset
+    /// - Returns: A new `Embedded` instance with subset font data
+    /// - Throws: `SubsettingError` if subsetting or re-parsing fails
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let fontData: [Byte] = ... // Full TrueType font (500KB)
+    /// let embedded = try Embedded(data: fontData)
+    /// let usedChars: Set<Character> = ["H", "e", "l", "o", " ", "W", "r", "d", "!"]
+    /// let subset = try embedded.subsetted(for: usedChars)
+    /// // subset.data is now ~5KB instead of 500KB
+    /// ```
+    public func subsetted(for characters: Set<Character>) throws(SubsettingError) -> Self {
+        let subsetter = ISO_14496_22.FontSubsetter(fontFile: fontFile)
+        let subsetData: [Byte]
+        do throws(ISO_14496_22.FontSubsetter.SubsetError) {
+            subsetData = try subsetter.subset(characters: characters)
+        } catch {
+            throw .subset(error)
         }
 
-        /// Errors that can occur during font subsetting.
-        public enum SubsettingError: Swift.Error, Sendable {
-            /// The font subsetter failed.
-            case subset(ISO_14496_22.FontSubsetter.SubsetError)
-            /// The subset font data could not be parsed.
-            case parsing(ISO_14496_22.FontFile.ParsingError)
-        }
-
-        /// Create a subset of this font containing only the specified characters.
-        ///
-        /// Font subsetting significantly reduces PDF file size by including only
-        /// the glyphs that are actually used. A typical font is 200KB+ but a subset
-        /// with just ASCII characters might be 5-20KB.
-        ///
-        /// - Parameter characters: The characters to include in the subset
-        /// - Returns: A new `Embedded` instance with subset font data
-        /// - Throws: `SubsettingError` if subsetting or re-parsing fails
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let fontData: [Byte] = ... // Full TrueType font (500KB)
-        /// let embedded = try Embedded(data: fontData)
-        /// let usedChars: Set<Character> = ["H", "e", "l", "o", " ", "W", "r", "d", "!"]
-        /// let subset = try embedded.subsetted(for: usedChars)
-        /// // subset.data is now ~5KB instead of 500KB
-        /// ```
-        public func subsetted(for characters: Set<Character>) throws(SubsettingError) -> Embedded {
-            let subsetter = ISO_14496_22.FontSubsetter(fontFile: fontFile)
-            let subsetData: [Byte]
-            do {
-                subsetData = try subsetter.subset(characters: characters)
-            } catch {
-                throw .subset(error)
-            }
-
-            // Parse the subset font to get updated metrics
-            do {
-                return try Embedded(data: subsetData)
-            } catch {
-                throw .parsing(error)
-            }
+        // Parse the subset font to get updated metrics
+        do throws(ISO_14496_22.FontFile.ParsingError) {
+            return try Self(data: subsetData)
+        } catch {
+            throw .parsing(error)
         }
     }
 }
@@ -252,12 +255,12 @@ extension ISO_32000.`9`.`6`.Font {
         style: Style = .normal
     ) throws(DataError) {
         let embedded: ISO_32000.`9`.`6`.Embedded
-        do {
+        do throws(ISO_14496_22.FontFile.ParsingError) {
             embedded = try ISO_32000.`9`.`6`.Embedded(data: data)
         } catch {
             throw .parsing(error)
         }
-        do {
+        do throws(ISO_32000.`7`.`3`.COS.Name.Error) {
             try self.init(
                 embedded: embedded,
                 resourceName: resourceName,

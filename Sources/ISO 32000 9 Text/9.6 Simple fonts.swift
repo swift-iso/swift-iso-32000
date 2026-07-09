@@ -51,16 +51,6 @@ extension ISO_32000.`9`.`6` {
         ///    produce dangling pointers to large inline structs in debug mode
         private let _storage: Ownership.Immutable<Storage>
 
-        public var baseFontName: ISO_32000.`7`.`3`.COS.Name { _storage.value.baseFontName }
-        public var resourceName: ISO_32000.`7`.`3`.COS.Name { _storage.value.resourceName }
-        public var metrics: ISO_32000.`9`.`8`.Metrics { _storage.value.metrics }
-        public var isMonospaced: Bool { _storage.value.isMonospaced }
-        public var weight: Weight { _storage.value.weight }
-        public var style: Style { _storage.value.style }
-        public var family: Family { _storage.value.family }
-        public var embeddedSource: Embedded? { _storage.value.embeddedSource }
-        public var isEmbedded: Bool { embeddedSource != nil }
-
         public init(
             baseFontName: ISO_32000.`7`.`3`.COS.Name,
             resourceName: ISO_32000.`7`.`3`.COS.Name,
@@ -84,17 +74,29 @@ extension ISO_32000.`9`.`6` {
                 )
             )
         }
+    }
+}
 
-        struct Storage: Sendable {
-            let baseFontName: ISO_32000.`7`.`3`.COS.Name
-            let resourceName: ISO_32000.`7`.`3`.COS.Name
-            let metrics: ISO_32000.`9`.`8`.Metrics
-            let isMonospaced: Bool
-            let weight: Weight
-            let style: Style
-            let family: Family
-            let embeddedSource: Embedded?
-        }
+extension ISO_32000.`9`.`6`.Font {
+    public var baseFontName: ISO_32000.`7`.`3`.COS.Name { _storage.value.baseFontName }
+    public var resourceName: ISO_32000.`7`.`3`.COS.Name { _storage.value.resourceName }
+    public var metrics: ISO_32000.`9`.`8`.Metrics { _storage.value.metrics }
+    public var isMonospaced: Bool { _storage.value.isMonospaced }
+    public var weight: Weight { _storage.value.weight }
+    public var style: Style { _storage.value.style }
+    public var family: Family { _storage.value.family }
+    public var embeddedSource: ISO_32000.`9`.`6`.Embedded? { _storage.value.embeddedSource }
+    public var isEmbedded: Bool { embeddedSource != nil }
+
+    struct Storage: Sendable {
+        let baseFontName: ISO_32000.`7`.`3`.COS.Name
+        let resourceName: ISO_32000.`7`.`3`.COS.Name
+        let metrics: ISO_32000.`9`.`8`.Metrics
+        let isMonospaced: Bool
+        let weight: Weight
+        let style: Style
+        let family: Family
+        let embeddedSource: ISO_32000.`9`.`6`.Embedded?
     }
 }
 
@@ -144,180 +146,26 @@ extension ISO_32000.`9`.`6`.Font {
     /// Helvetica font family (sans-serif)
     public struct Helvetica: Sendable {
         private init() {}
-
-        /// Helvetica Regular
-        public static let regular = ISO_32000.`9`.`6`.Font(
-            baseFontName: .helvetica,
-            resourceName: .f1,
-            metrics: .helvetica,
-            isMonospaced: false,
-            weight: .regular,
-            style: .normal,
-            family: .helvetica
-        )
-
-        /// Helvetica Bold
-        public static let bold = ISO_32000.`9`.`6`.Font(
-            baseFontName: .helveticaBold,
-            resourceName: .f2,
-            metrics: .helveticaBold,
-            isMonospaced: false,
-            weight: .bold,
-            style: .normal,
-            family: .helvetica
-        )
-
-        /// Helvetica Oblique
-        public static let oblique = ISO_32000.`9`.`6`.Font(
-            baseFontName: .helveticaOblique,
-            resourceName: .f3,
-            metrics: .helvetica,
-            isMonospaced: false,
-            weight: .regular,
-            style: .oblique,
-            family: .helvetica
-        )
-
-        /// Helvetica Bold Oblique
-        public static let boldOblique = ISO_32000.`9`.`6`.Font(
-            baseFontName: .helveticaBoldOblique,
-            resourceName: .f4,
-            metrics: .helveticaBold,
-            isMonospaced: false,
-            weight: .bold,
-            style: .oblique,
-            family: .helvetica
-        )
     }
 
     /// Times font family (serif)
     public struct Times: Sendable {
         private init() {}
-
-        /// Times Roman (regular)
-        public static let regular = ISO_32000.`9`.`6`.Font(
-            baseFontName: .timesRoman,
-            resourceName: .f5,
-            metrics: .timesRoman,
-            isMonospaced: false,
-            weight: .regular,
-            style: .normal,
-            family: .times
-        )
-
-        /// Times Bold
-        public static let bold = ISO_32000.`9`.`6`.Font(
-            baseFontName: .timesBold,
-            resourceName: .f6,
-            metrics: .timesBold,
-            isMonospaced: false,
-            weight: .bold,
-            style: .normal,
-            family: .times
-        )
-
-        /// Times Italic
-        public static let italic = ISO_32000.`9`.`6`.Font(
-            baseFontName: .timesItalic,
-            resourceName: .f7,
-            metrics: .timesRoman,
-            isMonospaced: false,
-            weight: .regular,
-            style: .italic,
-            family: .times
-        )
-
-        /// Times Bold Italic
-        public static let boldItalic = ISO_32000.`9`.`6`.Font(
-            baseFontName: .timesBoldItalic,
-            resourceName: .f8,
-            metrics: .timesBold,
-            isMonospaced: false,
-            weight: .bold,
-            style: .italic,
-            family: .times
-        )
     }
 
     /// Courier font family (monospaced)
     public struct Courier: Sendable {
         private init() {}
-
-        /// Courier Regular
-        public static let regular = ISO_32000.`9`.`6`.Font(
-            baseFontName: .courier,
-            resourceName: .f9,
-            metrics: .courier,
-            isMonospaced: true,
-            weight: .regular,
-            style: .normal,
-            family: .courier
-        )
-
-        /// Courier Bold
-        public static let bold = ISO_32000.`9`.`6`.Font(
-            baseFontName: .courierBold,
-            resourceName: .f10,
-            metrics: .courier,
-            isMonospaced: true,
-            weight: .bold,
-            style: .normal,
-            family: .courier
-        )
-
-        /// Courier Oblique
-        public static let oblique = ISO_32000.`9`.`6`.Font(
-            baseFontName: .courierOblique,
-            resourceName: .f11,
-            metrics: .courier,
-            isMonospaced: true,
-            weight: .regular,
-            style: .oblique,
-            family: .courier
-        )
-
-        /// Courier Bold Oblique
-        public static let boldOblique = ISO_32000.`9`.`6`.Font(
-            baseFontName: .courierBoldOblique,
-            resourceName: .f12,
-            metrics: .courier,
-            isMonospaced: true,
-            weight: .bold,
-            style: .oblique,
-            family: .courier
-        )
     }
 
     /// Symbol font (special symbols)
     public struct Symbol: Sendable {
         private init() {}
-
-        /// Symbol font
-        public static let regular = ISO_32000.`9`.`6`.Font(
-            baseFontName: .symbol,
-            resourceName: .f13,
-            metrics: .symbol,
-            isMonospaced: false,
-            weight: .regular,
-            style: .normal,
-            family: .symbol
-        )
     }
 
     /// ZapfDingbats font (decorative symbols)
     public struct ZapfDingbats: Sendable {
         private init() {}
-
-        /// ZapfDingbats font
-        public static let regular = ISO_32000.`9`.`6`.Font(
-            baseFontName: .zapfDingbats,
-            resourceName: .f14,
-            metrics: .zapfDingbats,
-            isMonospaced: false,
-            weight: .regular,
-            style: .normal,
-            family: .zapfDingbats
-        )
     }
 
     // MARK: - Font Accessors
@@ -336,6 +184,170 @@ extension ISO_32000.`9`.`6`.Font {
 
     /// ZapfDingbats font
     public static var zapfDingbats: Self { ZapfDingbats.regular }
+}
+
+extension ISO_32000.`9`.`6`.Font.Helvetica {
+    /// Helvetica Regular
+    public static let regular = ISO_32000.`9`.`6`.Font(
+        baseFontName: .helvetica,
+        resourceName: .f1,
+        metrics: .helvetica,
+        isMonospaced: false,
+        weight: .regular,
+        style: .normal,
+        family: .helvetica
+    )
+
+    /// Helvetica Bold
+    public static let bold = ISO_32000.`9`.`6`.Font(
+        baseFontName: .helveticaBold,
+        resourceName: .f2,
+        metrics: .helveticaBold,
+        isMonospaced: false,
+        weight: .bold,
+        style: .normal,
+        family: .helvetica
+    )
+
+    /// Helvetica Oblique
+    public static let oblique = ISO_32000.`9`.`6`.Font(
+        baseFontName: .helveticaOblique,
+        resourceName: .f3,
+        metrics: .helvetica,
+        isMonospaced: false,
+        weight: .regular,
+        style: .oblique,
+        family: .helvetica
+    )
+
+    /// Helvetica Bold Oblique
+    public static let boldOblique = ISO_32000.`9`.`6`.Font(
+        baseFontName: .helveticaBoldOblique,
+        resourceName: .f4,
+        metrics: .helveticaBold,
+        isMonospaced: false,
+        weight: .bold,
+        style: .oblique,
+        family: .helvetica
+    )
+}
+
+extension ISO_32000.`9`.`6`.Font.Times {
+    /// Times Roman (regular)
+    public static let regular = ISO_32000.`9`.`6`.Font(
+        baseFontName: .timesRoman,
+        resourceName: .f5,
+        metrics: .timesRoman,
+        isMonospaced: false,
+        weight: .regular,
+        style: .normal,
+        family: .times
+    )
+
+    /// Times Bold
+    public static let bold = ISO_32000.`9`.`6`.Font(
+        baseFontName: .timesBold,
+        resourceName: .f6,
+        metrics: .timesBold,
+        isMonospaced: false,
+        weight: .bold,
+        style: .normal,
+        family: .times
+    )
+
+    /// Times Italic
+    public static let italic = ISO_32000.`9`.`6`.Font(
+        baseFontName: .timesItalic,
+        resourceName: .f7,
+        metrics: .timesRoman,
+        isMonospaced: false,
+        weight: .regular,
+        style: .italic,
+        family: .times
+    )
+
+    /// Times Bold Italic
+    public static let boldItalic = ISO_32000.`9`.`6`.Font(
+        baseFontName: .timesBoldItalic,
+        resourceName: .f8,
+        metrics: .timesBold,
+        isMonospaced: false,
+        weight: .bold,
+        style: .italic,
+        family: .times
+    )
+}
+
+extension ISO_32000.`9`.`6`.Font.Courier {
+    /// Courier Regular
+    public static let regular = ISO_32000.`9`.`6`.Font(
+        baseFontName: .courier,
+        resourceName: .f9,
+        metrics: .courier,
+        isMonospaced: true,
+        weight: .regular,
+        style: .normal,
+        family: .courier
+    )
+
+    /// Courier Bold
+    public static let bold = ISO_32000.`9`.`6`.Font(
+        baseFontName: .courierBold,
+        resourceName: .f10,
+        metrics: .courier,
+        isMonospaced: true,
+        weight: .bold,
+        style: .normal,
+        family: .courier
+    )
+
+    /// Courier Oblique
+    public static let oblique = ISO_32000.`9`.`6`.Font(
+        baseFontName: .courierOblique,
+        resourceName: .f11,
+        metrics: .courier,
+        isMonospaced: true,
+        weight: .regular,
+        style: .oblique,
+        family: .courier
+    )
+
+    /// Courier Bold Oblique
+    public static let boldOblique = ISO_32000.`9`.`6`.Font(
+        baseFontName: .courierBoldOblique,
+        resourceName: .f12,
+        metrics: .courier,
+        isMonospaced: true,
+        weight: .bold,
+        style: .oblique,
+        family: .courier
+    )
+}
+
+extension ISO_32000.`9`.`6`.Font.Symbol {
+    /// Symbol font
+    public static let regular = ISO_32000.`9`.`6`.Font(
+        baseFontName: .symbol,
+        resourceName: .f13,
+        metrics: .symbol,
+        isMonospaced: false,
+        weight: .regular,
+        style: .normal,
+        family: .symbol
+    )
+}
+
+extension ISO_32000.`9`.`6`.Font.ZapfDingbats {
+    /// ZapfDingbats font
+    public static let regular = ISO_32000.`9`.`6`.Font(
+        baseFontName: .zapfDingbats,
+        resourceName: .f14,
+        metrics: .zapfDingbats,
+        isMonospaced: false,
+        weight: .regular,
+        style: .normal,
+        family: .zapfDingbats
+    )
 }
 
 // MARK: - Standard 14 Collection (Table 111)
@@ -380,14 +392,16 @@ extension ISO_32000.`9`.`6`.Font {
     /// WinAnsi encoding namespace for font
     public struct WinAnsi: Sendable {
         let font: ISO_32000.`9`.`6`.Font
+    }
+}
 
-        /// Calculate width of WinAnsi-encoded bytes at a specific font size (returns UserSpace)
-        public func width<Bytes: Collection>(
-            of bytes: Bytes,
-            atSize fontSize: ISO_32000.UserSpace.Size<1>
-        ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
-            font.metrics.winAnsi.width(of: bytes, atSize: fontSize)
-        }
+extension ISO_32000.`9`.`6`.Font.WinAnsi {
+    /// Calculate width of WinAnsi-encoded bytes at a specific font size (returns UserSpace)
+    public func width<Bytes: Collection>(
+        of bytes: Bytes,
+        atSize fontSize: ISO_32000.UserSpace.Size<1>
+    ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
+        font.metrics.winAnsi.width(of: bytes, atSize: fontSize)
     }
 }
 

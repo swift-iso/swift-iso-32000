@@ -40,7 +40,9 @@ extension ISO_32000 {
 ///
 /// Quantized to 0.01 points (1/7200 inch) to ensure adjacent
 /// geometric elements share exact boundary values.
-public enum UserSpace: Numeric.Quantized {
+public enum UserSpace: Numeric.Quantized {}
+
+extension UserSpace {
     public typealias Scalar = Double
     public static var quantum: Double { 0.01 }
 }

@@ -35,17 +35,20 @@ extension ISO_32000 {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (WIN column)
-    public enum WinAnsiEncoding: Encoding {
-        /// The encoding name as used in PDF
-        public static let name: String = "WinAnsiEncoding"
+    public enum WinAnsiEncoding: Encoding {}
+}
 
-        // MARK: - Decode Table
+extension ISO_32000.WinAnsiEncoding {
+    /// The encoding name as used in PDF
+    public static let name: String = "WinAnsiEncoding"
 
-        /// Complete decode table (256 entries)
-        ///
-        /// Built from ISO 32000-2 Table D.2, WIN column.
-        /// Octal values converted to decimal indices.
-        public static let decodeTable: [Unicode.Scalar?] = [
+    // MARK: - Decode Table
+
+    /// Complete decode table (256 entries)
+    ///
+    /// Built from ISO 32000-2 Table D.2, WIN column.
+    /// Octal values converted to decimal indices.
+    public static let decodeTable: [Unicode.Scalar?] = [
             // 0x00-0x1F: Control characters (undefined in WinAnsi for PDF)
             nil, nil, nil, nil, nil, nil, nil, nil,  // 0x00-0x07
             nil, nil, nil, nil, nil, nil, nil, nil,  // 0x08-0x0F
@@ -448,5 +451,4 @@ extension ISO_32000 {
         public static func decode(_ byte: Byte) -> Unicode.Scalar? {
             decodeTable[Int(byte.underlying)]
         }
-    }
 }

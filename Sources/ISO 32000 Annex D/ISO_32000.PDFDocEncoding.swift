@@ -38,18 +38,21 @@ extension ISO_32000 {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table D.3 — PDFDocEncoding character set
-    public enum PDFDocEncoding: Encoding {
-        /// The encoding name (note: not used as predefined name in PDF)
-        public static let name: String = "PDFDocEncoding"
+    public enum PDFDocEncoding: Encoding {}
+}
 
-        // MARK: - Decode Table
+extension ISO_32000.PDFDocEncoding {
+    /// The encoding name (note: not used as predefined name in PDF)
+    public static let name: String = "PDFDocEncoding"
 
-        /// Complete decode table from ISO 32000-2 Table D.3
-        ///
-        /// Notes column meanings:
-        /// - U: Undefined code point in PDFDocEncoding
-        /// - SR: Unicode codepoint that may require special representation in XML
-        public static let decodeTable: [Unicode.Scalar?] = [
+    // MARK: - Decode Table
+
+    /// Complete decode table from ISO 32000-2 Table D.3
+    ///
+    /// Notes column meanings:
+    /// - U: Undefined code point in PDFDocEncoding
+    /// - SR: Unicode codepoint that may require special representation in XML
+    public static let decodeTable: [Unicode.Scalar?] = [
             // 0x00-0x17: Control characters (undefined - marked U in spec)
             nil,  // 0x00 NULL (U)
             nil,  // 0x01 START OF HEADING (U)
@@ -352,7 +355,6 @@ extension ISO_32000 {
         public static func decode(_ byte: Byte) -> Unicode.Scalar? {
             decodeTable[Int(byte.underlying)]
         }
-    }
 }
 
 // MARK: - Text String Detection

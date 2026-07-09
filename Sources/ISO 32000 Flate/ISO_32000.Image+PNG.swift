@@ -30,7 +30,7 @@ extension ISO_32000.Image {
     ) throws(Parse.Error) {
         // Parse PNG
         let image: W3C_PNG.Image
-        do {
+        do throws(W3C_PNG.ParseError) {
             image = try W3C_PNG.parse(pngData)
         } catch {
             throw .invalidHeader

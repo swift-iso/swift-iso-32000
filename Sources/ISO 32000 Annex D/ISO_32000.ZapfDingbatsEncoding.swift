@@ -34,19 +34,22 @@ extension ISO_32000 {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table D.6 — ZapfDingbats set and encoding
-    public enum ZapfDingbatsEncoding: Encoding {
-        /// The encoding name
-        ///
-        /// Note: This is a font-specific built-in encoding, not a predefined
-        /// encoding name in PDF encoding dictionaries.
-        public static let name: String = "ZapfDingbatsEncoding"
+    public enum ZapfDingbatsEncoding: Encoding {}
+}
 
-        // MARK: - Decode Table
+extension ISO_32000.ZapfDingbatsEncoding {
+    /// The encoding name
+    ///
+    /// Note: This is a font-specific built-in encoding, not a predefined
+    /// encoding name in PDF encoding dictionaries.
+    public static let name: String = "ZapfDingbatsEncoding"
 
-        /// Complete decode table from ISO 32000-2 Table D.6
-        ///
-        /// Uses Unicode Dingbats block (U+2700-U+27BF) and other related characters.
-        public static let decodeTable: [Unicode.Scalar?] = [
+    // MARK: - Decode Table
+
+    /// Complete decode table from ISO 32000-2 Table D.6
+    ///
+    /// Uses Unicode Dingbats block (U+2700-U+27BF) and other related characters.
+    public static let decodeTable: [Unicode.Scalar?] = [
             // 0x00-0x1F: Undefined (control characters)
             nil, nil, nil, nil, nil, nil, nil, nil,
             nil, nil, nil, nil, nil, nil, nil, nil,
@@ -297,5 +300,4 @@ extension ISO_32000 {
         public static func decode(_ byte: Byte) -> Unicode.Scalar? {
             decodeTable[Int(byte.underlying)]
         }
-    }
 }

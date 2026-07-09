@@ -30,19 +30,22 @@ extension ISO_32000 {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (STD column)
-    public enum StandardEncoding: Encoding {
-        /// The encoding name
-        ///
-        /// Note: PDF processors shall NOT have this as a predefined encoding name.
-        /// It is used internally by Type 1 fonts.
-        public static let name: String = "StandardEncoding"
+    public enum StandardEncoding: Encoding {}
+}
 
-        // MARK: - Decode Table
+extension ISO_32000.StandardEncoding {
+    /// The encoding name
+    ///
+    /// Note: PDF processors shall NOT have this as a predefined encoding name.
+    /// It is used internally by Type 1 fonts.
+    public static let name: String = "StandardEncoding"
 
-        /// Complete decode table from ISO 32000-2 Table D.2 (STD column)
-        ///
-        /// Octal codes from the spec are converted to decimal indices.
-        public static let decodeTable: [Unicode.Scalar?] = [
+    // MARK: - Decode Table
+
+    /// Complete decode table from ISO 32000-2 Table D.2 (STD column)
+    ///
+    /// Octal codes from the spec are converted to decimal indices.
+    public static let decodeTable: [Unicode.Scalar?] = [
             // 0x00-0x1F: Control characters (undefined)
             nil, nil, nil, nil, nil, nil, nil, nil,
             nil, nil, nil, nil, nil, nil, nil, nil,
@@ -268,5 +271,4 @@ extension ISO_32000 {
         public static func decode(_ byte: Byte) -> Unicode.Scalar? {
             decodeTable[Int(byte.underlying)]
         }
-    }
 }

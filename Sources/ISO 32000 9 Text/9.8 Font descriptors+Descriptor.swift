@@ -174,52 +174,54 @@ extension ISO_32000.`9`.`8`.Descriptor {
         public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
-
-        /// Bit 1: Fixed-width font.
-        ///
-        /// > All glyphs have the same width (as opposed to proportional fonts).
-        public static let fixedPitch = Flags(rawValue: 1 << 0)
-
-        /// Bit 2: Font contains serifs.
-        ///
-        /// > Glyphs have serifs (e.g., Times Roman).
-        public static let serif = Flags(rawValue: 1 << 1)
-
-        /// Bit 3: Font contains glyphs outside the Adobe standard Latin character set.
-        ///
-        /// > Font uses non-Latin character set (e.g., Symbol).
-        public static let symbolic = Flags(rawValue: 1 << 2)
-
-        /// Bit 4: Glyphs resemble cursive handwriting.
-        ///
-        /// > Font appears cursive/script-like.
-        public static let script = Flags(rawValue: 1 << 3)
-
-        /// Bit 6: Font uses the Adobe standard Latin character set.
-        ///
-        /// > Mutually exclusive with Symbolic flag.
-        public static let nonsymbolic = Flags(rawValue: 1 << 5)
-
-        /// Bit 7: Glyphs are italic or oblique.
-        ///
-        /// > Font contains italic or oblique glyphs.
-        public static let italic = Flags(rawValue: 1 << 6)
-
-        /// Bit 17: Font contains no lowercase letters.
-        ///
-        /// > Font is all-caps.
-        public static let allCap = Flags(rawValue: 1 << 16)
-
-        /// Bit 18: Font contains both uppercase and lowercase letters scaled to same size.
-        ///
-        /// > Font uses small caps.
-        public static let smallCap = Flags(rawValue: 1 << 17)
-
-        /// Bit 19: Bold glyphs shall be painted with extra pixels.
-        ///
-        /// > Used for very small text sizes to make bold more visible.
-        public static let forceBold = Flags(rawValue: 1 << 18)
     }
+}
+
+extension ISO_32000.`9`.`8`.Descriptor.Flags {
+    /// Bit 1: Fixed-width font.
+    ///
+    /// > All glyphs have the same width (as opposed to proportional fonts).
+    public static let fixedPitch = Self(rawValue: 1 << 0)
+
+    /// Bit 2: Font contains serifs.
+    ///
+    /// > Glyphs have serifs (e.g., Times Roman).
+    public static let serif = Self(rawValue: 1 << 1)
+
+    /// Bit 3: Font contains glyphs outside the Adobe standard Latin character set.
+    ///
+    /// > Font uses non-Latin character set (e.g., Symbol).
+    public static let symbolic = Self(rawValue: 1 << 2)
+
+    /// Bit 4: Glyphs resemble cursive handwriting.
+    ///
+    /// > Font appears cursive/script-like.
+    public static let script = Self(rawValue: 1 << 3)
+
+    /// Bit 6: Font uses the Adobe standard Latin character set.
+    ///
+    /// > Mutually exclusive with Symbolic flag.
+    public static let nonsymbolic = Self(rawValue: 1 << 5)
+
+    /// Bit 7: Glyphs are italic or oblique.
+    ///
+    /// > Font contains italic or oblique glyphs.
+    public static let italic = Self(rawValue: 1 << 6)
+
+    /// Bit 17: Font contains no lowercase letters.
+    ///
+    /// > Font is all-caps.
+    public static let allCap = Self(rawValue: 1 << 16)
+
+    /// Bit 18: Font contains both uppercase and lowercase letters scaled to same size.
+    ///
+    /// > Font uses small caps.
+    public static let smallCap = Self(rawValue: 1 << 17)
+
+    /// Bit 19: Bold glyphs shall be painted with extra pixels.
+    ///
+    /// > Used for very small text sizes to make bold more visible.
+    public static let forceBold = Self(rawValue: 1 << 18)
 }
 
 // MARK: - FontDescriptor from FontFile

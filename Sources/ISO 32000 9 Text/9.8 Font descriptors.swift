@@ -189,22 +189,6 @@ extension ISO_32000.`9`.`8` {
         /// - TrueType fonts: typically 2048 units per em (but variable)
         public let unitsPerEm: Int
 
-        /// Get the width for a Unicode code point.
-        ///
-        /// Returns the glyph width in font design units, or the default width
-        /// if the code point is not in the width table.
-        ///
-        /// - Parameter codePoint: Unicode code point (e.g., 65 for 'A')
-        /// - Returns: Width in font design units
-        public func width(forCodePoint codePoint: UInt32) -> Int {
-            (widths[codePoint] ?? defaultWidth).underlying
-        }
-
-        /// The default width for missing glyphs (in font design units).
-        ///
-        /// Used for characters not in the width table.
-        public var missingWidth: Int { defaultWidth.underlying }
-
         /// Create metrics with a width table and vertical metrics
         public init(
             widths: [UInt32: Int],
@@ -244,6 +228,22 @@ extension ISO_32000.`9`.`8` {
 }
 
 extension ISO_32000.`9`.`8`.Metrics {
+
+    /// Get the width for a Unicode code point.
+    ///
+    /// Returns the glyph width in font design units, or the default width
+    /// if the code point is not in the width table.
+    ///
+    /// - Parameter codePoint: Unicode code point (e.g., 65 for 'A')
+    /// - Returns: Width in font design units
+    public func width(forCodePoint codePoint: UInt32) -> Int {
+        (widths[codePoint] ?? defaultWidth).underlying
+    }
+
+    /// The default width for missing glyphs (in font design units).
+    ///
+    /// Used for characters not in the width table.
+    public var missingWidth: Int { defaultWidth.underlying }
 
     // MARK: - Primitive: Byte Width (canonical)
 
@@ -328,27 +328,31 @@ extension ISO_32000.`9`.`8`.Metrics {
     /// WinAnsi encoding namespace for font metrics
     public struct WinAnsi: Sendable {
         let metrics: ISO_32000.`9`.`8`.Metrics
+    }
+}
 
-        /// Get width of a single WinAnsi byte in font design units
-        public func width(of byte: Byte) -> ISO_32000.FontDesign.Width {
-            metrics.width(of: byte)
-        }
-
-        /// Calculate width of WinAnsi-encoded bytes in font design units
-        public func width<Bytes: Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
-        where Bytes.Element == Byte {
-            metrics.width(of: bytes)
-        }
-
-        /// Calculate width of WinAnsi-encoded bytes at a specific font size (returns UserSpace)
-        public func width<Bytes: Collection>(
-            of bytes: Bytes,
-            atSize fontSize: ISO_32000.UserSpace.Size<1>
-        ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
-            metrics.width(of: bytes, atSize: fontSize)
-        }
+extension ISO_32000.`9`.`8`.Metrics.WinAnsi {
+    /// Get width of a single WinAnsi byte in font design units
+    public func width(of byte: Byte) -> ISO_32000.FontDesign.Width {
+        metrics.width(of: byte)
     }
 
+    /// Calculate width of WinAnsi-encoded bytes in font design units
+    public func width<Bytes: Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
+    where Bytes.Element == Byte {
+        metrics.width(of: bytes)
+    }
+
+    /// Calculate width of WinAnsi-encoded bytes at a specific font size (returns UserSpace)
+    public func width<Bytes: Collection>(
+        of bytes: Bytes,
+        atSize fontSize: ISO_32000.UserSpace.Size<1>
+    ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
+        metrics.width(of: bytes, atSize: fontSize)
+    }
+}
+
+extension ISO_32000.`9`.`8`.Metrics {
     /// Line height in font design units (ascender - descender)
     ///
     /// This is the minimum line height without any leading/line gap.
@@ -418,36 +422,40 @@ extension ISO_32000.`9`.`8`.Metrics {
     /// Line height multipliers namespace.
     public struct Line: Sendable {
         let metrics: ISO_32000.`9`.`8`.Metrics
+    }
+}
 
-        /// Base line height as a multiplier (ascender - descender) / unitsPerEm.
-        ///
-        /// This is the ratio of the typographic line height to the em square.
-        public var height: Multiplier {
-            let h = metrics.ascender.underlying - metrics.descender.underlying
-            return Multiplier(Double(h) / Double(metrics.unitsPerEm))
-        }
-
-        /// Normal line height as a multiplier (ascender - descender + leading) / unitsPerEm.
-        ///
-        /// This corresponds to CSS `line-height: normal` and includes the font's
-        /// recommended leading (from the Leading entry in the font descriptor).
-        public var normal: Multiplier {
-            let h =
-                metrics.ascender.underlying - metrics.descender.underlying
-                + metrics.leading.underlying
-            return Multiplier(Double(h) / Double(metrics.unitsPerEm))
-        }
-
-        /// A multiplier value (dimensionless ratio).
-        public struct Multiplier: Sendable {
-            public let value: Double
-
-            public init(_ value: Double) {
-                self.value = value
-            }
-        }
+extension ISO_32000.`9`.`8`.Metrics.Line {
+    /// Base line height as a multiplier (ascender - descender) / unitsPerEm.
+    ///
+    /// This is the ratio of the typographic line height to the em square.
+    public var height: Multiplier {
+        let h = metrics.ascender.underlying - metrics.descender.underlying
+        return Multiplier(Double(h) / Double(metrics.unitsPerEm))
     }
 
+    /// Normal line height as a multiplier (ascender - descender + leading) / unitsPerEm.
+    ///
+    /// This corresponds to CSS `line-height: normal` and includes the font's
+    /// recommended leading (from the Leading entry in the font descriptor).
+    public var normal: Multiplier {
+        let h =
+            metrics.ascender.underlying - metrics.descender.underlying
+            + metrics.leading.underlying
+        return Multiplier(Double(h) / Double(metrics.unitsPerEm))
+    }
+
+    /// A multiplier value (dimensionless ratio).
+    public struct Multiplier: Sendable {
+        public let value: Double
+
+        public init(_ value: Double) {
+            self.value = value
+        }
+    }
+}
+
+extension ISO_32000.`9`.`8`.Metrics {
     // MARK: - Glyph Accessors
 
     /// Bullet glyph metrics (U+2022, •).
@@ -468,18 +476,20 @@ extension ISO_32000.`9`.`8`.Metrics {
     public struct Glyph: Sendable {
         let scalar: UnicodeScalar
         let metrics: ISO_32000.`9`.`8`.Metrics
+    }
+}
 
-        /// Glyph width in font design units (1/1000 em)
-        public var width: ISO_32000.FontDesign.Width {
-            metrics.glyphWidth(for: scalar)
-        }
+extension ISO_32000.`9`.`8`.Metrics.Glyph {
+    /// Glyph width in font design units (1/1000 em)
+    public var width: ISO_32000.FontDesign.Width {
+        metrics.glyphWidth(for: scalar)
+    }
 
-        /// Glyph width at a specific font size (returns UserSpace)
-        public func width(
-            atSize fontSize: ISO_32000.UserSpace.Size<1>
-        ) -> ISO_32000.UserSpace.Width {
-            width.scaled(by: fontSize, unitsPerEm: metrics.unitsPerEm)
-        }
+    /// Glyph width at a specific font size (returns UserSpace)
+    public func width(
+        atSize fontSize: ISO_32000.UserSpace.Size<1>
+    ) -> ISO_32000.UserSpace.Width {
+        width.scaled(by: fontSize, unitsPerEm: metrics.unitsPerEm)
     }
 }
 

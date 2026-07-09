@@ -26,16 +26,19 @@ extension ISO_32000 {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (MAC column)
-    public enum MacRomanEncoding: Encoding {
-        /// The encoding name as used in PDF
-        public static let name: String = "MacRomanEncoding"
+    public enum MacRomanEncoding: Encoding {}
+}
 
-        // MARK: - Decode Table
+extension ISO_32000.MacRomanEncoding {
+    /// The encoding name as used in PDF
+    public static let name: String = "MacRomanEncoding"
 
-        /// Complete decode table from ISO 32000-2 Table D.2 (MAC column)
-        ///
-        /// Octal codes from the spec are converted to decimal indices.
-        public static let decodeTable: [Unicode.Scalar?] = [
+    // MARK: - Decode Table
+
+    /// Complete decode table from ISO 32000-2 Table D.2 (MAC column)
+    ///
+    /// Octal codes from the spec are converted to decimal indices.
+    public static let decodeTable: [Unicode.Scalar?] = [
             // 0x00-0x1F: Control characters (undefined in PDF context)
             nil, nil, nil, nil, nil, nil, nil, nil,
             nil, nil, nil, nil, nil, nil, nil, nil,
@@ -316,5 +319,4 @@ extension ISO_32000 {
         public static func decode(_ byte: Byte) -> Unicode.Scalar? {
             decodeTable[Int(byte.underlying)]
         }
-    }
 }

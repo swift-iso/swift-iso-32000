@@ -108,10 +108,6 @@ extension ISO_32000 {
             self.annotations = annotations
         }
 
-        /// Create an empty page
-        public static func empty(size: ISO_32000.UserSpace.Rectangle = .a4) -> Page {
-            Page(mediaBox: size)
-        }
     }
 }
 
@@ -123,6 +119,11 @@ extension ISO_32000.Page {
 
     /// Page range for printing (Table 147)
     public typealias Range = ISO_32000.`12`.`2`.PageRange
+
+    /// Create an empty page
+    public static func empty(size: ISO_32000.UserSpace.Rectangle = .a4) -> Self {
+        Self(mediaBox: size)
+    }
 }
 
 // MARK: - Convenience Properties
@@ -180,21 +181,23 @@ extension ISO_32000 {
             self.fonts = fonts
             self.xObjects = xObjects
         }
+    }
+}
 
-        /// Add a font and return its resource name
-        @discardableResult
-        public mutating func addFont(_ font: Font) -> COS.Name {
-            let name = font.resourceName
-            fonts[name] = font
-            return name
-        }
+extension ISO_32000.Resources {
+    /// Add a font and return its resource name
+    @discardableResult
+    public mutating func addFont(_ font: ISO_32000.Font) -> ISO_32000.COS.Name {
+        let name = font.resourceName
+        fonts[name] = font
+        return name
+    }
 
-        /// Add an image and return its resource name
-        @discardableResult
-        public mutating func addImage(_ image: Image) -> COS.Name {
-            let name = image.resourceName
-            xObjects[name] = image
-            return name
-        }
+    /// Add an image and return its resource name
+    @discardableResult
+    public mutating func addImage(_ image: ISO_32000.Image) -> ISO_32000.COS.Name {
+        let name = image.resourceName
+        xObjects[name] = image
+        return name
     }
 }

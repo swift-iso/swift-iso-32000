@@ -79,11 +79,14 @@ extension ISO_32000.ContentStream {
 
         /// Create an empty builder
         public init() {}
+    }
+}
 
+extension ISO_32000.ContentStream.Builder {
         // MARK: - Emit Operator
 
         /// Emit an operator to the content stream
-        private mutating func emit(_ op: Operator) {
+        private mutating func emit(_ op: ISO_32000.ContentStream.Operator) {
             if !data.isEmpty {
                 data.append(.ascii.lf)
             }
@@ -352,12 +355,12 @@ extension ISO_32000.ContentStream {
         }
 
         /// Set line cap style (J)
-        public mutating func setLineCap(_ cap: LineCap) {
+        public mutating func setLineCap(_ cap: ISO_32000.ContentStream.LineCap) {
             emit(.setLineCap(cap))
         }
 
         /// Set line join style (j)
-        public mutating func setLineJoin(_ join: LineJoin) {
+        public mutating func setLineJoin(_ join: ISO_32000.ContentStream.LineJoin) {
             emit(.setLineJoin(join))
         }
 
@@ -591,8 +594,8 @@ extension ISO_32000.ContentStream {
                 )
             )
         }
-    }
 }
+
 
 // MARK: - Line Style Types
 
