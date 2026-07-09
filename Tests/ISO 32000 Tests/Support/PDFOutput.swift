@@ -4,6 +4,9 @@ import Byte_Primitives
 import Foundation
 
 enum PDFOutput {
+}
+
+extension PDFOutput {
     static let directory = "/tmp/pdf-tests"
 
     static func write(_ bytes: [Byte], name: String) throws -> String {
