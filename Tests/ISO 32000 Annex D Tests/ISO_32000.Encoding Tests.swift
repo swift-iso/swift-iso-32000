@@ -11,10 +11,104 @@ import Testing
 @Suite
 struct `ISO_32000.Encoding Tests` {
 
-    // MARK: - WinAnsiEncoding Tests (Table D.2 WIN column)
+    // MARK: - Cross-Encoding Comparison Tests
 
     @Suite
-    struct WinAnsiEncodingTests {
+    struct CrossEncodingTests {
+
+        @Test
+        func `WinAnsi vs PDFDoc Euro position differs`() {
+            // WinAnsi: Euro at 0x80
+            // PDFDoc: Euro at 0xA0
+            #expect(ISO_32000.WinAnsiEncoding.decode(0x80) == "\u{20AC}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0xA0) == "\u{20AC}")
+
+            // They differ at these positions
+            #expect(ISO_32000.WinAnsiEncoding.decode(0xA0) != ISO_32000.PDFDocEncoding.decode(0xA0))
+        }
+
+        @Test
+        func `Standard vs WinAnsi quote handling differs`() {
+            // StandardEncoding: 0x27 = RIGHT SINGLE QUOTATION MARK
+            // WinAnsiEncoding: 0x27 = APOSTROPHE (ASCII)
+            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")  // U+2019
+            #expect(ISO_32000.WinAnsiEncoding.decode(0x27) == "'")  // U+0027
+        }
+
+        @Test
+        func `MacRoman vs WinAnsi ligatures at different positions`() {
+            // MacRoman: fi at 0xDE, fl at 0xDF
+            // WinAnsi: no ligatures (uses separate characters)
+            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")  // fi
+            #expect(ISO_32000.WinAnsiEncoding.decode(0xDE) == "\u{00DE}")  // Thorn
+        }
+
+        @Test
+        func `All encodings have correct names`() {
+            #expect(ISO_32000.WinAnsiEncoding.name == "WinAnsiEncoding")
+            #expect(ISO_32000.PDFDocEncoding.name == "PDFDocEncoding")
+            #expect(ISO_32000.StandardEncoding.name == "StandardEncoding")
+            #expect(ISO_32000.MacRomanEncoding.name == "MacRomanEncoding")
+            #expect(ISO_32000.MacExpertEncoding.name == "MacExpertEncoding")
+            #expect(ISO_32000.SymbolEncoding.name == "SymbolEncoding")
+            #expect(ISO_32000.ZapfDingbatsEncoding.name == "ZapfDingbatsEncoding")
+        }
+    }
+
+    // MARK: - Protocol Conformance Tests
+
+    @Suite
+    struct ProtocolConformanceTests {
+
+        @Test
+        func `All encodings have decode tables`() {
+            #expect(ISO_32000.WinAnsiEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.PDFDocEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.StandardEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.MacRomanEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.MacExpertEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.SymbolEncoding.decodeTable.count == 256)
+            #expect(ISO_32000.ZapfDingbatsEncoding.decodeTable.count == 256)
+        }
+
+        @Test
+        func `Roundtrip encode-decode for WinAnsi ASCII`() {
+            for raw: UInt8 in 0x20...0x7E {
+                let byte = Byte(raw)
+                if let scalar = ISO_32000.WinAnsiEncoding.decode(byte) {
+                    let encoded = ISO_32000.WinAnsiEncoding.encode(scalar)
+                    #expect(encoded == byte, "Roundtrip failed for byte \(byte)")
+                }
+            }
+        }
+
+        @Test
+        func `Scalar encoding extension`() {
+            let scalars = "Hello".unicodeScalars
+            let encoded = ISO_32000.WinAnsiEncoding.encode(scalars)
+            #expect(encoded == [0x48, 0x65, 0x6C, 0x6C, 0x6F])
+        }
+
+        @Test
+        func `String init from bytes`() {
+            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
+            let decoded = String(winAnsi: bytes)
+            #expect(decoded == "Hello")
+        }
+
+        @Test
+        func `String init with replacement from bytes`() {
+            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
+            let decoded = String(winAnsi: bytes, withReplacement: true)
+            #expect(decoded == "Hello")
+        }
+    }
+}
+
+// MARK: - WinAnsiEncoding Tests (Table D.2 WIN column)
+extension ISO_32000.WinAnsiEncoding {
+    @Suite
+    struct Test {
 
         @Test
         func `Euro sign at 0x80`() {
@@ -107,11 +201,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(validBytes.winAnsi.isValid)
         }
     }
+}
 
-    // MARK: - PDFDocEncoding Tests (Table D.3)
-
+// MARK: - PDFDocEncoding Tests (Table D.3)
+extension ISO_32000.PDFDocEncoding {
     @Suite
-    struct PDFDocEncodingTests {
+    struct Test {
 
         @Test
         func `Euro at 0xA0 differs from WinAnsi`() {
@@ -178,11 +273,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(detected == .pdfDocEncoding)
         }
     }
+}
 
-    // MARK: - StandardEncoding Tests (Table D.2 STD column)
-
+// MARK: - StandardEncoding Tests (Table D.2 STD column)
+extension ISO_32000.StandardEncoding {
     @Suite
-    struct StandardEncodingTests {
+    struct Test {
 
         @Test
         func `Encoding name not predefined`() {
@@ -230,11 +326,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(ISO_32000.StandardEncoding.decode(0x80) == nil)
         }
     }
+}
 
-    // MARK: - MacRomanEncoding Tests (Table D.2 MAC column)
-
+// MARK: - MacRomanEncoding Tests (Table D.2 MAC column)
+extension ISO_32000.MacRomanEncoding {
     @Suite
-    struct MacRomanEncodingTests {
+    struct Test {
 
         @Test
         func `Encoding name`() {
@@ -274,11 +371,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(ISO_32000.MacRomanEncoding.decode(0x7E) == "~")
         }
     }
+}
 
-    // MARK: - MacExpertEncoding Tests (Table D.4)
-
+// MARK: - MacExpertEncoding Tests (Table D.4)
+extension ISO_32000.MacExpertEncoding {
     @Suite
-    struct MacExpertEncodingTests {
+    struct Test {
 
         @Test
         func `Encoding name`() {
@@ -321,11 +419,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(ISO_32000.MacExpertEncoding.decode(0x2F) == "\u{2044}")  // FRACTION SLASH
         }
     }
+}
 
-    // MARK: - SymbolEncoding Tests (Table D.5)
-
+// MARK: - SymbolEncoding Tests (Table D.5)
+extension ISO_32000.SymbolEncoding {
     @Suite
-    struct SymbolEncodingTests {
+    struct Test {
 
         @Test
         func `Encoding name`() {
@@ -386,11 +485,12 @@ struct `ISO_32000.Encoding Tests` {
             #expect(ISO_32000.SymbolEncoding.decode(0x39) == "9")
         }
     }
+}
 
-    // MARK: - ZapfDingbatsEncoding Tests (Table D.6)
-
+// MARK: - ZapfDingbatsEncoding Tests (Table D.6)
+extension ISO_32000.ZapfDingbatsEncoding {
     @Suite
-    struct ZapfDingbatsEncodingTests {
+    struct Test {
 
         @Test
         func `Encoding name`() {
@@ -452,99 +552,6 @@ struct `ISO_32000.Encoding Tests` {
                 let value = scissors.value
                 #expect(value >= 0x2700 && value <= 0x27BF)
             }
-        }
-    }
-
-    // MARK: - Cross-Encoding Comparison Tests
-
-    @Suite
-    struct CrossEncodingTests {
-
-        @Test
-        func `WinAnsi vs PDFDoc Euro position differs`() {
-            // WinAnsi: Euro at 0x80
-            // PDFDoc: Euro at 0xA0
-            #expect(ISO_32000.WinAnsiEncoding.decode(0x80) == "\u{20AC}")
-            #expect(ISO_32000.PDFDocEncoding.decode(0xA0) == "\u{20AC}")
-
-            // They differ at these positions
-            #expect(ISO_32000.WinAnsiEncoding.decode(0xA0) != ISO_32000.PDFDocEncoding.decode(0xA0))
-        }
-
-        @Test
-        func `Standard vs WinAnsi quote handling differs`() {
-            // StandardEncoding: 0x27 = RIGHT SINGLE QUOTATION MARK
-            // WinAnsiEncoding: 0x27 = APOSTROPHE (ASCII)
-            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")  // U+2019
-            #expect(ISO_32000.WinAnsiEncoding.decode(0x27) == "'")  // U+0027
-        }
-
-        @Test
-        func `MacRoman vs WinAnsi ligatures at different positions`() {
-            // MacRoman: fi at 0xDE, fl at 0xDF
-            // WinAnsi: no ligatures (uses separate characters)
-            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")  // fi
-            #expect(ISO_32000.WinAnsiEncoding.decode(0xDE) == "\u{00DE}")  // Thorn
-        }
-
-        @Test
-        func `All encodings have correct names`() {
-            #expect(ISO_32000.WinAnsiEncoding.name == "WinAnsiEncoding")
-            #expect(ISO_32000.PDFDocEncoding.name == "PDFDocEncoding")
-            #expect(ISO_32000.StandardEncoding.name == "StandardEncoding")
-            #expect(ISO_32000.MacRomanEncoding.name == "MacRomanEncoding")
-            #expect(ISO_32000.MacExpertEncoding.name == "MacExpertEncoding")
-            #expect(ISO_32000.SymbolEncoding.name == "SymbolEncoding")
-            #expect(ISO_32000.ZapfDingbatsEncoding.name == "ZapfDingbatsEncoding")
-        }
-    }
-
-    // MARK: - Protocol Conformance Tests
-
-    @Suite
-    struct ProtocolConformanceTests {
-
-        @Test
-        func `All encodings have decode tables`() {
-            #expect(ISO_32000.WinAnsiEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.PDFDocEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.StandardEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.MacRomanEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.MacExpertEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.SymbolEncoding.decodeTable.count == 256)
-            #expect(ISO_32000.ZapfDingbatsEncoding.decodeTable.count == 256)
-        }
-
-        @Test
-        func `Roundtrip encode-decode for WinAnsi ASCII`() {
-            for raw: UInt8 in 0x20...0x7E {
-                let byte = Byte(raw)
-                if let scalar = ISO_32000.WinAnsiEncoding.decode(byte) {
-                    let encoded = ISO_32000.WinAnsiEncoding.encode(scalar)
-                    #expect(encoded == byte, "Roundtrip failed for byte \(byte)")
-                }
-            }
-        }
-
-        @Test
-        func `Scalar encoding extension`() {
-            let scalars = "Hello".unicodeScalars
-            let encoded = ISO_32000.WinAnsiEncoding.encode(scalars)
-            #expect(encoded == [0x48, 0x65, 0x6C, 0x6C, 0x6F])
-        }
-
-        @Test
-        func `String init from bytes`() {
-            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
-            let decoded = String(winAnsi: bytes)
-            #expect(decoded == "Hello")
-        }
-
-        @Test
-        func `String init with replacement from bytes`() {
-            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
-            let decoded = String(winAnsi: bytes, withReplacement: true)
-            #expect(decoded == "Hello")
         }
     }
 }
