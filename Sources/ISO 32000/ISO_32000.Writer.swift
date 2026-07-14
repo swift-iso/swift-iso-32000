@@ -31,898 +31,900 @@ extension ISO_32000 {
 }
 
 extension ISO_32000.Writer {
-        /// Write a document to a buffer
-        public mutating func write<Buffer: RangeReplaceableCollection>(
-            _ document: ISO_32000.Document,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte {
-            var state = State()
+    /// Write a document to a buffer
+    public mutating func write<Buffer: RangeReplaceableCollection>(
+        _ document: ISO_32000.Document,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        var state = State()
 
-            // Header
-            writeHeader(document.version, into: &buffer)
+        // Header
+        writeHeader(document.version, into: &buffer)
 
-            // Binary marker (ensures file is treated as binary)
-            buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8)
+        // Binary marker (ensures file is treated as binary)
+        buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8)
 
-            // Collect all fonts used
-            var allFonts: [ISO_32000.COS.Name: ISO_32000.Font] = [:]
-            for page in document.pages {
-                for (name, font) in page.resources.fonts {
-                    allFonts[name] = font
-                }
+        // Collect all fonts used
+        var allFonts: [ISO_32000.COS.Name: ISO_32000.Font] = [:]
+        for page in document.pages {
+            for (name, font) in page.resources.fonts {
+                allFonts[name] = font
             }
+        }
 
-            // Collect all images used
-            var allImages: [ISO_32000.COS.Name: ISO_32000.Image] = [:]
-            for page in document.pages {
-                for (name, image) in page.resources.xObjects {
-                    allImages[name] = image
-                }
+        // Collect all images used
+        var allImages: [ISO_32000.COS.Name: ISO_32000.Image] = [:]
+        for page in document.pages {
+            for (name, image) in page.resources.xObjects {
+                allImages[name] = image
             }
+        }
 
-            // Create font objects (and embedded font resources)
-            var fontRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
-            for (name, font) in allFonts.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
-                if let embedded = font.embeddedSource {
-                    // TrueType embedded font
-                    let fontRef = writeEmbeddedTrueTypeFont(
-                        font: font,
-                        embedded: embedded,
-                        state: &state,
-                        into: &buffer
-                    )
-                    fontRefs[name] = fontRef
-                } else {
-                    // Standard Type1 font (Standard 14)
-                    let objNum = state.nextObjectNumber()
-                    fontRefs[name] = ISO_32000.COS.IndirectReference(objectNumber: objNum)
-
-                    var fontDict = ISO_32000.COS.Dictionary()
-                    fontDict[.type] = .name(.font)
-                    fontDict[.subtype] = .name(.type1)
-                    fontDict[.baseFont] = .name(font.baseFontName)
-
-                    // ZapfDingbats and Symbol have built-in encodings (ISO 32000-2 Annex D)
-                    // Other Standard 14 fonts use WinAnsiEncoding for proper glyph mapping
-                    if font.family != .zapfDingbats && font.family != .symbol {
-                        fontDict[.encoding] = .name(.winAnsiEncoding)
-                    }
-
-                    state.objectOffsets[objNum] = buffer.count
-                    writeIndirectObject(objNum, object: .dictionary(fontDict), into: &buffer)
-                }
-            }
-
-            // Create image XObject streams
-            var imageRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
-            for (name, image) in allImages.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+        // Create font objects (and embedded font resources)
+        var fontRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
+        for (name, font) in allFonts.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+            if let embedded = font.embeddedSource {
+                // TrueType embedded font
+                let fontRef = writeEmbeddedTrueTypeFont(
+                    font: font,
+                    embedded: embedded,
+                    state: &state,
+                    into: &buffer
+                )
+                fontRefs[name] = fontRef
+            } else {
+                // Standard Type1 font (Standard 14)
                 let objNum = state.nextObjectNumber()
-                imageRefs[name] = ISO_32000.COS.IndirectReference(objectNumber: objNum)
+                fontRefs[name] = ISO_32000.COS.IndirectReference(objectNumber: objNum)
 
-                var imageDict = ISO_32000.COS.Dictionary()
-                imageDict[.type] = .name(.xObject)
-                imageDict[.subtype] = .name(.image)
-                imageDict[.width] = .integer(Int64(image.pixelWidth))
-                imageDict[.height] = .integer(Int64(image.pixelHeight))
-                imageDict[.bitsPerComponent] = .integer(Int64(image.bitsPerComponent))
+                var fontDict = ISO_32000.COS.Dictionary()
+                fontDict[.type] = .name(.font)
+                fontDict[.subtype] = .name(.type1)
+                fontDict[.baseFont] = .name(font.baseFontName)
 
-                // Color space
-                switch image.colorSpace {
-                case .deviceGray:
-                    imageDict[.colorSpace] = .name(.deviceGray)
-                case .deviceRGB:
-                    imageDict[.colorSpace] = .name(.deviceRGB)
-                case .deviceCMYK:
-                    imageDict[.colorSpace] = .name(.deviceCMYK)
+                // ZapfDingbats and Symbol have built-in encodings (ISO 32000-2 Annex D)
+                // Other Standard 14 fonts use WinAnsiEncoding for proper glyph mapping
+                if font.family != .zapfDingbats && font.family != .symbol {
+                    fontDict[.encoding] = .name(.winAnsiEncoding)
                 }
 
-                // Filter
-                switch image.filter {
-                case .dctDecode:
-                    imageDict[.filter] = .name(.dctDecode)
-                case .flateDecode:
-                    imageDict[.filter] = .name(.flateDecode)
+                state.objectOffsets[objNum] = buffer.count
+                writeIndirectObject(objNum, object: .dictionary(fontDict), into: &buffer)
+            }
+        }
+
+        // Create image XObject streams
+        var imageRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
+        for (name, image) in allImages.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+            let objNum = state.nextObjectNumber()
+            imageRefs[name] = ISO_32000.COS.IndirectReference(objectNumber: objNum)
+
+            var imageDict = ISO_32000.COS.Dictionary()
+            imageDict[.type] = .name(.xObject)
+            imageDict[.subtype] = .name(.image)
+            imageDict[.width] = .integer(Int64(image.pixelWidth))
+            imageDict[.height] = .integer(Int64(image.pixelHeight))
+            imageDict[.bitsPerComponent] = .integer(Int64(image.bitsPerComponent))
+
+            // Color space
+            switch image.colorSpace {
+            case .deviceGray:
+                imageDict[.colorSpace] = .name(.deviceGray)
+            case .deviceRGB:
+                imageDict[.colorSpace] = .name(.deviceRGB)
+            case .deviceCMYK:
+                imageDict[.colorSpace] = .name(.deviceCMYK)
+            }
+
+            // Filter
+            switch image.filter {
+            case .dctDecode:
+                imageDict[.filter] = .name(.dctDecode)
+            case .flateDecode:
+                imageDict[.filter] = .name(.flateDecode)
+            }
+
+            let stream = ISO_32000.COS.Stream(dictionary: imageDict, data: image.data)
+            state.objectOffsets[objNum] = buffer.count
+            writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
+        }
+
+        // Create page content streams
+        var contentRefs: [[ISO_32000.COS.IndirectReference]] = []
+        for page in document.pages {
+            var pageContentRefs: [ISO_32000.COS.IndirectReference] = []
+            for content in page.contents {
+                let objNum = state.nextObjectNumber()
+                pageContentRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
+
+                // ContentStream.data, ISO_32000.COS.Stream.data, and the Flate compression
+                // callback are all [Byte] post-cascade; the data flows with no bridge.
+                var streamData = content.data
+                var streamDict = ISO_32000.COS.Dictionary()
+
+                // Apply compression if available
+                if let compress = compression {
+                    var compressed: [Byte] = []
+                    compress.compress(streamData, into: &compressed)
+                    if compressed.count < streamData.count {
+                        streamData = compressed
+                        streamDict[.filter] = .name(.flateDecode)
+                    }
                 }
 
-                let stream = ISO_32000.COS.Stream(dictionary: imageDict, data: image.data)
+                let stream = ISO_32000.COS.Stream(dictionary: streamDict, data: streamData)
                 state.objectOffsets[objNum] = buffer.count
                 writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
             }
+            contentRefs.append(pageContentRefs)
+        }
 
-            // Create page content streams
-            var contentRefs: [[ISO_32000.COS.IndirectReference]] = []
-            for page in document.pages {
-                var pageContentRefs: [ISO_32000.COS.IndirectReference] = []
-                for content in page.contents {
-                    let objNum = state.nextObjectNumber()
-                    pageContentRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
+        // Pre-allocate page object numbers (needed for destination links)
+        // We allocate: 1 for pages dict + N for each page
+        let pagesObjNum = state.nextObjectNumber()
+        let pagesRef = ISO_32000.COS.IndirectReference(objectNumber: pagesObjNum)
 
-                    // ContentStream.data, ISO_32000.COS.Stream.data, and the Flate compression
-                    // callback are all [Byte] post-cascade; the data flows with no bridge.
-                    var streamData = content.data
-                    var streamDict = ISO_32000.COS.Dictionary()
+        var pageRefs: [ISO_32000.COS.IndirectReference] = []
+        for _ in document.pages {
+            let objNum = state.nextObjectNumber()
+            pageRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
+        }
 
-                    // Apply compression if available
-                    if let compress = compression {
-                        var compressed: [Byte] = []
-                        compress.compress(streamData, into: &compressed)
-                        if compressed.count < streamData.count {
-                            streamData = compressed
-                            streamDict[.filter] = .name(.flateDecode)
-                        }
-                    }
-
-                    let stream = ISO_32000.COS.Stream(dictionary: streamDict, data: streamData)
-                    state.objectOffsets[objNum] = buffer.count
-                    writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
-                }
-                contentRefs.append(pageContentRefs)
-            }
-
-            // Pre-allocate page object numbers (needed for destination links)
-            // We allocate: 1 for pages dict + N for each page
-            let pagesObjNum = state.nextObjectNumber()
-            let pagesRef = ISO_32000.COS.IndirectReference(objectNumber: pagesObjNum)
-
-            var pageRefs: [ISO_32000.COS.IndirectReference] = []
-            for _ in document.pages {
+        // Create annotation objects for each page (now pageRefs are available)
+        var annotRefs: [[ISO_32000.COS.IndirectReference]] = []
+        for page in document.pages {
+            var pageAnnotRefs: [ISO_32000.COS.IndirectReference] = []
+            for annotation in page.annotations {
                 let objNum = state.nextObjectNumber()
-                pageRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
-            }
+                pageAnnotRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
 
-            // Create annotation objects for each page (now pageRefs are available)
-            var annotRefs: [[ISO_32000.COS.IndirectReference]] = []
-            for page in document.pages {
-                var pageAnnotRefs: [ISO_32000.COS.IndirectReference] = []
-                for annotation in page.annotations {
-                    let objNum = state.nextObjectNumber()
-                    pageAnnotRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
+                var annotDict = ISO_32000.COS.Dictionary()
+                annotDict[.type] = .name(.annot)
+                annotDict[.subtype] = .name(annotation.subtype.name)
+                annotDict[.rect] = ISO_32000.COS.Object(annotation.rect)
 
-                    var annotDict = ISO_32000.COS.Dictionary()
-                    annotDict[.type] = .name(.annot)
-                    annotDict[.subtype] = .name(annotation.subtype.name)
-                    annotDict[.rect] = ISO_32000.COS.Object(annotation.rect)
+                // Border (common entry)
+                if let border = annotation.border {
+                    annotDict[.border] = .array([
+                        .real(border.horizontalRadius),
+                        .real(border.verticalRadius),
+                        .real(border.width),
+                    ])
+                }
 
-                    // Border (common entry)
-                    if let border = annotation.border {
-                        annotDict[.border] = .array([
-                            .real(border.horizontalRadius),
-                            .real(border.verticalRadius),
-                            .real(border.width),
-                        ])
+                // Serialize type-specific content
+                switch annotation.content {
+                case .link(let link):
+                    switch link.target {
+                    case .uri(let uri):
+                        // URI action for external links
+                        var actionDict = ISO_32000.COS.Dictionary()
+                        actionDict[.s] = .name(.uri)
+                        actionDict[.uri] = .string(ISO_32000.COS.StringValue(uri))
+                        annotDict[.a] = .dictionary(actionDict)
+
+                    case .destination(let dest):
+                        // Direct destination for internal links
+                        annotDict[.dest] = serializeDestination(dest, pageRefs: pageRefs)
                     }
 
-                    // Serialize type-specific content
-                    switch annotation.content {
-                    case .link(let link):
-                        switch link.target {
-                        case .uri(let uri):
-                            // URI action for external links
-                            var actionDict = ISO_32000.COS.Dictionary()
-                            actionDict[.s] = .name(.uri)
-                            actionDict[.uri] = .string(ISO_32000.COS.StringValue(uri))
-                            annotDict[.a] = .dictionary(actionDict)
-
-                        case .destination(let dest):
-                            // Direct destination for internal links
-                            annotDict[.dest] = serializeDestination(dest, pageRefs: pageRefs)
-                        }
-
-                    default:
-                        // Other annotation types not yet fully implemented in serialization
-                        break
-                    }
-
-                    state.objectOffsets[objNum] = buffer.count
-                    writeIndirectObject(objNum, object: .dictionary(annotDict), into: &buffer)
+                default:
+                    // Other annotation types not yet fully implemented in serialization
+                    break
                 }
-                annotRefs.append(pageAnnotRefs)
+
+                state.objectOffsets[objNum] = buffer.count
+                writeIndirectObject(objNum, object: .dictionary(annotDict), into: &buffer)
             }
-
-            // Write page objects (object numbers already allocated above)
-            for (i, page) in document.pages.enumerated() {
-                let pageRef = pageRefs[i]
-
-                var pageDict = ISO_32000.COS.Dictionary()
-                pageDict[.type] = .name(.page)
-                pageDict[.parent] = .reference(pagesRef)
-                pageDict[.mediaBox] = ISO_32000.COS.Object(page.mediaBox)
-
-                if let cropBox = page.cropBox {
-                    pageDict[.cropBox] = ISO_32000.COS.Object(cropBox)
-                }
-
-                if let rotation = page.rotation, rotation.underlying != 0 {
-                    pageDict[.rotate] = .integer(Int64(rotation.underlying))
-                }
-
-                // Contents
-                if contentRefs[i].count == 1 {
-                    pageDict[.contents] = .reference(contentRefs[i][0])
-                } else if contentRefs[i].count > 1 {
-                    pageDict[.contents] = .array(contentRefs[i].map { .reference($0) })
-                }
-
-                // Annotations
-                if !annotRefs[i].isEmpty {
-                    pageDict[.annots] = .array(annotRefs[i].map { .reference($0) })
-                }
-
-                // Resources
-                var resourcesDict = ISO_32000.COS.Dictionary()
-
-                // ISO_32000.Font resources
-                if !page.resources.fonts.isEmpty {
-                    var fontResourceDict = ISO_32000.COS.Dictionary()
-                    for name in page.resources.fonts.keys
-                        .sorted(by: { $0.rawValue < $1.rawValue })
-                    {
-                        if let ref = fontRefs[name] {
-                            fontResourceDict[name] = .reference(ref)
-                        }
-                    }
-                    resourcesDict[.font] = .dictionary(fontResourceDict)
-                }
-
-                // XObject resources (images)
-                if !page.resources.xObjects.isEmpty {
-                    var xObjectDict = ISO_32000.COS.Dictionary()
-                    for name in page.resources.xObjects.keys
-                        .sorted(by: { $0.rawValue < $1.rawValue })
-                    {
-                        if let ref = imageRefs[name] {
-                            xObjectDict[name] = .reference(ref)
-                        }
-                    }
-                    resourcesDict[.xObject] = .dictionary(xObjectDict)
-                }
-
-                // ProcSet - include ImageC/ImageB if we have images
-                var procSetArray: [ISO_32000.COS.Object] = [.name(.pdf), .name(.text)]
-                if !page.resources.xObjects.isEmpty {
-                    procSetArray.append(ISO_32000.COS.Object.name(.imagec))  // Color images
-                    procSetArray.append(ISO_32000.COS.Object.name(.imageb))  // Grayscale images
-                }
-                resourcesDict[.procSet] = .array(procSetArray)
-
-                pageDict[.resources] = .dictionary(resourcesDict)
-
-                state.objectOffsets[pageRef.objectNumber] = buffer.count
-                writeIndirectObject(
-                    pageRef.objectNumber,
-                    object: .dictionary(pageDict),
-                    into: &buffer
-                )
-            }
-
-            // Pages dictionary
-            var pagesDict = ISO_32000.COS.Dictionary()
-            pagesDict[.type] = .name(.pages)
-            pagesDict[.kids] = .array(pageRefs.map { .reference($0) })
-            pagesDict[.count] = .integer(Int64(document.pages.count))
-
-            state.objectOffsets[pagesObjNum] = buffer.count
-            writeIndirectObject(pagesObjNum, object: .dictionary(pagesDict), into: &buffer)
-
-            // ISO_32000.Outline (if present)
-            var outlineRef: ISO_32000.COS.IndirectReference?
-            if let outline = document.outline, !outline.isEmpty {
-                outlineRef = writeOutline(outline, pageRefs: pageRefs, state: &state, into: &buffer)
-            }
-
-            // Catalog
-            let catalogObjNum = state.nextObjectNumber()
-            var catalogDict = ISO_32000.COS.Dictionary()
-            catalogDict[.type] = .name(.catalog)
-            catalogDict[.pages] = .reference(pagesRef)
-
-            if let outlineRef = outlineRef {
-                catalogDict[.outlines] = .reference(outlineRef)
-            }
-
-            state.objectOffsets[catalogObjNum] = buffer.count
-            writeIndirectObject(catalogObjNum, object: .dictionary(catalogDict), into: &buffer)
-
-            // Info dictionary (optional)
-            var infoRef: ISO_32000.COS.IndirectReference?
-            if let info = document.info {
-                let infoObjNum = state.nextObjectNumber()
-                infoRef = ISO_32000.COS.IndirectReference(objectNumber: infoObjNum)
-
-                var infoDict = ISO_32000.COS.Dictionary()
-                if let title = info.title {
-                    infoDict[.title] = .string(ISO_32000.COS.StringValue(title))
-                }
-                if let author = info.author {
-                    infoDict[.author] = .string(ISO_32000.COS.StringValue(author))
-                }
-                if let subject = info.subject {
-                    infoDict[.subject] = .string(ISO_32000.COS.StringValue(subject))
-                }
-                if let keywords = info.keywords {
-                    infoDict[.keywords] = .string(ISO_32000.COS.StringValue(keywords))
-                }
-                if let creator = info.creator {
-                    infoDict[.creator] = .string(ISO_32000.COS.StringValue(creator))
-                }
-                if let producer = info.producer {
-                    infoDict[.producer] = .string(ISO_32000.COS.StringValue(producer))
-                }
-                if let date = info.creationDate {
-                    infoDict[.creationDate] = .string(ISO_32000.COS.StringValue(date.description))
-                }
-                if let date = info.modificationDate {
-                    infoDict[.modDate] = .string(ISO_32000.COS.StringValue(date.description))
-                }
-
-                state.objectOffsets[infoObjNum] = buffer.count
-                writeIndirectObject(infoObjNum, object: .dictionary(infoDict), into: &buffer)
-            }
-
-            // Cross-reference table
-            let xrefOffset = buffer.count
-            writeXref(state: state, into: &buffer)
-
-            // Trailer
-            writeTrailer(
-                size: state.objectCount + 1,
-                rootRef: ISO_32000.COS.IndirectReference(objectNumber: catalogObjNum),
-                infoRef: infoRef,
-                xrefOffset: xrefOffset,
-                into: &buffer
-            )
+            annotRefs.append(pageAnnotRefs)
         }
 
-        /// Convenience: write and return bytes
-        public mutating func write(_ document: ISO_32000.Document) -> [Byte] {
-            var buffer: [Byte] = []
-            write(document, into: &buffer)
-            return buffer
-        }
+        // Write page objects (object numbers already allocated above)
+        for (i, page) in document.pages.enumerated() {
+            let pageRef = pageRefs[i]
 
-        // MARK: - Private Helpers
+            var pageDict = ISO_32000.COS.Dictionary()
+            pageDict[.type] = .name(.page)
+            pageDict[.parent] = .reference(pagesRef)
+            pageDict[.mediaBox] = ISO_32000.COS.Object(page.mediaBox)
 
-        private func writeHeader<Buffer: RangeReplaceableCollection>(
-            _ version: ISO_32000.Version,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte {
-            buffer.append(contentsOf: "\(version.header)\n".utf8)
-        }
-
-        private func writeIndirectObject<Buffer: RangeReplaceableCollection>(
-            _ objectNumber: Int,
-            object: ISO_32000.COS.Object,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte {
-            buffer.append(contentsOf: "\(objectNumber) 0 obj\n".utf8)
-            ISO_32000.COS.serialize(object, into: &buffer)
-            buffer.append(contentsOf: "\nendobj\n".utf8)
-        }
-
-        private func writeXref<Buffer: RangeReplaceableCollection>(
-            state: State,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte {
-            buffer.append(contentsOf: "xref\n".utf8)
-            buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8)
-
-            // Entry 0: free object (head of free list)
-            buffer.append(contentsOf: "0000000000 65535 f \n".utf8)
-
-            // Object entries
-            for i in 1...state.objectCount {
-                let offset = state.objectOffsets[i] ?? 0
-                var offsetStr = Swift.String(offset)
-                while offsetStr.count < 10 {
-                    offsetStr = "0" + offsetStr
-                }
-                let entry = "\(offsetStr) 00000 n \n"
-                buffer.append(contentsOf: entry.utf8)
+            if let cropBox = page.cropBox {
+                pageDict[.cropBox] = ISO_32000.COS.Object(cropBox)
             }
-        }
 
-        // MARK: - ISO_32000.Outline Writing
+            if let rotation = page.rotation, rotation.underlying != 0 {
+                pageDict[.rotate] = .integer(Int64(rotation.underlying))
+            }
 
-        /// Helper type for tracking outline item metadata during serialization
-        private struct OutlineFlatItem {
-            let item: ISO_32000.Outline.Item
-            let objNum: Int
-            let parentObjNum: Int
-            let prevObjNum: Int?
-            let nextObjNum: Int?
-            let firstChildObjNum: Int?
-            let lastChildObjNum: Int?
-        }
+            // Contents
+            if contentRefs[i].count == 1 {
+                pageDict[.contents] = .reference(contentRefs[i][0])
+            } else if contentRefs[i].count > 1 {
+                pageDict[.contents] = .array(contentRefs[i].map { .reference($0) })
+            }
 
-        private func writeOutline<Buffer: RangeReplaceableCollection>(
-            _ outline: ISO_32000.Outline.Root,
-            pageRefs: [ISO_32000.COS.IndirectReference],
-            state: inout State,
-            into buffer: inout Buffer
-        ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
-            // ISO_32000.Outline root object number
-            let outlineObjNum = state.nextObjectNumber()
-            let outlineRef = ISO_32000.COS.IndirectReference(objectNumber: outlineObjNum)
+            // Annotations
+            if !annotRefs[i].isEmpty {
+                pageDict[.annots] = .array(annotRefs[i].map { .reference($0) })
+            }
 
-            // First pass: assign object numbers to all items in depth-first order
-            // We track items by their flat index
-            var itemObjNums: [Int] = []  // flatIndex -> objNum
-            var allItems: [ISO_32000.Outline.Item] = []
+            // Resources
+            var resourcesDict = ISO_32000.COS.Dictionary()
 
-            func assignObjectNumbers(_ items: [ISO_32000.Outline.Item]) {
-                for item in items {
-                    let objNum = state.nextObjectNumber()
-                    itemObjNums.append(objNum)
-                    allItems.append(item)
-                    if !item.children.isEmpty {
-                        assignObjectNumbers(item.children)
+            // ISO_32000.Font resources
+            if !page.resources.fonts.isEmpty {
+                var fontResourceDict = ISO_32000.COS.Dictionary()
+                for name in page.resources.fonts.keys
+                    .sorted(by: { $0.rawValue < $1.rawValue })
+                {
+                    if let ref = fontRefs[name] {
+                        fontResourceDict[name] = .reference(ref)
                     }
                 }
+                resourcesDict[.font] = .dictionary(fontResourceDict)
             }
-            assignObjectNumbers(outline.items)
 
-            // Second pass: build flat list with correct references
-            var flatItems: [OutlineFlatItem] = []
-            var currentIndex = 0
-
-            func buildFlatList(_ items: [ISO_32000.Outline.Item], parentObjNum: Int) {
-                // First, collect object numbers for all items at this level
-                var siblingObjNums: [Int] = []
-                var tempIndex = currentIndex
-                for item in items {
-                    siblingObjNums.append(itemObjNums[tempIndex])
-                    tempIndex += 1
-                    tempIndex += countDescendants(item)
-                }
-
-                // Now build the flat items with correct sibling references
-                for (i, item) in items.enumerated() {
-                    let myObjNum = itemObjNums[currentIndex]
-                    currentIndex += 1
-
-                    // Previous and next siblings from our pre-collected list
-                    let prevObjNum = i > 0 ? siblingObjNums[i - 1] : nil
-                    let nextObjNum = i < items.count - 1 ? siblingObjNums[i + 1] : nil
-
-                    // First and last child
-                    var firstChildObjNum: Int? = nil
-                    var lastChildObjNum: Int? = nil
-                    if !item.children.isEmpty {
-                        firstChildObjNum = itemObjNums[currentIndex]  // Next item is first child
-                        // Last child: need to find it
-                        var lastChildIndex = currentIndex
-                        for (j, child) in item.children.enumerated() {
-                            if j == item.children.count - 1 {
-                                lastChildObjNum = itemObjNums[lastChildIndex]
-                            }
-                            lastChildIndex += 1
-                            lastChildIndex += countDescendants(child)
-                        }
-                    }
-
-                    flatItems.append(
-                        OutlineFlatItem(
-                            item: item,
-                            objNum: myObjNum,
-                            parentObjNum: parentObjNum,
-                            prevObjNum: prevObjNum,
-                            nextObjNum: nextObjNum,
-                            firstChildObjNum: firstChildObjNum,
-                            lastChildObjNum: lastChildObjNum
-                        )
-                    )
-
-                    if !item.children.isEmpty {
-                        buildFlatList(item.children, parentObjNum: myObjNum)
+            // XObject resources (images)
+            if !page.resources.xObjects.isEmpty {
+                var xObjectDict = ISO_32000.COS.Dictionary()
+                for name in page.resources.xObjects.keys
+                    .sorted(by: { $0.rawValue < $1.rawValue })
+                {
+                    if let ref = imageRefs[name] {
+                        xObjectDict[name] = .reference(ref)
                     }
                 }
+                resourcesDict[.xObject] = .dictionary(xObjectDict)
             }
 
-            // Helper to count all descendants of an item
-            func countDescendants(_ item: ISO_32000.Outline.Item) -> Int {
-                var count = 0
-                for child in item.children {
-                    count += 1
-                    count += countDescendants(child)
-                }
-                return count
+            // ProcSet - include ImageC/ImageB if we have images
+            var procSetArray: [ISO_32000.COS.Object] = [.name(.pdf), .name(.text)]
+            if !page.resources.xObjects.isEmpty {
+                procSetArray.append(ISO_32000.COS.Object.name(.imagec))  // Color images
+                procSetArray.append(ISO_32000.COS.Object.name(.imageb))  // Grayscale images
             }
+            resourcesDict[.procSet] = .array(procSetArray)
 
-            buildFlatList(outline.items, parentObjNum: outlineObjNum)
+            pageDict[.resources] = .dictionary(resourcesDict)
 
-            // Write outline root dictionary
-            var outlineDict = ISO_32000.COS.Dictionary()
-            outlineDict[.type] = .name(.outlines)
-
-            if !outline.items.isEmpty {
-                outlineDict[.first] = .reference(
-                    ISO_32000.COS.IndirectReference(objectNumber: itemObjNums[0])
-                )
-                // Find last top-level item's object number
-                var lastTopLevelIndex = 0
-                for (i, item) in outline.items.enumerated() {
-                    if i == outline.items.count - 1 {
-                        break
-                    }
-                    lastTopLevelIndex += 1
-                    lastTopLevelIndex += countDescendants(item)
-                }
-                outlineDict[.last] = .reference(
-                    ISO_32000.COS.IndirectReference(objectNumber: itemObjNums[lastTopLevelIndex])
-                )
-            }
-
-            outlineDict[.count] = .integer(Int64(outline.count))
-
-            state.objectOffsets[outlineObjNum] = buffer.count
-            writeIndirectObject(outlineObjNum, object: .dictionary(outlineDict), into: &buffer)
-
-            // Write all outline item dictionaries
-            for fi in flatItems {
-                var itemDict = ISO_32000.COS.Dictionary()
-                itemDict[.title] = .string(ISO_32000.COS.StringValue(fi.item.title))
-                itemDict[.parent] = .reference(ISO_32000.COS.IndirectReference(objectNumber: fi.parentObjNum))
-
-                if let prev = fi.prevObjNum {
-                    itemDict[.prev] = .reference(ISO_32000.COS.IndirectReference(objectNumber: prev))
-                }
-                if let next = fi.nextObjNum {
-                    itemDict[.next] = .reference(ISO_32000.COS.IndirectReference(objectNumber: next))
-                }
-                if let first = fi.firstChildObjNum {
-                    itemDict[.first] = .reference(ISO_32000.COS.IndirectReference(objectNumber: first))
-                }
-                if let last = fi.lastChildObjNum {
-                    itemDict[.last] = .reference(ISO_32000.COS.IndirectReference(objectNumber: last))
-                }
-
-                // Count: positive if open, negative if closed
-                if !fi.item.children.isEmpty {
-                    let descendantCount = fi.item.visibleDescendantCount - 1
-                    let countValue = fi.item.isOpen ? descendantCount : -descendantCount
-                    itemDict[.count] = .integer(Int64(countValue))
-                }
-
-                // Target (destination or action)
-                if let target = fi.item.target {
-                    switch target {
-                    case .destination(let destination):
-                        itemDict[.dest] = serializeDestination(destination, pageRefs: pageRefs)
-                    case .action:
-                        // Action serialization not yet implemented
-                        break
-                    }
-                }
-
-                state.objectOffsets[fi.objNum] = buffer.count
-                writeIndirectObject(fi.objNum, object: .dictionary(itemDict), into: &buffer)
-            }
-
-            return outlineRef
-        }
-
-        private func serializeDestination(
-            _ dest: ISO_32000.Destination,
-            pageRefs: [ISO_32000.COS.IndirectReference]
-        ) -> ISO_32000.COS.Object {
-            switch dest {
-            case .xyz(let page, let left, let top, let zoom):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.xyz),
-                    left.map { .real($0.underlying) } ?? .null,
-                    top.map { .real($0.underlying) } ?? .null,
-                    zoom.map { .real($0) } ?? .null,
-                ])
-
-            case .fit(let page):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([.reference(pageRef), .name(.fit)])
-
-            case .fitH(let page, let top):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.fitH),
-                    top.map { .real($0.underlying) } ?? .null,
-                ])
-
-            case .fitV(let page, let left):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.fitV),
-                    left.map { .real($0.underlying) } ?? .null,
-                ])
-
-            case .fitR(let page, let left, let bottom, let right, let top):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.fitR),
-                    .real(left.underlying),
-                    .real(bottom.underlying),
-                    .real(right.underlying),
-                    .real(top.underlying),
-                ])
-
-            case .fitB(let page):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([.reference(pageRef), .name(.fitB)])
-
-            case .fitBH(let page, let top):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.fitBH),
-                    top.map { .real($0.underlying) } ?? .null,
-                ])
-
-            case .fitBV(let page, let left):
-                let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
-                return .array([
-                    .reference(pageRef),
-                    .name(.fitBV),
-                    left.map { .real($0.underlying) } ?? .null,
-                ])
-
-            case .named(let name):
-                return .string(ISO_32000.COS.StringValue(name))
-            }
-        }
-
-        private func writeTrailer<Buffer: RangeReplaceableCollection>(
-            size: Int,
-            rootRef: ISO_32000.COS.IndirectReference,
-            infoRef: ISO_32000.COS.IndirectReference?,
-            xrefOffset: Int,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte {
-            buffer.append(contentsOf: "trailer\n".utf8)
-
-            var trailerDict = ISO_32000.COS.Dictionary()
-            trailerDict[.size] = .integer(Int64(size))
-            trailerDict[.root] = .reference(rootRef)
-
-            if let info = infoRef {
-                trailerDict[.info] = .reference(info)
-            }
-
-            ISO_32000.COS.Dictionary.serialize(trailerDict, into: &buffer)
-
-            buffer.append(contentsOf: "\nstartxref\n".utf8)
-            buffer.append(contentsOf: "\(xrefOffset)\n".utf8)
-            buffer.append(contentsOf: "%%EOF\n".utf8)
-        }
-
-        // MARK: - Embedded TrueType ISO_32000.Font Writing
-
-        /// Write an embedded TrueType font to the PDF.
-        ///
-        /// This creates:
-        /// 1. FontFile2 stream (raw TrueType data)
-        /// 2. FontDescriptor dictionary
-        /// 3. ISO_32000.Font dictionary (referencing the above)
-        ///
-        /// Per ISO 32000-2:2020, Section 9.6.3 (TrueType fonts) and 9.9.1 (ISO_32000.Font embedding).
-        private mutating func writeEmbeddedTrueTypeFont<Buffer: RangeReplaceableCollection>(
-            font: ISO_32000.Font,
-            embedded: ISO_32000.`9`.`6`.Embedded,
-            state: inout State,
-            into buffer: inout Buffer
-        ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
-            // 1. Write FontFile2 stream (the raw TrueType font program)
-            let fontFileObjNum = state.nextObjectNumber()
-            let fontFileRef = ISO_32000.COS.IndirectReference(objectNumber: fontFileObjNum)
-
-            var fontFileData = embedded.data
-            var fontFileDict = ISO_32000.COS.Dictionary()
-            fontFileDict[.length1] = .integer(Int64(embedded.data.count))
-
-            // Apply compression if available
-            if let compress = compression {
-                var compressed: [Byte] = []
-                compress.compress(fontFileData, into: &compressed)
-                if compressed.count < fontFileData.count {
-                    fontFileData = compressed
-                    fontFileDict[.filter] = .name(.flateDecode)
-                }
-            }
-
-            let fontFileStream = ISO_32000.COS.Stream(dictionary: fontFileDict, data: fontFileData)
-            state.objectOffsets[fontFileObjNum] = buffer.count
-            writeIndirectObject(fontFileObjNum, object: .stream(fontFileStream), into: &buffer)
-
-            // 2. Write FontDescriptor dictionary
-            let descriptorObjNum = state.nextObjectNumber()
-            let descriptorRef = ISO_32000.COS.IndirectReference(objectNumber: descriptorObjNum)
-
-            let descriptor = embedded.descriptor(fontName: font.baseFontName)
-            var descriptorDict = ISO_32000.COS.Dictionary()
-            descriptorDict[.type] = .name(.fontDescriptor)
-            descriptorDict[.fontName] = .name(font.baseFontName)
-            descriptorDict[.fontFlags] = .integer(Int64(descriptor.flags.rawValue))
-            descriptorDict[.fontBBox] = .array([
-                .integer(Int64(descriptor.fontBBox.llx)),
-                .integer(Int64(descriptor.fontBBox.lly)),
-                .integer(Int64(descriptor.fontBBox.urx)),
-                .integer(Int64(descriptor.fontBBox.ury)),
-            ])
-            descriptorDict[.italicAngle] = .real(descriptor.italicAngle)
-            descriptorDict[.ascent] = .integer(Int64(descriptor.ascent.underlying))
-            descriptorDict[.descent] = .integer(Int64(descriptor.descent.underlying))
-            descriptorDict[.capHeight] = .integer(Int64(descriptor.capHeight.underlying))
-            descriptorDict[.stemV] = .integer(Int64(descriptor.stemV.underlying))
-            descriptorDict[.fontFile2] = .reference(fontFileRef)
-
-            state.objectOffsets[descriptorObjNum] = buffer.count
+            state.objectOffsets[pageRef.objectNumber] = buffer.count
             writeIndirectObject(
-                descriptorObjNum,
-                object: .dictionary(descriptorDict),
+                pageRef.objectNumber,
+                object: .dictionary(pageDict),
                 into: &buffer
             )
+        }
 
-            // 3. Write ToUnicode CMap stream
-            let toUnicodeObjNum = state.nextObjectNumber()
-            let toUnicodeRef = ISO_32000.COS.IndirectReference(objectNumber: toUnicodeObjNum)
+        // Pages dictionary
+        var pagesDict = ISO_32000.COS.Dictionary()
+        pagesDict[.type] = .name(.pages)
+        pagesDict[.kids] = .array(pageRefs.map { .reference($0) })
+        pagesDict[.count] = .integer(Int64(document.pages.count))
 
-            var toUnicodeData = generateToUnicodeCMap()
-            var toUnicodeDict = ISO_32000.COS.Dictionary()
+        state.objectOffsets[pagesObjNum] = buffer.count
+        writeIndirectObject(pagesObjNum, object: .dictionary(pagesDict), into: &buffer)
 
-            // Apply compression if available
-            if let compress = compression {
-                var compressed: [Byte] = []
-                compress.compress(toUnicodeData, into: &compressed)
-                if compressed.count < toUnicodeData.count {
-                    toUnicodeData = compressed
-                    toUnicodeDict[.filter] = .name(.flateDecode)
+        // ISO_32000.Outline (if present)
+        var outlineRef: ISO_32000.COS.IndirectReference?
+        if let outline = document.outline, !outline.isEmpty {
+            outlineRef = writeOutline(outline, pageRefs: pageRefs, state: &state, into: &buffer)
+        }
+
+        // Catalog
+        let catalogObjNum = state.nextObjectNumber()
+        var catalogDict = ISO_32000.COS.Dictionary()
+        catalogDict[.type] = .name(.catalog)
+        catalogDict[.pages] = .reference(pagesRef)
+
+        if let outlineRef = outlineRef {
+            catalogDict[.outlines] = .reference(outlineRef)
+        }
+
+        state.objectOffsets[catalogObjNum] = buffer.count
+        writeIndirectObject(catalogObjNum, object: .dictionary(catalogDict), into: &buffer)
+
+        // Info dictionary (optional)
+        var infoRef: ISO_32000.COS.IndirectReference?
+        if let info = document.info {
+            let infoObjNum = state.nextObjectNumber()
+            infoRef = ISO_32000.COS.IndirectReference(objectNumber: infoObjNum)
+
+            var infoDict = ISO_32000.COS.Dictionary()
+            if let title = info.title {
+                infoDict[.title] = .string(ISO_32000.COS.StringValue(title))
+            }
+            if let author = info.author {
+                infoDict[.author] = .string(ISO_32000.COS.StringValue(author))
+            }
+            if let subject = info.subject {
+                infoDict[.subject] = .string(ISO_32000.COS.StringValue(subject))
+            }
+            if let keywords = info.keywords {
+                infoDict[.keywords] = .string(ISO_32000.COS.StringValue(keywords))
+            }
+            if let creator = info.creator {
+                infoDict[.creator] = .string(ISO_32000.COS.StringValue(creator))
+            }
+            if let producer = info.producer {
+                infoDict[.producer] = .string(ISO_32000.COS.StringValue(producer))
+            }
+            if let date = info.creationDate {
+                infoDict[.creationDate] = .string(ISO_32000.COS.StringValue(date.description))
+            }
+            if let date = info.modificationDate {
+                infoDict[.modDate] = .string(ISO_32000.COS.StringValue(date.description))
+            }
+
+            state.objectOffsets[infoObjNum] = buffer.count
+            writeIndirectObject(infoObjNum, object: .dictionary(infoDict), into: &buffer)
+        }
+
+        // Cross-reference table
+        let xrefOffset = buffer.count
+        writeXref(state: state, into: &buffer)
+
+        // Trailer
+        writeTrailer(
+            size: state.objectCount + 1,
+            rootRef: ISO_32000.COS.IndirectReference(objectNumber: catalogObjNum),
+            infoRef: infoRef,
+            xrefOffset: xrefOffset,
+            into: &buffer
+        )
+    }
+
+    /// Convenience: write and return bytes
+    public mutating func write(_ document: ISO_32000.Document) -> [Byte] {
+        var buffer: [Byte] = []
+        write(document, into: &buffer)
+        return buffer
+    }
+
+    // MARK: - Private Helpers
+
+    private func writeHeader<Buffer: RangeReplaceableCollection>(
+        _ version: ISO_32000.Version,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        buffer.append(contentsOf: "\(version.header)\n".utf8)
+    }
+
+    private func writeIndirectObject<Buffer: RangeReplaceableCollection>(
+        _ objectNumber: Int,
+        object: ISO_32000.COS.Object,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        buffer.append(contentsOf: "\(objectNumber) 0 obj\n".utf8)
+        ISO_32000.COS.serialize(object, into: &buffer)
+        buffer.append(contentsOf: "\nendobj\n".utf8)
+    }
+
+    private func writeXref<Buffer: RangeReplaceableCollection>(
+        state: State,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        buffer.append(contentsOf: "xref\n".utf8)
+        buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8)
+
+        // Entry 0: free object (head of free list)
+        buffer.append(contentsOf: "0000000000 65535 f \n".utf8)
+
+        // Object entries
+        for i in 1...state.objectCount {
+            let offset = state.objectOffsets[i] ?? 0
+            var offsetStr = Swift.String(offset)
+            while offsetStr.count < 10 {
+                offsetStr = "0" + offsetStr
+            }
+            let entry = "\(offsetStr) 00000 n \n"
+            buffer.append(contentsOf: entry.utf8)
+        }
+    }
+
+    // MARK: - ISO_32000.Outline Writing
+
+    /// Helper type for tracking outline item metadata during serialization
+    private struct OutlineFlatItem {
+        let item: ISO_32000.Outline.Item
+        let objNum: Int
+        let parentObjNum: Int
+        let prevObjNum: Int?
+        let nextObjNum: Int?
+        let firstChildObjNum: Int?
+        let lastChildObjNum: Int?
+    }
+
+    private func writeOutline<Buffer: RangeReplaceableCollection>(
+        _ outline: ISO_32000.Outline.Root,
+        pageRefs: [ISO_32000.COS.IndirectReference],
+        state: inout State,
+        into buffer: inout Buffer
+    ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
+        // ISO_32000.Outline root object number
+        let outlineObjNum = state.nextObjectNumber()
+        let outlineRef = ISO_32000.COS.IndirectReference(objectNumber: outlineObjNum)
+
+        // First pass: assign object numbers to all items in depth-first order
+        // We track items by their flat index
+        var itemObjNums: [Int] = []  // flatIndex -> objNum
+        var allItems: [ISO_32000.Outline.Item] = []
+
+        func assignObjectNumbers(_ items: [ISO_32000.Outline.Item]) {
+            for item in items {
+                let objNum = state.nextObjectNumber()
+                itemObjNums.append(objNum)
+                allItems.append(item)
+                if !item.children.isEmpty {
+                    assignObjectNumbers(item.children)
+                }
+            }
+        }
+        assignObjectNumbers(outline.items)
+
+        // Second pass: build flat list with correct references
+        var flatItems: [OutlineFlatItem] = []
+        var currentIndex = 0
+
+        func buildFlatList(_ items: [ISO_32000.Outline.Item], parentObjNum: Int) {
+            // First, collect object numbers for all items at this level
+            var siblingObjNums: [Int] = []
+            var tempIndex = currentIndex
+            for item in items {
+                siblingObjNums.append(itemObjNums[tempIndex])
+                tempIndex += 1
+                tempIndex += countDescendants(item)
+            }
+
+            // Now build the flat items with correct sibling references
+            for (i, item) in items.enumerated() {
+                let myObjNum = itemObjNums[currentIndex]
+                currentIndex += 1
+
+                // Previous and next siblings from our pre-collected list
+                let prevObjNum = i > 0 ? siblingObjNums[i - 1] : nil
+                let nextObjNum = i < items.count - 1 ? siblingObjNums[i + 1] : nil
+
+                // First and last child
+                var firstChildObjNum: Int? = nil
+                var lastChildObjNum: Int? = nil
+                if !item.children.isEmpty {
+                    firstChildObjNum = itemObjNums[currentIndex]  // Next item is first child
+                    // Last child: need to find it
+                    var lastChildIndex = currentIndex
+                    for (j, child) in item.children.enumerated() {
+                        if j == item.children.count - 1 {
+                            lastChildObjNum = itemObjNums[lastChildIndex]
+                        }
+                        lastChildIndex += 1
+                        lastChildIndex += countDescendants(child)
+                    }
+                }
+
+                flatItems.append(
+                    OutlineFlatItem(
+                        item: item,
+                        objNum: myObjNum,
+                        parentObjNum: parentObjNum,
+                        prevObjNum: prevObjNum,
+                        nextObjNum: nextObjNum,
+                        firstChildObjNum: firstChildObjNum,
+                        lastChildObjNum: lastChildObjNum
+                    )
+                )
+
+                if !item.children.isEmpty {
+                    buildFlatList(item.children, parentObjNum: myObjNum)
+                }
+            }
+        }
+
+        // Helper to count all descendants of an item
+        func countDescendants(_ item: ISO_32000.Outline.Item) -> Int {
+            var count = 0
+            for child in item.children {
+                count += 1
+                count += countDescendants(child)
+            }
+            return count
+        }
+
+        buildFlatList(outline.items, parentObjNum: outlineObjNum)
+
+        // Write outline root dictionary
+        var outlineDict = ISO_32000.COS.Dictionary()
+        outlineDict[.type] = .name(.outlines)
+
+        if !outline.items.isEmpty {
+            outlineDict[.first] = .reference(
+                ISO_32000.COS.IndirectReference(objectNumber: itemObjNums[0])
+            )
+            // Find last top-level item's object number
+            var lastTopLevelIndex = 0
+            for (i, item) in outline.items.enumerated() {
+                if i == outline.items.count - 1 {
+                    break
+                }
+                lastTopLevelIndex += 1
+                lastTopLevelIndex += countDescendants(item)
+            }
+            outlineDict[.last] = .reference(
+                ISO_32000.COS.IndirectReference(objectNumber: itemObjNums[lastTopLevelIndex])
+            )
+        }
+
+        outlineDict[.count] = .integer(Int64(outline.count))
+
+        state.objectOffsets[outlineObjNum] = buffer.count
+        writeIndirectObject(outlineObjNum, object: .dictionary(outlineDict), into: &buffer)
+
+        // Write all outline item dictionaries
+        for fi in flatItems {
+            var itemDict = ISO_32000.COS.Dictionary()
+            itemDict[.title] = .string(ISO_32000.COS.StringValue(fi.item.title))
+            itemDict[.parent] = .reference(
+                ISO_32000.COS.IndirectReference(objectNumber: fi.parentObjNum)
+            )
+
+            if let prev = fi.prevObjNum {
+                itemDict[.prev] = .reference(ISO_32000.COS.IndirectReference(objectNumber: prev))
+            }
+            if let next = fi.nextObjNum {
+                itemDict[.next] = .reference(ISO_32000.COS.IndirectReference(objectNumber: next))
+            }
+            if let first = fi.firstChildObjNum {
+                itemDict[.first] = .reference(ISO_32000.COS.IndirectReference(objectNumber: first))
+            }
+            if let last = fi.lastChildObjNum {
+                itemDict[.last] = .reference(ISO_32000.COS.IndirectReference(objectNumber: last))
+            }
+
+            // Count: positive if open, negative if closed
+            if !fi.item.children.isEmpty {
+                let descendantCount = fi.item.visibleDescendantCount - 1
+                let countValue = fi.item.isOpen ? descendantCount : -descendantCount
+                itemDict[.count] = .integer(Int64(countValue))
+            }
+
+            // Target (destination or action)
+            if let target = fi.item.target {
+                switch target {
+                case .destination(let destination):
+                    itemDict[.dest] = serializeDestination(destination, pageRefs: pageRefs)
+                case .action:
+                    // Action serialization not yet implemented
+                    break
                 }
             }
 
-            let toUnicodeStream = ISO_32000.COS.Stream(dictionary: toUnicodeDict, data: toUnicodeData)
-            state.objectOffsets[toUnicodeObjNum] = buffer.count
-            writeIndirectObject(toUnicodeObjNum, object: .stream(toUnicodeStream), into: &buffer)
-
-            // 4. Write ISO_32000.Font dictionary
-            let fontObjNum = state.nextObjectNumber()
-            let fontRef = ISO_32000.COS.IndirectReference(objectNumber: fontObjNum)
-
-            var fontDict = ISO_32000.COS.Dictionary()
-            fontDict[.type] = .name(.font)
-            fontDict[.subtype] = .name(.trueType)
-            fontDict[.baseFont] = .name(font.baseFontName)
-            fontDict[.fontDescriptor] = .reference(descriptorRef)
-            fontDict[.encoding] = .name(.winAnsiEncoding)
-            fontDict[.toUnicode] = .reference(toUnicodeRef)
-
-            // Build Widths array for WinAnsi range (32-255)
-            // Per ISO 32000-2, FirstChar and LastChar define the range,
-            // and Widths is an array of glyph widths for each character code
-            let firstChar = 32
-            let lastChar = 255
-            fontDict[.firstChar] = .integer(Int64(firstChar))
-            fontDict[.lastChar] = .integer(Int64(lastChar))
-
-            var widthsArray: [ISO_32000.COS.Object] = []
-            let unitsPerEm = embedded.metrics.unitsPerEm
-            for charCode in firstChar...lastChar {
-                // Get width for this character code
-                let width = embedded.metrics.width(forCodePoint: UInt32(charCode))
-                // Scale to 1000 units (PDF standard for glyph widths)
-                let scaledWidth = (width * 1000) / unitsPerEm
-                widthsArray.append(.integer(Int64(scaledWidth)))
-            }
-            fontDict[.widths] = .array(widthsArray)
-
-            state.objectOffsets[fontObjNum] = buffer.count
-            writeIndirectObject(fontObjNum, object: .dictionary(fontDict), into: &buffer)
-
-            return fontRef
+            state.objectOffsets[fi.objNum] = buffer.count
+            writeIndirectObject(fi.objNum, object: .dictionary(itemDict), into: &buffer)
         }
 
-        /// Generate ToUnicode CMap for WinAnsi encoding
-        ///
-        /// Per ISO 32000-2:2020, Section 9.10.3:
-        /// > A ToUnicode CMap is used to map character codes to Unicode values.
-        /// > This is essential for text extraction and accessibility.
-        ///
-        /// - Returns: The CMap data as UTF-8 bytes
-        private func generateToUnicodeCMap() -> [Byte] {
-            var cmap = ""
+        return outlineRef
+    }
 
-            // CMap header
-            cmap += "/CIDInit /ProcSet findresource begin\n"
-            cmap += "12 dict begin\n"
-            cmap += "begincmap\n"
-            cmap += "/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n"
-            cmap += "/CMapName /Adobe-Identity-UCS def\n"
-            cmap += "/CMapType 2 def\n"
+    private func serializeDestination(
+        _ dest: ISO_32000.Destination,
+        pageRefs: [ISO_32000.COS.IndirectReference]
+    ) -> ISO_32000.COS.Object {
+        switch dest {
+        case .xyz(let page, let left, let top, let zoom):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.xyz),
+                left.map { .real($0.underlying) } ?? .null,
+                top.map { .real($0.underlying) } ?? .null,
+                zoom.map { .real($0) } ?? .null,
+            ])
 
-            // Code space range (single byte: 00-FF)
-            cmap += "1 begincodespacerange\n"
-            cmap += "<00> <FF>\n"
-            cmap += "endcodespacerange\n"
+        case .fit(let page):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([.reference(pageRef), .name(.fit)])
 
-            // Character mappings (WinAnsi to Unicode)
-            // WinAnsi codes 32-255 map to Unicode
-            let mappings = Self.winAnsiToUnicode
-            let mappingCount = mappings.count
+        case .fitH(let page, let top):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.fitH),
+                top.map { .real($0.underlying) } ?? .null,
+            ])
 
-            cmap += "\(mappingCount) beginbfchar\n"
-            for (charCode, unicodeValue) in mappings.sorted(by: { $0.key < $1.key }) {
-                // Use RFC 4648 Base16 encoding (uppercase). Base16.encode writes ASCII
-                // hex digits, so its destination buffer element is ASCII.Code; bridge
-                // each scratch buffer back to [UInt8] for String(decoding:as:).
-                var charCodeHex: [ASCII.Code] = []
-                RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
-                var unicodeHex: [ASCII.Code] = []
-                RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
-                cmap +=
-                    "<\(String(decoding: [UInt8](charCodeHex), as: UTF8.self))> <\(String(decoding: [UInt8](unicodeHex), as: UTF8.self))>\n"
-            }
-            cmap += "endbfchar\n"
+        case .fitV(let page, let left):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.fitV),
+                left.map { .real($0.underlying) } ?? .null,
+            ])
 
-            // CMap footer
-            cmap += "endcmap\n"
-            cmap += "CMapName currentdict /CMap defineresource pop\n"
-            cmap += "end\n"
-            cmap += "end\n"
+        case .fitR(let page, let left, let bottom, let right, let top):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.fitR),
+                .real(left.underlying),
+                .real(bottom.underlying),
+                .real(right.underlying),
+                .real(top.underlying),
+            ])
 
-            return cmap.utf8.map(Byte.init)
+        case .fitB(let page):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([.reference(pageRef), .name(.fitB)])
+
+        case .fitBH(let page, let top):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.fitBH),
+                top.map { .real($0.underlying) } ?? .null,
+            ])
+
+        case .fitBV(let page, let left):
+            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            return .array([
+                .reference(pageRef),
+                .name(.fitBV),
+                left.map { .real($0.underlying) } ?? .null,
+            ])
+
+        case .named(let name):
+            return .string(ISO_32000.COS.StringValue(name))
+        }
+    }
+
+    private func writeTrailer<Buffer: RangeReplaceableCollection>(
+        size: Int,
+        rootRef: ISO_32000.COS.IndirectReference,
+        infoRef: ISO_32000.COS.IndirectReference?,
+        xrefOffset: Int,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        buffer.append(contentsOf: "trailer\n".utf8)
+
+        var trailerDict = ISO_32000.COS.Dictionary()
+        trailerDict[.size] = .integer(Int64(size))
+        trailerDict[.root] = .reference(rootRef)
+
+        if let info = infoRef {
+            trailerDict[.info] = .reference(info)
         }
 
-        /// WinAnsi (Windows-1252) to Unicode mapping table
-        ///
-        /// Codes 32-127 and 160-255 map directly to the same Unicode code point.
-        /// Codes 128-159 have special mappings per Windows-1252.
-        private static let winAnsiToUnicode: [Int: Int] = {
-            var mapping: [Int: Int] = [:]
+        ISO_32000.COS.Dictionary.serialize(trailerDict, into: &buffer)
 
-            // Direct mappings: 32-127 (ASCII) and 160-255 (ISO-8859-1)
-            for code in 32...127 {
-                mapping[code] = code
+        buffer.append(contentsOf: "\nstartxref\n".utf8)
+        buffer.append(contentsOf: "\(xrefOffset)\n".utf8)
+        buffer.append(contentsOf: "%%EOF\n".utf8)
+    }
+
+    // MARK: - Embedded TrueType ISO_32000.Font Writing
+
+    /// Write an embedded TrueType font to the PDF.
+    ///
+    /// This creates:
+    /// 1. FontFile2 stream (raw TrueType data)
+    /// 2. FontDescriptor dictionary
+    /// 3. ISO_32000.Font dictionary (referencing the above)
+    ///
+    /// Per ISO 32000-2:2020, Section 9.6.3 (TrueType fonts) and 9.9.1 (ISO_32000.Font embedding).
+    private mutating func writeEmbeddedTrueTypeFont<Buffer: RangeReplaceableCollection>(
+        font: ISO_32000.Font,
+        embedded: ISO_32000.`9`.`6`.Embedded,
+        state: inout State,
+        into buffer: inout Buffer
+    ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
+        // 1. Write FontFile2 stream (the raw TrueType font program)
+        let fontFileObjNum = state.nextObjectNumber()
+        let fontFileRef = ISO_32000.COS.IndirectReference(objectNumber: fontFileObjNum)
+
+        var fontFileData = embedded.data
+        var fontFileDict = ISO_32000.COS.Dictionary()
+        fontFileDict[.length1] = .integer(Int64(embedded.data.count))
+
+        // Apply compression if available
+        if let compress = compression {
+            var compressed: [Byte] = []
+            compress.compress(fontFileData, into: &compressed)
+            if compressed.count < fontFileData.count {
+                fontFileData = compressed
+                fontFileDict[.filter] = .name(.flateDecode)
             }
-            for code in 160...255 {
-                mapping[code] = code
+        }
+
+        let fontFileStream = ISO_32000.COS.Stream(dictionary: fontFileDict, data: fontFileData)
+        state.objectOffsets[fontFileObjNum] = buffer.count
+        writeIndirectObject(fontFileObjNum, object: .stream(fontFileStream), into: &buffer)
+
+        // 2. Write FontDescriptor dictionary
+        let descriptorObjNum = state.nextObjectNumber()
+        let descriptorRef = ISO_32000.COS.IndirectReference(objectNumber: descriptorObjNum)
+
+        let descriptor = embedded.descriptor(fontName: font.baseFontName)
+        var descriptorDict = ISO_32000.COS.Dictionary()
+        descriptorDict[.type] = .name(.fontDescriptor)
+        descriptorDict[.fontName] = .name(font.baseFontName)
+        descriptorDict[.fontFlags] = .integer(Int64(descriptor.flags.rawValue))
+        descriptorDict[.fontBBox] = .array([
+            .integer(Int64(descriptor.fontBBox.llx)),
+            .integer(Int64(descriptor.fontBBox.lly)),
+            .integer(Int64(descriptor.fontBBox.urx)),
+            .integer(Int64(descriptor.fontBBox.ury)),
+        ])
+        descriptorDict[.italicAngle] = .real(descriptor.italicAngle)
+        descriptorDict[.ascent] = .integer(Int64(descriptor.ascent.underlying))
+        descriptorDict[.descent] = .integer(Int64(descriptor.descent.underlying))
+        descriptorDict[.capHeight] = .integer(Int64(descriptor.capHeight.underlying))
+        descriptorDict[.stemV] = .integer(Int64(descriptor.stemV.underlying))
+        descriptorDict[.fontFile2] = .reference(fontFileRef)
+
+        state.objectOffsets[descriptorObjNum] = buffer.count
+        writeIndirectObject(
+            descriptorObjNum,
+            object: .dictionary(descriptorDict),
+            into: &buffer
+        )
+
+        // 3. Write ToUnicode CMap stream
+        let toUnicodeObjNum = state.nextObjectNumber()
+        let toUnicodeRef = ISO_32000.COS.IndirectReference(objectNumber: toUnicodeObjNum)
+
+        var toUnicodeData = generateToUnicodeCMap()
+        var toUnicodeDict = ISO_32000.COS.Dictionary()
+
+        // Apply compression if available
+        if let compress = compression {
+            var compressed: [Byte] = []
+            compress.compress(toUnicodeData, into: &compressed)
+            if compressed.count < toUnicodeData.count {
+                toUnicodeData = compressed
+                toUnicodeDict[.filter] = .name(.flateDecode)
             }
+        }
 
-            // Windows-1252 specific mappings (128-159)
-            // These differ from ISO-8859-1
-            mapping[128] = 0x20AC  // € Euro sign
-            // 129 is undefined in Windows-1252
-            mapping[130] = 0x201A  // ‚ Single low-9 quotation mark
-            mapping[131] = 0x0192  // ƒ Latin small letter f with hook
-            mapping[132] = 0x201E  // „ Double low-9 quotation mark
-            mapping[133] = 0x2026  // … Horizontal ellipsis
-            mapping[134] = 0x2020  // † Dagger
-            mapping[135] = 0x2021  // ‡ Double dagger
-            mapping[136] = 0x02C6  // ˆ Modifier letter circumflex accent
-            mapping[137] = 0x2030  // ‰ Per mille sign
-            mapping[138] = 0x0160  // Š Latin capital letter S with caron
-            mapping[139] = 0x2039  // ‹ Single left-pointing angle quotation mark
-            mapping[140] = 0x0152  // Œ Latin capital ligature OE
-            // 141 is undefined in Windows-1252
-            mapping[142] = 0x017D  // Ž Latin capital letter Z with caron
-            // 143, 144 are undefined in Windows-1252
-            mapping[145] = 0x2018  // ' Left single quotation mark
-            mapping[146] = 0x2019  // ' Right single quotation mark
-            mapping[147] = 0x201C  // " Left double quotation mark
-            mapping[148] = 0x201D  // " Right double quotation mark
-            mapping[149] = 0x2022  // • Bullet
-            mapping[150] = 0x2013  // – En dash
-            mapping[151] = 0x2014  // — Em dash
-            mapping[152] = 0x02DC  // ˜ Small tilde
-            mapping[153] = 0x2122  // ™ Trade mark sign
-            mapping[154] = 0x0161  // š Latin small letter s with caron
-            mapping[155] = 0x203A  // › Single right-pointing angle quotation mark
-            mapping[156] = 0x0153  // œ Latin small ligature oe
-            // 157 is undefined in Windows-1252
-            mapping[158] = 0x017E  // ž Latin small letter z with caron
-            mapping[159] = 0x0178  // Ÿ Latin capital letter Y with diaeresis
+        let toUnicodeStream = ISO_32000.COS.Stream(dictionary: toUnicodeDict, data: toUnicodeData)
+        state.objectOffsets[toUnicodeObjNum] = buffer.count
+        writeIndirectObject(toUnicodeObjNum, object: .stream(toUnicodeStream), into: &buffer)
 
-            return mapping
-        }()
+        // 4. Write ISO_32000.Font dictionary
+        let fontObjNum = state.nextObjectNumber()
+        let fontRef = ISO_32000.COS.IndirectReference(objectNumber: fontObjNum)
+
+        var fontDict = ISO_32000.COS.Dictionary()
+        fontDict[.type] = .name(.font)
+        fontDict[.subtype] = .name(.trueType)
+        fontDict[.baseFont] = .name(font.baseFontName)
+        fontDict[.fontDescriptor] = .reference(descriptorRef)
+        fontDict[.encoding] = .name(.winAnsiEncoding)
+        fontDict[.toUnicode] = .reference(toUnicodeRef)
+
+        // Build Widths array for WinAnsi range (32-255)
+        // Per ISO 32000-2, FirstChar and LastChar define the range,
+        // and Widths is an array of glyph widths for each character code
+        let firstChar = 32
+        let lastChar = 255
+        fontDict[.firstChar] = .integer(Int64(firstChar))
+        fontDict[.lastChar] = .integer(Int64(lastChar))
+
+        var widthsArray: [ISO_32000.COS.Object] = []
+        let unitsPerEm = embedded.metrics.unitsPerEm
+        for charCode in firstChar...lastChar {
+            // Get width for this character code
+            let width = embedded.metrics.width(forCodePoint: UInt32(charCode))
+            // Scale to 1000 units (PDF standard for glyph widths)
+            let scaledWidth = (width * 1000) / unitsPerEm
+            widthsArray.append(.integer(Int64(scaledWidth)))
+        }
+        fontDict[.widths] = .array(widthsArray)
+
+        state.objectOffsets[fontObjNum] = buffer.count
+        writeIndirectObject(fontObjNum, object: .dictionary(fontDict), into: &buffer)
+
+        return fontRef
+    }
+
+    /// Generate ToUnicode CMap for WinAnsi encoding
+    ///
+    /// Per ISO 32000-2:2020, Section 9.10.3:
+    /// > A ToUnicode CMap is used to map character codes to Unicode values.
+    /// > This is essential for text extraction and accessibility.
+    ///
+    /// - Returns: The CMap data as UTF-8 bytes
+    private func generateToUnicodeCMap() -> [Byte] {
+        var cmap = ""
+
+        // CMap header
+        cmap += "/CIDInit /ProcSet findresource begin\n"
+        cmap += "12 dict begin\n"
+        cmap += "begincmap\n"
+        cmap += "/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n"
+        cmap += "/CMapName /Adobe-Identity-UCS def\n"
+        cmap += "/CMapType 2 def\n"
+
+        // Code space range (single byte: 00-FF)
+        cmap += "1 begincodespacerange\n"
+        cmap += "<00> <FF>\n"
+        cmap += "endcodespacerange\n"
+
+        // Character mappings (WinAnsi to Unicode)
+        // WinAnsi codes 32-255 map to Unicode
+        let mappings = Self.winAnsiToUnicode
+        let mappingCount = mappings.count
+
+        cmap += "\(mappingCount) beginbfchar\n"
+        for (charCode, unicodeValue) in mappings.sorted(by: { $0.key < $1.key }) {
+            // Use RFC 4648 Base16 encoding (uppercase). Base16.encode writes ASCII
+            // hex digits, so its destination buffer element is ASCII.Code; bridge
+            // each scratch buffer back to [UInt8] for String(decoding:as:).
+            var charCodeHex: [ASCII.Code] = []
+            RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
+            var unicodeHex: [ASCII.Code] = []
+            RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
+            cmap +=
+                "<\(String(decoding: [UInt8](charCodeHex), as: UTF8.self))> <\(String(decoding: [UInt8](unicodeHex), as: UTF8.self))>\n"
+        }
+        cmap += "endbfchar\n"
+
+        // CMap footer
+        cmap += "endcmap\n"
+        cmap += "CMapName currentdict /CMap defineresource pop\n"
+        cmap += "end\n"
+        cmap += "end\n"
+
+        return cmap.utf8.map(Byte.init)
+    }
+
+    /// WinAnsi (Windows-1252) to Unicode mapping table
+    ///
+    /// Codes 32-127 and 160-255 map directly to the same Unicode code point.
+    /// Codes 128-159 have special mappings per Windows-1252.
+    private static let winAnsiToUnicode: [Int: Int] = {
+        var mapping: [Int: Int] = [:]
+
+        // Direct mappings: 32-127 (ASCII) and 160-255 (ISO-8859-1)
+        for code in 32...127 {
+            mapping[code] = code
+        }
+        for code in 160...255 {
+            mapping[code] = code
+        }
+
+        // Windows-1252 specific mappings (128-159)
+        // These differ from ISO-8859-1
+        mapping[128] = 0x20AC  // € Euro sign
+        // 129 is undefined in Windows-1252
+        mapping[130] = 0x201A  // ‚ Single low-9 quotation mark
+        mapping[131] = 0x0192  // ƒ Latin small letter f with hook
+        mapping[132] = 0x201E  // „ Double low-9 quotation mark
+        mapping[133] = 0x2026  // … Horizontal ellipsis
+        mapping[134] = 0x2020  // † Dagger
+        mapping[135] = 0x2021  // ‡ Double dagger
+        mapping[136] = 0x02C6  // ˆ Modifier letter circumflex accent
+        mapping[137] = 0x2030  // ‰ Per mille sign
+        mapping[138] = 0x0160  // Š Latin capital letter S with caron
+        mapping[139] = 0x2039  // ‹ Single left-pointing angle quotation mark
+        mapping[140] = 0x0152  // Œ Latin capital ligature OE
+        // 141 is undefined in Windows-1252
+        mapping[142] = 0x017D  // Ž Latin capital letter Z with caron
+        // 143, 144 are undefined in Windows-1252
+        mapping[145] = 0x2018  // ' Left single quotation mark
+        mapping[146] = 0x2019  // ' Right single quotation mark
+        mapping[147] = 0x201C  // " Left double quotation mark
+        mapping[148] = 0x201D  // " Right double quotation mark
+        mapping[149] = 0x2022  // • Bullet
+        mapping[150] = 0x2013  // – En dash
+        mapping[151] = 0x2014  // — Em dash
+        mapping[152] = 0x02DC  // ˜ Small tilde
+        mapping[153] = 0x2122  // ™ Trade mark sign
+        mapping[154] = 0x0161  // š Latin small letter s with caron
+        mapping[155] = 0x203A  // › Single right-pointing angle quotation mark
+        mapping[156] = 0x0153  // œ Latin small ligature oe
+        // 157 is undefined in Windows-1252
+        mapping[158] = 0x017E  // ž Latin small letter z with caron
+        mapping[159] = 0x0178  // Ÿ Latin capital letter Y with diaeresis
+
+        return mapping
+    }()
 }
 
 // MARK: - Writer State

@@ -185,7 +185,10 @@ extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern {
     /// A solid line (no dashes).
     ///
     /// Initial value per Table 51.
-    public static let solid = ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern(array: [], phase: 0)
+    public static let solid = ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern(
+        array: [],
+        phase: 0
+    )
 }
 
 // MARK: - 8.6.5.8 Rendering Intent

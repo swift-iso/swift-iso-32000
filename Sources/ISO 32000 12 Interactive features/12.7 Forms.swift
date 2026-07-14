@@ -778,17 +778,25 @@ extension ISO_32000.Form.Field.Signature.SeedValue.SeedFlags {
     /// Filter is a required constraint.
     public static let filter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 0)
     /// SubFilter is a required constraint.
-    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 1)
+    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+        rawValue: 1 << 1
+    )
     /// V (version) is a required constraint.
     public static let version = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 2)
     /// Reasons is a required constraint.
     public static let reasons = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 3)
     /// LegalAttestation is a required constraint.
-    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 4)
+    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+        rawValue: 1 << 4
+    )
     /// AddRevInfo is a required constraint.
-    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 5)
+    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+        rawValue: 1 << 5
+    )
     /// DigestMethod is a required constraint.
-    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 6)
+    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+        rawValue: 1 << 6
+    )
 }
 
 // MARK: - Signature.Lock (Table 238)
@@ -921,7 +929,9 @@ extension ISO_32000.Form.SubmitForm.SubmitFlags {
     /// (PDF 1.4) Convert dates to standard format.
     public static let canonicalFormat = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 9)
     /// (PDF 1.4) Exclude non-user annotations.
-    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 10)
+    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitFlags(
+        rawValue: 1 << 10
+    )
     /// (PDF 1.4) Exclude F entry.
     public static let excludeFKey = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 11)
     /// (PDF 1.5) Include empty text fields.

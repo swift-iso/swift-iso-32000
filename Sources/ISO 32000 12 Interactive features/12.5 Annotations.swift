@@ -451,7 +451,11 @@ extension ISO_32000.`12`.`5`.Annotation {
 
 extension ISO_32000.`12`.`5`.Annotation.Color {
     /// Creates an RGB color.
-    public static func rgb(_ red: Double, _ green: Double, _ blue: Double) -> ISO_32000.`12`.`5`.Annotation.Color {
+    public static func rgb(
+        _ red: Double,
+        _ green: Double,
+        _ blue: Double
+    ) -> ISO_32000.`12`.`5`.Annotation.Color {
         .rgb(red: red, green: green, blue: blue)
     }
 }

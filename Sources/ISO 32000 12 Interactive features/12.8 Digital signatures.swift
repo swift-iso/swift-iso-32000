@@ -451,46 +451,82 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams {
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights {
     /// Permit saving with modified form/annotation data
-    public static let fullSave = ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights(rawValue: 1 << 0)
+    public static let fullSave = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .DocumentRights(rawValue: 1 << 0)
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights {
-    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 0)
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 1)
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 2)
-    public static let copy = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 3)
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 4)
-    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 5)
+    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 0
+    )
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 1
+    )
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 2
+    )
+    public static let copy = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 3
+    )
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 4
+    )
+    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 5
+    )
     /// PDF 1.6: Online commenting
-    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 6)
+    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+        rawValue: 1 << 6
+    )
     /// PDF 1.6: Summary view
-    public static let summaryView = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(rawValue: 1 << 7)
+    public static let summaryView = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .AnnotRights(rawValue: 1 << 7)
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights {
-    public static let add = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 0)
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 1)
-    public static let fillIn = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 2)
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 3)
-    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 4)
-    public static let submitStandalone = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 5)
-    public static let spawnTemplate = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 6)
+    public static let add = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 0
+    )
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 1
+    )
+    public static let fillIn = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 2
+    )
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 3
+    )
+    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 4
+    )
+    public static let submitStandalone = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .FormRights(rawValue: 1 << 5)
+    public static let spawnTemplate = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .FormRights(rawValue: 1 << 6)
     /// PDF 1.6
-    public static let barcodePlaintext = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 7)
+    public static let barcodePlaintext = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .FormRights(rawValue: 1 << 7)
     /// PDF 1.6
-    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(rawValue: 1 << 8)
+    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+        rawValue: 1 << 8
+    )
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights {
     /// Permit applying/clearing digital signatures
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights(rawValue: 1 << 0)
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .SignatureRights(rawValue: 1 << 0)
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights {
-    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 0)
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 1)
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 2)
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights(rawValue: 1 << 3)
+    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .EmbeddedFileRights(rawValue: 1 << 0)
+    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .EmbeddedFileRights(rawValue: 1 << 1)
+    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .EmbeddedFileRights(rawValue: 1 << 2)
+    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams
+        .EmbeddedFileRights(rawValue: 1 << 3)
 }
 
 // MARK: - 12.8.2.4 FieldMDP Transform Parameters (Table 259)
