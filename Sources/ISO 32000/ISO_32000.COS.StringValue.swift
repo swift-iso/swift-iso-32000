@@ -106,8 +106,13 @@ extension ISO_32000.COS.StringValue {
             result.append(.ascii.F)
             result.append(.ascii.F)
 
-            for scalar in value.unicodeScalars {
-                let codeUnit = UInt16(scalar.value)
+            // Iterate UTF-16 code units (not unicodeScalars), matching
+            // asLiteral()'s UTF-16BE branch: any scalar beyond U+FFFF
+            // (astral plane, e.g. emoji) is naturally split into its
+            // surrogate pair this way. The old `UInt16(scalar.value)` narrowing
+            // trapped (Fatal error: integer overflow) for every astral-plane
+            // scalar, since `scalar.value` for those is > UInt16.max (F-003).
+            for codeUnit in value.utf16 {
                 for byte in codeUnit.bytes(endianness: .big) {
                     result.append(Self.hexChar(byte.underlying >> 4))
                     result.append(Self.hexChar(byte.underlying & 0x0F))
@@ -179,17 +184,24 @@ extension ISO_32000.COS.StringValue {
         case .pdfDocEncoding:
             self.init(String(pdfDoc: [Byte](bytes), withReplacement: true))
         case .utf16BE:
-            // Skip BOM (first 2 bytes) and decode UTF-16BE
+            // Skip BOM (first 2 bytes) and decode UTF-16BE.
+            //
+            // Collect the big-endian code units and decode the whole
+            // sequence via `String(decoding:as: UTF16.self)`, which
+            // correctly reassembles high/low surrogate pairs into their
+            // astral-plane scalar. The old code resolved each code unit to
+            // a `Unicode.Scalar` independently — `Unicode.Scalar(UInt16)`
+            // returns nil for any value in the surrogate range
+            // (0xD800...0xDFFF), which silently dropped *both* code units
+            // of every surrogate pair instead of reconstructing the scalar
+            // they encode (F-003).
             let dataBytes = bytes.dropFirst(2)
-            var scalars: [Unicode.Scalar] = []
+            var codeUnits: [UInt16] = []
             var iterator = dataBytes.makeIterator()
             while let hi = iterator.next(), let lo = iterator.next() {
-                let codeUnit = UInt16(bytes: [hi, lo], endianness: .big)!
-                if let scalar = Unicode.Scalar(codeUnit) {
-                    scalars.append(scalar)
-                }
+                codeUnits.append(UInt16(bytes: [hi, lo], endianness: .big)!)
             }
-            self.init(String(String.UnicodeScalarView(scalars)))
+            self.init(String(decoding: codeUnits, as: UTF16.self))
         case .utf8:
             // Skip BOM (first 3 bytes) and decode UTF-8
             let dataBytes = Array(bytes.dropFirst(3))
