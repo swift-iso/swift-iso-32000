@@ -197,61 +197,20 @@ extension ISO_32000.`7`.`3`.`3`.RealFormatStyle {
     public typealias Output = String
     public typealias Failure = Never
 
-    /// Maximum decimal places for real numbers (per Annex C recommendations)
-    private static let maxDecimalPlaces = 5
-
-    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
-    private static let multiplier: Double = 100_000
-
+    /// Formats a Double per ISO 32000-2:2020 §7.3.3.
+    ///
+    /// Delegates to the single canonical byte-domain real serializer
+    /// (`PDFNumber.serializeReal`), also shared by `PDFNumber.serialize` and
+    /// `COS.serialize`'s `.real` case. Per F-002 remediation: this format
+    /// style used to carry its own, independently-written copy of the same
+    /// integer/fraction-split logic, which shared a fractional
+    /// rounding-carry defect and an `Int64` overflow trap with the
+    /// byte-domain formatter — fixing the two copies in lockstep is exactly
+    /// the kind of drift a single canonical implementation prevents.
     public func format(_ value: Double) -> String {
-        // Handle special cases per IEEE 754 classification (Annex C references IEEE 754)
-        guard IEEE_754.Classification.isFinite(value) else {
-            // PDF doesn't support infinity/NaN - output 0 as fallback
-            return "0"
-        }
-
-        // Check if value is effectively an integer
-        // Per spec: "it is not necessary to write the number 1.0 in real format"
-        let rounded = value.rounded()
-        if value == rounded && abs(value) < Double(Int64.max) {
-            return String(Int64(value))
-        }
-
-        // Format as real number without exponential notation
-        // Per spec: "shall not use... exponential format (such as 6.02E23)"
-        return formatReal(value)
-    }
-
-    /// Format a real number without exponential notation
-    private func formatReal(_ value: Double) -> String {
-        let isNegative = value < 0
-        let absValue = abs(value)
-
-        // Split into integer and fractional parts
-        let intPart = Int64(absValue)
-        let fracPart = absValue - Double(intPart)
-
-        // Calculate fractional digits (up to maxDecimalPlaces)
-        let fracDigits = Int64((fracPart * Self.multiplier).rounded())
-
-        var result = isNegative ? "-" : ""
-        result += String(intPart)
-
-        if fracDigits != 0 {
-            result += "."
-            var fracStr = String(fracDigits)
-            // Pad with leading zeros if needed
-            while fracStr.count < Self.maxDecimalPlaces {
-                fracStr = "0" + fracStr
-            }
-            // Strip trailing zeros
-            while fracStr.hasSuffix("0") {
-                fracStr.removeLast()
-            }
-            result += fracStr
-        }
-
-        return result
+        var bytes: [Byte] = []
+        ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &bytes)
+        return String(decoding: bytes, as: UTF8.self)
     }
 }
 
@@ -1031,8 +990,11 @@ extension ISO_32000.`7`.`3`.COS {
             buffer.append(contentsOf: Swift.String(value).utf8)
 
         case .real(let value):
-            let formatted = formatReal(value)
-            buffer.append(contentsOf: formatted.utf8)
+            // Calls the canonical byte-domain real serializer directly
+            // (F-002): previously routed through `RealFormatStyle` via a
+            // String round-trip, and independently duplicated its
+            // rounding-carry/overflow bugs before that.
+            ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &buffer)
 
         case .name(let name):
             Name.serialize(name, into: &buffer)
@@ -1059,13 +1021,6 @@ extension ISO_32000.`7`.`3`.COS {
         case .reference(let ref):
             buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8)
         }
-    }
-
-    /// Format a real number with appropriate precision
-    ///
-    /// Uses `ISO_32000.7.3.3.RealFormatStyle` for consistent PDF number formatting.
-    private static func formatReal(_ value: Double) -> Swift.String {
-        value.formatted(.pdf)
     }
 }
 
@@ -1272,37 +1227,94 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
         _ number: ISO_32000_Shared.ISO_32000.`7`.`3`.`3`.PDFNumber,
         into buffer: inout Buffer
     ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
+        serializeReal(number.value, into: &buffer)
+    }
+
+    /// Maximum decimal places for real numbers (per Annex C recommendations)
+    private static let maxDecimalPlaces = 5
+
+    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
+    private static let multiplier: Double = 100_000
+
+    /// The single canonical byte-domain real-number serializer for ISO
+    /// 32000-2:2020 §7.3.3 (Numeric objects).
+    ///
+    /// F-002 remediation: prior to this fix, `RealFormatStyle.format` (the
+    /// `String`-returning formatter) and this type's `serialize` each carried
+    /// their own, independently-written copy of the integer/fraction-split
+    /// logic below, and both copies shared the same two defects:
+    ///
+    /// 1. **Fractional rounding-carry defect.** Rounding the fractional
+    ///    remainder to 5 decimal places can itself reach the next whole
+    ///    unit — e.g. `0.999995` rounds to `fracDigits == 100_000`
+    ///    (10^`maxDecimalPlaces`) — which the old code emitted verbatim as
+    ///    an invalid 6-digit fraction (`"43.100000"` stripped to `"43.1"` —
+    ///    silently wrong — instead of carrying into the integer part to
+    ///    produce `"44"`). This implementation computes the carry
+    ///    explicitly and folds it into the integer part before emitting
+    ///    anything.
+    /// 2. **`Int64` overflow trap.** The old code called `Int64(absValue)`
+    ///    unconditionally once a value failed the "is this exactly an
+    ///    integer under `Int64.max`" fast path, so any finite `Double` with
+    ///    magnitude at or beyond `Double(Int64.max)` (== 2^63, since
+    ///    `Int64.max` itself is not exactly representable as a `Double`)
+    ///    trapped instead of formatting. This implementation converts into
+    ///    `UInt64` (doubling the safe magnitude ceiling to 2^64, since the
+    ///    value is already non-negative) and explicitly clamps to
+    ///    `UInt64.max` for anything at or beyond that — a deliberate,
+    ///    documented saturation for magnitudes no real PDF document
+    ///    (finite user space) will ever produce, not a silent precision
+    ///    loss for any realistic input.
+    ///
+    /// `RealFormatStyle.format` and `COS.serialize`'s `.real` case both call
+    /// this function directly now, so there is exactly one place the
+    /// rounding/overflow logic can go wrong.
+    static func serializeReal<Buffer: RangeReplaceableCollection>(
+        _ value: Double,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
         // Handle special cases (PDF doesn't support infinity/NaN)
-        guard number.value.isFinite else {
+        guard IEEE_754.Classification.isFinite(value) else {
             buffer.append(.ascii.0)
             return
         }
 
-        // Check if value is effectively an integer
-        let rounded = number.value.rounded()
-        if number.value == rounded && abs(number.value) < Double(Int64.max) {
-            ASCII.Decimal.serialize(Int64(number.value), into: &buffer)
-            return
+        let magnitude = value.magnitude
+        let isNegative = value.sign == .minus
+
+        // Guard the magnitude before any UInt64 conversion (fix 2 above).
+        // `0x1p64` is the exact Double value of 2^64; any finite value at or
+        // beyond it is clamped to `UInt64.max` rather than handed to
+        // `UInt64(_:)`, which traps out of range.
+        let intPart: UInt64 = magnitude >= 0x1p64 ? UInt64.max : UInt64(magnitude)
+
+        // Every finite Double with magnitude >= 2^53 has no fractional bits
+        // left in its 52-bit mantissa — it is already an exact integer — so
+        // skip the fractional extraction (and the subtraction against a
+        // possibly-saturated `intPart`) for those values instead of doing
+        // meaningless arithmetic on them.
+        var fracDigits: UInt64 = 0
+        if magnitude < 0x1p53 {
+            let fracPart = magnitude - Double(intPart)
+            fracDigits = UInt64((fracPart * Self.multiplier).rounded())
         }
 
-        // Handle negative numbers
-        let absValue: Double
-        if number.value < 0 {
+        // Rounding-carry (fix 1 above): fold a fractional remainder that
+        // rounded up to a whole unit into the integer part instead of
+        // emitting an invalid 6-digit fraction.
+        var carriedIntPart = intPart
+        if fracDigits >= UInt64(Self.multiplier) {
+            fracDigits = 0
+            if carriedIntPart < UInt64.max { carriedIntPart += 1 }
+        }
+
+        // Suppress a bare "-0" for negative values whose magnitude rounds
+        // away to nothing (e.g. negative subnormals) — PDF has no negative
+        // zero.
+        if isNegative && !(carriedIntPart == 0 && fracDigits == 0) {
             buffer.append(.ascii.hyphen)
-            absValue = -number.value
-        } else {
-            absValue = number.value
         }
-
-        // Split into integer and fractional parts
-        let intPart = Int64(absValue)
-        let fracPart = absValue - Double(intPart)
-
-        // Serialize integer part
-        ASCII.Decimal.serialize(intPart, into: &buffer)
-
-        // Calculate fractional digits (up to 5 decimal places)
-        let fracDigits = Int64((fracPart * Self.multiplier).rounded())
+        ASCII.Decimal.serialize(carriedIntPart, into: &buffer)
 
         if fracDigits != 0 {
             buffer.append(.ascii.period)
@@ -1313,7 +1325,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
             var fracValue = fracDigits
             let zero = ASCII.Code.`0`
 
-            func digit(_ value: Int64) -> ASCII.Code {
+            func digit(_ value: UInt64) -> ASCII.Code {
                 // value % 10 is always 0–9, so `digit(_:)` never returns nil.
                 ASCII.Decimal.code(UInt8(value % 10)) ?? 0x30
             }
@@ -1342,10 +1354,4 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
             }
         }
     }
-
-    /// Maximum decimal places for real numbers (per Annex C recommendations)
-    private static let maxDecimalPlaces = 5
-
-    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
-    private static let multiplier: Double = 100_000
 }
