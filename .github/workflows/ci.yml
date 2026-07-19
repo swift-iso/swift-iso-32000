@@ -14,6 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Reject verbatim paid ISO 32000-2 specification text (with its "Sold by
+  # the PDF Association ... Single user only" purchase watermark) from ever
+  # being re-pasted into source. Fable-448 F-001 remediation guard.
+  no-verbatim-spec-text:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for the ISO purchase watermark
+        run: |
+          if grep -rn "Sold by the PDF Association" --include='*.swift' Sources Tests 2>/dev/null; then
+            echo "::error::Verbatim paid ISO 32000-2 spec text (purchase watermark) found in source — see Fable-448 F-001." >&2
+            exit 1
+          fi
+          if grep -rn "© ISO 2020" --include='*.swift' Sources Tests 2>/dev/null; then
+            echo "::error::Verbatim ISO 32000-2 copyright line found in source — see Fable-448 F-001." >&2
+            exit 1
+          fi
+
   # Build + test matrix — see swift-standards/.github/.github/workflows/swift-ci.yml (layer wrapper)
   ci:
     uses: swift-standards/.github/.github/workflows/swift-ci.yml@main
