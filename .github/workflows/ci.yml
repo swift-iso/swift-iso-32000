@@ -23,11 +23,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Scan for the ISO purchase watermark
         run: |
-          if grep -rn "Sold by the PDF Association" --include='*.swift' Sources Tests 2>/dev/null; then
+          # Scoped to Sources/ only: the ban is on shipping the watermark in
+          # product source. Tests/ legitimately embeds these literals in the
+          # F-001 regression test that asserts the watermark stays gone.
+          if grep -rn "Sold by the PDF Association" --include='*.swift' Sources 2>/dev/null; then
             echo "::error::Verbatim paid ISO 32000-2 spec text (purchase watermark) found in source — see Fable-448 F-001." >&2
             exit 1
           fi
-          if grep -rn "© ISO 2020" --include='*.swift' Sources Tests 2>/dev/null; then
+          if grep -rn "© ISO 2020" --include='*.swift' Sources 2>/dev/null; then
             echo "::error::Verbatim ISO 32000-2 copyright line found in source — see Fable-448 F-001." >&2
             exit 1
           fi
