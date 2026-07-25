@@ -16,6 +16,17 @@ dependencies: [
 ]
 ```
 
+Add the product to a target that needs it:
+
+```swift
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "ISO 32000", package: "swift-iso-32000")
+    ]
+)
+```
+
 ## License
 
 This package is licensed under the Apache License 2.0. See [LICENSE.md](LICENSE.md) for details.
