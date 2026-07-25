@@ -1,0 +1,17 @@
+version: 1
+builder:
+  configs:
+  - documentation_targets:
+    - ISO 32000
+    - ISO 32000 Flate
+    - ISO 32000 Shared
+    - ISO 32000 3 Terms and definitions
+    - ISO 32000 7 Syntax
+    - ISO 32000 8 Graphics
+    - ISO 32000 9 Text
+    - ISO 32000 10 Rendering
+    - ISO 32000 11 Transparency
+    - ISO 32000 12 Interactive features
+    - ISO 32000 13 Multimedia features
+    - ISO 32000 14 Document interchange
+    - ISO 32000 Annex D
