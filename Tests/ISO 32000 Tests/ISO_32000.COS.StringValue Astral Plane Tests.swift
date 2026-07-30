@@ -90,7 +90,9 @@ extension ISO_32000.COS.StringValue.Tests.Integration {
             "\u{1F600}\u{1F601}",  // two adjacent astral-plane scalars
         ]
     )
-    func `hex encode then pdfStringBytes decode round-trips an astral-plane payload`(_ original: String) {
+    func `hex encode then pdfStringBytes decode round-trips an astral-plane payload`(
+        _ original: String
+    ) {
         let str = ISO_32000.COS.StringValue(original)
         let hexString = String(decoding: str.asHexadecimal(), as: UTF8.self)
 

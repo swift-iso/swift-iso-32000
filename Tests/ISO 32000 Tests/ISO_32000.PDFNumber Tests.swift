@@ -7,9 +7,9 @@
 // rounding-carry defect and an `Int64` overflow trap. All three surfaces now
 // delegate to one canonical byte-domain serializer.
 
-import Testing
 import Binary_Serializable_Primitives
 import Format_Primitives_Standard_Library_Integration
+import Testing
 
 @testable import ISO_32000
 

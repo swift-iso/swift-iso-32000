@@ -23,7 +23,10 @@ extension ISO_32000.Tests.`Edge Case` {
     @Test
     func `no verbatim ISO purchase watermark remains anywhere in package sources`() throws {
         let sourcesRoot = try Self.packageSourcesRoot()
-        let offending = try Self.swiftFiles(under: sourcesRoot, containing: "Sold by the PDF Association")
+        let offending = try Self.swiftFiles(
+            under: sourcesRoot,
+            containing: "Sold by the PDF Association"
+        )
         #expect(offending.isEmpty, "Verbatim ISO purchase watermark found in: \(offending)")
     }
 

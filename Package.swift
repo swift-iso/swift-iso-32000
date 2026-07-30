@@ -10,39 +10,84 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26)
+        .visionOS(.v26),
     ],
     products: [
         .library(name: "ISO 32000", targets: ["ISO 32000"]),
         .library(name: "ISO 32000 Flate", targets: ["ISO 32000 Flate"]),
         .library(name: "ISO 32000 Shared", targets: ["ISO 32000 Shared"]),
-        .library(name: "ISO 32000 3 Terms and definitions", targets: ["ISO 32000 3 Terms and definitions"]),
+        .library(
+            name: "ISO 32000 3 Terms and definitions",
+            targets: ["ISO 32000 3 Terms and definitions"]
+        ),
         .library(name: "ISO 32000 7 Syntax", targets: ["ISO 32000 7 Syntax"]),
         .library(name: "ISO 32000 8 Graphics", targets: ["ISO 32000 8 Graphics"]),
         .library(name: "ISO 32000 9 Text", targets: ["ISO 32000 9 Text"]),
         .library(name: "ISO 32000 10 Rendering", targets: ["ISO 32000 10 Rendering"]),
         .library(name: "ISO 32000 11 Transparency", targets: ["ISO 32000 11 Transparency"]),
-        .library(name: "ISO 32000 12 Interactive features", targets: ["ISO 32000 12 Interactive features"]),
-        .library(name: "ISO 32000 13 Multimedia features", targets: ["ISO 32000 13 Multimedia features"]),
-        .library(name: "ISO 32000 14 Document interchange", targets: ["ISO 32000 14 Document interchange"]),
-        .library(name: "ISO 32000 Annex D", targets: ["ISO 32000 Annex D"])
+        .library(
+            name: "ISO 32000 12 Interactive features",
+            targets: ["ISO 32000 12 Interactive features"]
+        ),
+        .library(
+            name: "ISO 32000 13 Multimedia features",
+            targets: ["ISO 32000 13 Multimedia features"]
+        ),
+        .library(
+            name: "ISO 32000 14 Document interchange",
+            targets: ["ISO 32000 14 Document interchange"]
+        ),
+        .library(name: "ISO 32000 Annex D", targets: ["ISO 32000 Annex D"]),
     ],
     dependencies: [
         // Primitives
-        .package(url: "https://github.com/swift-primitives/swift-geometry-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-format-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-dimension-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-numeric-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-witness-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-ownership-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-geometry-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-format-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-dimension-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-numeric-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-binary-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-witness-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-ownership-primitives.git",
+            branch: "main"
+        ),
         // Standards
         .package(url: "https://github.com/swift-iso/swift-iso-9899.git", branch: "main"),
         .package(url: "https://github.com/swift-ieee/swift-ieee-754.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-ascii-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-1950.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-iec/swift-iec-61966.git", branch: "main"),
@@ -56,16 +101,16 @@ let package = Package(
             name: "ISO 32000 Shared",
             dependencies: [
                 .product(name: "Geometry Primitives", package: "swift-geometry-primitives"),
-                .product(name: "Numeric Primitives", package: "swift-numeric-primitives")
+                .product(name: "Numeric Primitives", package: "swift-numeric-primitives"),
             ]
         ),
-        
+
         // MARK: - Clause Targets (literal spec encoding)
         .target(
             name: "ISO 32000 3 Terms and definitions",
             dependencies: [
                 "ISO 32000 Shared",
-                .product(name: "Byte Primitives", package: "swift-byte-primitives")
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
             ]
         ),
         .target(
@@ -77,8 +122,11 @@ let package = Package(
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
                 .product(name: "Format Primitives", package: "swift-format-primitives"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Binary Primitives Standard Library Integration", package: "swift-binary-primitives"),
-                .product(name: "IEEE 754", package: "swift-ieee-754")
+                .product(
+                    name: "Binary Primitives Standard Library Integration",
+                    package: "swift-binary-primitives"
+                ),
+                .product(name: "IEEE 754", package: "swift-ieee-754"),
             ]
         ),
         .target(
@@ -86,9 +134,12 @@ let package = Package(
             dependencies: [
                 "ISO 32000 Shared",
                 "ISO 32000 7 Syntax",
-                .product(name: "Binary Primitives Standard Library Integration", package: "swift-binary-primitives"),
+                .product(
+                    name: "Binary Primitives Standard Library Integration",
+                    package: "swift-binary-primitives"
+                ),
                 .product(name: "IEC 61966", package: "swift-iec-61966"),
-                .product(name: "Dimension Primitives", package: "swift-dimension-primitives")
+                .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
             ]
         ),
         .target(
@@ -100,7 +151,7 @@ let package = Package(
                 "ISO 32000 Annex D",
                 .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
                 .product(name: "Ownership Primitives", package: "swift-ownership-primitives"),
-                .product(name: "Byte Primitives", package: "swift-byte-primitives")
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
             ]
         ),
         .target(
@@ -124,9 +175,15 @@ let package = Package(
             dependencies: [
                 "ISO 32000 Shared",
                 "ISO 32000 7 Syntax",
-                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
+                .product(
+                    name: "Standard Library Extensions",
+                    package: "swift-standard-library-extensions"
+                ),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives")
+                .product(
+                    name: "Binary Serializable Primitives",
+                    package: "swift-binary-serializer-primitives"
+                ),
             ]
         ),
         .target(
@@ -151,13 +208,25 @@ let package = Package(
                 "ISO 32000 13 Multimedia features",
                 "ISO 32000 14 Document interchange",
                 "ISO 32000 Annex D",
-                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
+                .product(
+                    name: "Standard Library Extensions",
+                    package: "swift-standard-library-extensions"
+                ),
                 .product(name: "Geometry Primitives", package: "swift-geometry-primitives"),
                 .product(name: "Format Primitives", package: "swift-format-primitives"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Binary Primitives Standard Library Integration", package: "swift-binary-primitives"),
-                .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
-                .product(name: "Byte Primitives Standard Library Integration", package: "swift-byte-primitives"),
+                .product(
+                    name: "Binary Primitives Standard Library Integration",
+                    package: "swift-binary-primitives"
+                ),
+                .product(
+                    name: "Binary Serializable Primitives",
+                    package: "swift-binary-serializer-primitives"
+                ),
+                .product(
+                    name: "Byte Primitives Standard Library Integration",
+                    package: "swift-byte-primitives"
+                ),
                 .product(name: "ISO 9899", package: "swift-iso-9899"),
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
@@ -170,7 +239,7 @@ let package = Package(
                 "ISO 32000",
                 "ISO 32000 Shared",
                 .product(name: "RFC 1950", package: "swift-rfc-1950"),
-                .product(name: "W3C PNG", package: "swift-w3c-png")
+                .product(name: "W3C PNG", package: "swift-w3c-png"),
             ]
         ),
         .testTarget(
