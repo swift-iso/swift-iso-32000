@@ -280,7 +280,7 @@ extension ISO_32000.ZapfDingbatsEncoding {
     static let encodeTable: [UInt32: Byte] = {
         var table: [UInt32: Byte] = [:]
         for (byte, scalar) in decodeTable.enumerated() {
-            if let scalar = scalar {
+            if let scalar {
                 table[scalar.value] = Byte(UInt8(byte))
             }
         }

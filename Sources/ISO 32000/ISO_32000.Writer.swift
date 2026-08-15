@@ -110,8 +110,10 @@ extension ISO_32000.Writer {
             switch image.colorSpace {
             case .deviceGray:
                 imageDict[.colorSpace] = .name(.deviceGray)
+
             case .deviceRGB:
                 imageDict[.colorSpace] = .name(.deviceRGB)
+
             case .deviceCMYK:
                 imageDict[.colorSpace] = .name(.deviceCMYK)
             }
@@ -120,6 +122,7 @@ extension ISO_32000.Writer {
             switch image.filter {
             case .dctDecode:
                 imageDict[.filter] = .name(.dctDecode)
+
             case .flateDecode:
                 imageDict[.filter] = .name(.flateDecode)
             }
@@ -316,7 +319,7 @@ extension ISO_32000.Writer {
         catalogDict[.type] = .name(.catalog)
         catalogDict[.pages] = .reference(pagesRef)
 
-        if let outlineRef = outlineRef {
+        if let outlineRef {
             catalogDict[.outlines] = .reference(outlineRef)
         }
 
@@ -590,6 +593,7 @@ extension ISO_32000.Writer {
                 switch target {
                 case .destination(let destination):
                     itemDict[.dest] = serializeDestination(destination, pageRefs: pageRefs)
+
                 case .action:
                     // Action serialization not yet implemented
                     break

@@ -55,7 +55,7 @@ extension ISO_32000.Form {
         public var needAppearances: Bool
 
         /// Signature flags (Table 225). Default: none.
-        public var sigFlags: SigFlags
+        public var sigFlags: SigOptions
 
         /// Calculation order for fields with calculation actions.
         public var calculationOrder: [Int]?  // Object references
@@ -72,7 +72,7 @@ extension ISO_32000.Form {
         public init(
             fields: [Int],
             needAppearances: Bool = false,
-            sigFlags: SigFlags = [],
+            sigFlags: SigOptions = [],
             calculationOrder: [Int]? = nil,
             defaultResources: Int? = nil,
             defaultAppearance: String? = nil,
@@ -89,7 +89,7 @@ extension ISO_32000.Form {
     }
 }
 
-// MARK: - Form.SigFlags (Table 225)
+// MARK: - Form.SigOptions (Table 225)
 
 extension ISO_32000.Form {
     /// Signature flags (Table 225)
@@ -99,7 +99,7 @@ extension ISO_32000.Form {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 225 — Signature flags
-    public struct SigFlags: OptionSet, Sendable, Hashable {
+    public struct SigOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -108,13 +108,13 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form.SigFlags {
+extension ISO_32000.Form.SigOptions {
     /// The document contains at least one signature field.
-    public static let signaturesExist = ISO_32000.Form.SigFlags(rawValue: 1 << 0)
+    public static let signaturesExist = ISO_32000.Form.SigOptions(rawValue: 1 << 0)
 
     /// The document contains signatures that may be invalidated if the file
     /// is saved in a way that alters its previous contents (vs. incremental update).
-    public static let appendOnly = ISO_32000.Form.SigFlags(rawValue: 1 << 1)
+    public static let appendOnly = ISO_32000.Form.SigOptions(rawValue: 1 << 1)
 }
 
 // MARK: - Form.Quadding
@@ -176,7 +176,7 @@ extension ISO_32000.Form {
         public var mappingName: String?
 
         /// Field flags (Table 227). Default: 0.
-        public var flags: FieldFlags
+        public var flags: FieldOptions
 
         /// The field's value.
         public var value: FieldValue?
@@ -197,7 +197,7 @@ extension ISO_32000.Form {
             partialName: String? = nil,
             alternateName: String? = nil,
             mappingName: String? = nil,
-            flags: FieldFlags = [],
+            flags: FieldOptions = [],
             value: FieldValue? = nil,
             defaultValue: FieldValue? = nil,
             additionalActions: Int? = nil,
@@ -268,7 +268,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-// MARK: - Field.FieldFlags (Table 227)
+// MARK: - Field.FieldOptions (Table 227)
 
 extension ISO_32000.Form.Field {
     /// Field flags common to all field types (Table 227)
@@ -276,7 +276,7 @@ extension ISO_32000.Form.Field {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 227 — Field flags common to all field types
-    public struct FieldFlags: OptionSet, Sendable, Hashable {
+    public struct FieldOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -285,15 +285,15 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.FieldFlags {
+extension ISO_32000.Form.Field.FieldOptions {
     /// The user may not change the value of the field.
-    public static let readOnly = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 0)
+    public static let readOnly = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 0)
 
     /// The field shall have a value before the form can be submitted.
-    public static let required = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 1)
+    public static let required = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 1)
 
     /// The field shall not be exported by a submit-form action.
-    public static let noExport = ISO_32000.Form.Field.FieldFlags(rawValue: 1 << 2)
+    public static let noExport = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 2)
 }
 
 // MARK: - 12.7.5.2 Button Fields (Tables 229-232)
@@ -309,7 +309,7 @@ extension ISO_32000.Form.Field {
     /// ISO 32000-2:2020, Tables 229-232
     public struct Button: Sendable, Hashable {
         /// Button field flags (Table 232).
-        public var flags: ButtonFlags
+        public var flags: ButtonOptions
 
         /// The button's normal caption (for pushbuttons).
         public var normalCaption: String?
@@ -339,7 +339,7 @@ extension ISO_32000.Form.Field {
         public var options: [String]?
 
         public init(
-            flags: ButtonFlags = [],
+            flags: ButtonOptions = [],
             normalCaption: String? = nil,
             rolloverCaption: String? = nil,
             downCaption: String? = nil,
@@ -364,7 +364,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-// MARK: - Button.ButtonFlags (Table 232)
+// MARK: - Button.ButtonOptions (Table 232)
 
 extension ISO_32000.Form.Field.Button {
     /// Button field flags (Table 232)
@@ -372,7 +372,7 @@ extension ISO_32000.Form.Field.Button {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 232 — Button field flags
-    public struct ButtonFlags: OptionSet, Sendable, Hashable {
+    public struct ButtonOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -381,21 +381,21 @@ extension ISO_32000.Form.Field.Button {
     }
 }
 
-extension ISO_32000.Form.Field.Button.ButtonFlags {
+extension ISO_32000.Form.Field.Button.ButtonOptions {
     /// (Radio buttons only) Exactly one button shall be selected at all times.
     /// Selecting a button automatically deselects others.
-    public static let noToggleToOff = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 14)
+    public static let noToggleToOff = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 14)
 
     /// The field is a set of radio buttons. If clear and Pushbutton is also clear,
     /// the field is a checkbox.
-    public static let radio = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 15)
+    public static let radio = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 15)
 
     /// The field is a pushbutton that does not retain a permanent value.
-    public static let pushbutton = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 16)
+    public static let pushbutton = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 16)
 
     /// (PDF 1.5) A group of radio buttons within a radio button field that
     /// use the same value for the on state will turn on and off in unison.
-    public static let radiosInUnison = ISO_32000.Form.Field.Button.ButtonFlags(rawValue: 1 << 25)
+    public static let radiosInUnison = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 25)
 }
 
 // MARK: - Button.TextPosition (Table 230)
@@ -482,7 +482,7 @@ extension ISO_32000.Form.Field {
     /// ISO 32000-2:2020, Table 233 — Additional entries specific to a text field
     public struct Text: Sendable, Hashable {
         /// Text field flags.
-        public var flags: TextFlags
+        public var flags: TextOptions
 
         /// Maximum length of the text string. Optional.
         public var maxLength: Int?
@@ -500,7 +500,7 @@ extension ISO_32000.Form.Field {
         public var defaultStyle: String?
 
         public init(
-            flags: TextFlags = [],
+            flags: TextOptions = [],
             maxLength: Int? = nil,
             defaultAppearance: String? = nil,
             quadding: ISO_32000.Form.Quadding = .left,
@@ -517,7 +517,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-// MARK: - Text.TextFlags (Table 233)
+// MARK: - Text.TextOptions (Table 233)
 
 extension ISO_32000.Form.Field.Text {
     /// Text field flags (bits 13-25 of Ff)
@@ -525,7 +525,7 @@ extension ISO_32000.Form.Field.Text {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 233
-    public struct TextFlags: OptionSet, Sendable, Hashable {
+    public struct TextOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -534,27 +534,27 @@ extension ISO_32000.Form.Field.Text {
     }
 }
 
-extension ISO_32000.Form.Field.Text.TextFlags {
+extension ISO_32000.Form.Field.Text.TextOptions {
     /// The field may contain multiple lines of text.
-    public static let multiline = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 12)
+    public static let multiline = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 12)
 
     /// The field is intended for entering a secure password.
-    public static let password = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 13)
+    public static let password = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 13)
 
     /// (PDF 1.4) The field is a file-select field.
-    public static let fileSelect = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 20)
+    public static let fileSelect = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 20)
 
     /// (PDF 1.4) Text entered shall not be spell-checked.
-    public static let doNotSpellCheck = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 22)
+    public static let doNotSpellCheck = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 22)
 
     /// (PDF 1.4) The field shall not scroll if text exceeds boundaries.
-    public static let doNotScroll = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 23)
+    public static let doNotScroll = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 23)
 
     /// (PDF 1.5) The field shall be divided into positions for n characters.
-    public static let comb = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 24)
+    public static let comb = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 24)
 
     /// (PDF 1.5) The value shall be a rich text string.
-    public static let richText = ISO_32000.Form.Field.Text.TextFlags(rawValue: 1 << 25)
+    public static let richText = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 25)
 }
 
 // MARK: - 12.7.5.4 Choice Fields (Tables 234-235)
@@ -570,7 +570,7 @@ extension ISO_32000.Form.Field {
     /// ISO 32000-2:2020, Tables 234-235 — Additional entries specific to a choice field
     public struct Choice: Sendable, Hashable {
         /// Choice field flags.
-        public var flags: ChoiceFlags
+        public var flags: ChoiceOptions
 
         /// Array of options. Each is either a text string or a two-element array
         /// [export_value, display_value].
@@ -586,7 +586,7 @@ extension ISO_32000.Form.Field {
         public var quadding: ISO_32000.Form.Quadding
 
         public init(
-            flags: ChoiceFlags = [],
+            flags: ChoiceOptions = [],
             options: [Option] = [],
             topIndex: Int? = nil,
             defaultAppearance: String? = nil,
@@ -616,7 +616,7 @@ extension ISO_32000.Form.Field.Choice {
     }
 }
 
-// MARK: - Choice.ChoiceFlags (Table 235)
+// MARK: - Choice.ChoiceOptions (Table 235)
 
 extension ISO_32000.Form.Field.Choice {
     /// Choice field flags (Table 235)
@@ -624,7 +624,7 @@ extension ISO_32000.Form.Field.Choice {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 235 — Choice field flags
-    public struct ChoiceFlags: OptionSet, Sendable, Hashable {
+    public struct ChoiceOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -633,24 +633,26 @@ extension ISO_32000.Form.Field.Choice {
     }
 }
 
-extension ISO_32000.Form.Field.Choice.ChoiceFlags {
+extension ISO_32000.Form.Field.Choice.ChoiceOptions {
     /// The field is a combo box; if clear, it's a list box.
-    public static let combo = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 17)
+    public static let combo = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 17)
 
     /// (Combo boxes only) The combo box includes an editable text box.
-    public static let edit = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 18)
+    public static let edit = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 18)
 
     /// The field's options shall be sorted alphabetically.
-    public static let sort = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 19)
+    public static let sort = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 19)
 
     /// (PDF 1.4) More than one item may be selected simultaneously.
-    public static let multiSelect = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 21)
+    public static let multiSelect = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 21)
 
     /// (PDF 1.4) Text shall not be spell-checked.
-    public static let doNotSpellCheck = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 22)
+    public static let doNotSpellCheck = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 22)
 
     /// (PDF 1.5) New value commits immediately on selection.
-    public static let commitOnSelChange = ISO_32000.Form.Field.Choice.ChoiceFlags(rawValue: 1 << 26)
+    public static let commitOnSelChange = ISO_32000.Form.Field.Choice.ChoiceOptions(
+        rawValue: 1 << 26
+    )
 }
 
 // MARK: - 12.7.5.5 Signature Fields (Tables 236-237)
@@ -694,7 +696,7 @@ extension ISO_32000.Form.Field.Signature {
     /// Constrains the properties of a signature applied to this field.
     public struct SeedValue: Sendable, Hashable {
         /// Flags specifying which seed value entries are required.
-        public var flags: SeedFlags
+        public var flags: SeedOptions
 
         /// Acceptable signature handlers.
         public var filter: String?
@@ -718,7 +720,7 @@ extension ISO_32000.Form.Field.Signature {
         public var timeStampServer: String?
 
         public init(
-            flags: SeedFlags = [],
+            flags: SeedOptions = [],
             filter: String? = nil,
             subFilter: [String]? = nil,
             certConstraints: CertConstraints? = nil,
@@ -741,7 +743,7 @@ extension ISO_32000.Form.Field.Signature {
 
 extension ISO_32000.Form.Field.Signature.SeedValue {
     /// Seed value flags
-    public struct SeedFlags: OptionSet, Sendable, Hashable {
+    public struct SeedOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -774,27 +776,33 @@ extension ISO_32000.Form.Field.Signature.SeedValue {
     }
 }
 
-extension ISO_32000.Form.Field.Signature.SeedValue.SeedFlags {
+extension ISO_32000.Form.Field.Signature.SeedValue.SeedOptions {
     /// Filter is a required constraint.
-    public static let filter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 0)
+    public static let filter = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+        rawValue: 1 << 0
+    )
     /// SubFilter is a required constraint.
-    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 1
     )
     /// V (version) is a required constraint.
-    public static let version = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 2)
+    public static let version = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+        rawValue: 1 << 2
+    )
     /// Reasons is a required constraint.
-    public static let reasons = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(rawValue: 1 << 3)
+    public static let reasons = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+        rawValue: 1 << 3
+    )
     /// LegalAttestation is a required constraint.
-    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 4
     )
     /// AddRevInfo is a required constraint.
-    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 5
     )
     /// DigestMethod is a required constraint.
-    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedFlags(
+    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 6
     )
 }
@@ -850,9 +858,9 @@ extension ISO_32000.Form {
         public var fields: [String]?
 
         /// Submit flags.
-        public var flags: SubmitFlags
+        public var flags: SubmitOptions
 
-        public init(url: String, fields: [String]? = nil, flags: SubmitFlags = []) {
+        public init(url: String, fields: [String]? = nil, flags: SubmitOptions = []) {
             self.url = url
             self.fields = fields
             self.flags = flags
@@ -898,7 +906,7 @@ extension ISO_32000.Form {
 
 extension ISO_32000.Form.SubmitForm {
     /// Submit-form flags (Table 240)
-    public struct SubmitFlags: OptionSet, Sendable, Hashable {
+    public struct SubmitOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -907,35 +915,37 @@ extension ISO_32000.Form.SubmitForm {
     }
 }
 
-extension ISO_32000.Form.SubmitForm.SubmitFlags {
+extension ISO_32000.Form.SubmitForm.SubmitOptions {
     /// Fields array specifies fields to exclude (not include).
-    public static let exclude = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 0)
+    public static let exclude = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 0)
     /// Include fields without values.
-    public static let includeNoValueFields = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 1)
+    public static let includeNoValueFields = ISO_32000.Form.SubmitForm.SubmitOptions(
+        rawValue: 1 << 1
+    )
     /// Submit as HTML form (application/x-www-form-urlencoded).
-    public static let exportFormat = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 2)
+    public static let exportFormat = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 2)
     /// Field names and values submitted as HTTP GET (not POST).
-    public static let getMethod = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 3)
+    public static let getMethod = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 3)
     /// Coordinates of mouse click submitted.
-    public static let submitCoordinates = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 4)
+    public static let submitCoordinates = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 4)
     /// (PDF 1.4) Submit as XFDF.
-    public static let xfdf = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 5)
+    public static let xfdf = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 5)
     /// (PDF 1.4) Include annotations in FDF.
-    public static let includeAppendSaves = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 6)
+    public static let includeAppendSaves = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 6)
     /// (PDF 1.4) Include annotations.
-    public static let includeAnnotations = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 7)
+    public static let includeAnnotations = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 7)
     /// (PDF 1.4) Submit as PDF.
-    public static let submitPDF = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 8)
+    public static let submitPDF = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 8)
     /// (PDF 1.4) Convert dates to standard format.
-    public static let canonicalFormat = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 9)
+    public static let canonicalFormat = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 9)
     /// (PDF 1.4) Exclude non-user annotations.
-    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitFlags(
+    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitOptions(
         rawValue: 1 << 10
     )
     /// (PDF 1.4) Exclude F entry.
-    public static let excludeFKey = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 11)
+    public static let excludeFKey = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 11)
     /// (PDF 1.5) Include empty text fields.
-    public static let embedForm = ISO_32000.Form.SubmitForm.SubmitFlags(rawValue: 1 << 13)
+    public static let embedForm = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 13)
 }
 
 // MARK: - 12.5.6.19 Widget Annotation (Tables 191-192)
@@ -1072,7 +1082,7 @@ extension ISO_32000.`12`.`7` {
     public typealias AcroForm = ISO_32000.Form.AcroForm
 
     /// Signature flags (Table 225)
-    public typealias SigFlags = ISO_32000.Form.SigFlags
+    public typealias SigOptions = ISO_32000.Form.SigOptions
 
     /// Field dictionary (Table 226)
     public typealias Field = ISO_32000.Form.Field

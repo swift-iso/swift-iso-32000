@@ -227,10 +227,13 @@ extension ISO_32000.`8`.`9`.Image {
         switch components {
         case 1:
             self.colorSpace = .deviceGray
+
         case 3:
             self.colorSpace = .deviceRGB
+
         case 4:
             self.colorSpace = .deviceCMYK
+
         default:
             throw .unsupportedColorSpace(components: components)
         }

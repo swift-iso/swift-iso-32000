@@ -219,7 +219,7 @@ extension ISO_32000.MacExpertEncoding {
     static let encodeTable: [UInt32: Byte] = {
         var table: [UInt32: Byte] = [:]
         for (byte, scalar) in decodeTable.enumerated() {
-            if let scalar = scalar {
+            if let scalar {
                 table[scalar.value] = Byte(UInt8(byte))
             }
         }

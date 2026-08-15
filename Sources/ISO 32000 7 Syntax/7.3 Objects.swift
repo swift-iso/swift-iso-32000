@@ -429,11 +429,14 @@ extension ISO_32000.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
         switch self {
         case .empty:
             return "Name cannot be empty"
+
         case .tooLong(let count):
             return
                 "Name too long: \(count) bytes (max \(ISO_32000.`7`.`3`.`5`.Name.Limits.maxLength))"
+
         case .containsNullByte:
             return "Name cannot contain null bytes"
+
         case .containsWhitespace:
             return "Name cannot contain whitespace"
         }
@@ -897,7 +900,12 @@ extension ISO_32000.`7`.`3`.COS.Object {
 
     /// Create a name object from a string
     public static func name(_ value: String) -> Self? {
-        guard let name = try? ISO_32000.`7`.`3`.COS.Name(value) else { return nil }
+        let name: ISO_32000.`7`.`3`.COS.Name
+        do throws(ISO_32000.`7`.`3`.COS.Name.Error) {
+            name = try ISO_32000.`7`.`3`.COS.Name(value)
+        } catch {
+            return nil
+        }
         return .name(name)
     }
 

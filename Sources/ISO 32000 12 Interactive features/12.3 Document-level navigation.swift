@@ -247,7 +247,7 @@ extension ISO_32000.Outline {
         /// Style flags for displaying the outline item's text. (Optional; PDF 1.4)
         ///
         /// See Table 152 — Outline item flags. Default: 0.
-        public var flags: ItemFlags
+        public var flags: ItemOptions
 
         // MARK: - Initialization
 
@@ -257,7 +257,7 @@ extension ISO_32000.Outline {
             children: [Item] = [],
             isOpen: Bool = true,
             color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemFlags = []
+            flags: ItemOptions = []
         ) {
             self.title = title
             self.target = target
@@ -274,7 +274,7 @@ extension ISO_32000.Outline {
             children: [Item] = [],
             isOpen: Bool = true,
             color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemFlags = []
+            flags: ItemOptions = []
         ) {
             self.init(
                 title: title,
@@ -293,7 +293,7 @@ extension ISO_32000.Outline {
             children: [Item] = [],
             isOpen: Bool = true,
             color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemFlags = []
+            flags: ItemOptions = []
         ) {
             self.init(
                 title: title,
@@ -339,7 +339,7 @@ extension ISO_32000.Outline {
     /// ## Reference
     ///
     /// ISO 32000-2:2020, Table 152 — Outline item flags
-    public struct ItemFlags: OptionSet, Sendable, Hashable {
+    public struct ItemOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -348,12 +348,12 @@ extension ISO_32000.Outline {
     }
 }
 
-extension ISO_32000.Outline.ItemFlags {
+extension ISO_32000.Outline.ItemOptions {
     /// Bit 1: If set to 1, display the item in italic.
-    public static let italic = ISO_32000.Outline.ItemFlags(rawValue: 1 << 0)
+    public static let italic = ISO_32000.Outline.ItemOptions(rawValue: 1 << 0)
 
     /// Bit 2: If set to 1, display the item in bold.
-    public static let bold = ISO_32000.Outline.ItemFlags(rawValue: 1 << 1)
+    public static let bold = ISO_32000.Outline.ItemOptions(rawValue: 1 << 1)
 }
 
 // MARK: - 12.3.5 Collections (Table 153)
@@ -528,7 +528,7 @@ extension ISO_32000.Outline {
         )],
         openToLevel: Int = 1,
         color: ISO_32000.DeviceRGB? = nil,
-        flags: ItemFlags = []
+        flags: ItemOptions = []
     ) -> Root {
         guard !headings.isEmpty else { return Root() }
 
@@ -607,7 +607,7 @@ extension ISO_32000.`12`.`3` {
     public typealias OutlineItemTarget = ISO_32000.Outline.Target
 
     /// Outline item flags (Table 152)
-    public typealias OutlineItemFlags = ISO_32000.Outline.ItemFlags
+    public typealias OutlineItemFlags = ISO_32000.Outline.ItemOptions
 
     /// Destination (Table 149)
     public typealias Destination = ISO_32000.Destination
@@ -633,5 +633,5 @@ extension ISO_32000 {
     public typealias OutlineItemTarget = Outline.Target
 
     /// Convenience typealias for outline item flags
-    public typealias OutlineItemFlags = Outline.ItemFlags
+    public typealias OutlineItemFlags = Outline.ItemOptions
 }
