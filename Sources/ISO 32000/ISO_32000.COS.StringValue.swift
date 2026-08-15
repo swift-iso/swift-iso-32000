@@ -183,6 +183,7 @@ extension ISO_32000.COS.StringValue {
         switch ISO_32000.PDFDocEncoding.detectEncoding(bytes) {
         case .pdfDocEncoding:
             self.init(String(pdfDoc: [Byte](bytes), withReplacement: true))
+
         case .utf16BE:
             // Skip BOM (first 2 bytes) and decode UTF-16BE.
             //
@@ -202,6 +203,7 @@ extension ISO_32000.COS.StringValue {
                 codeUnits.append(UInt16(bytes: [hi, lo], endianness: .big)!)
             }
             self.init(String(decoding: codeUnits, as: UTF16.self))
+
         case .utf8:
             // Skip BOM (first 3 bytes) and decode UTF-8
             let dataBytes = Array(bytes.dropFirst(3))

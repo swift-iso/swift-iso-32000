@@ -225,6 +225,7 @@ extension ISO_32000.`12`.`5`.Annotation.Content {
         case .line: return .line
         case .shape(let s): return s.kind == .square ? .square : .circle
         case .poly(let p): return p.kind == .polygon ? .polygon : .polyLine
+
         case .textMarkup(let tm):
             switch tm.kind {
             case .highlight: return .highlight
@@ -232,6 +233,7 @@ extension ISO_32000.`12`.`5`.Annotation.Content {
             case .strikeOut: return .strikeOut
             case .squiggly: return .squiggly
             }
+
         case .caret: return .caret
         case .stamp: return .stamp
         case .ink: return .ink
@@ -349,6 +351,7 @@ extension ISO_32000.`12`.`5`.Annotation.Subtype {
             .squiggly, .strikeOut, .caret, .stamp, .ink,
             .fileAttachment, .sound, .redact, .projection:
             return true
+
         case .link, .popup, .movie, .screen, .widget,
             .printerMark, .trapNet, .watermark, .threeD, .richMedia:
             return false
@@ -360,6 +363,7 @@ extension ISO_32000.`12`.`5`.Annotation.Subtype {
         switch self {
         case .highlight, .underline, .squiggly, .strikeOut:
             return true
+
         default:
             return false
         }
@@ -907,6 +911,7 @@ extension ISO_32000.`12`.`5`.Annotation.State {
         switch self {
         case .marked, .unmarked:
             return .marked
+
         case .accepted, .rejected, .cancelled, .completed, .none:
             return .review
         }

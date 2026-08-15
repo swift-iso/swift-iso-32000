@@ -141,10 +141,13 @@ extension ISO_32000.`8`.`6`.Color {
             switch scalar {
             case "0"..."9":
                 value += UInt64(scalar.value - UnicodeScalar("0").value)
+
             case "a"..."f":
                 value += UInt64(scalar.value - UnicodeScalar("a").value + 10)
+
             case "A"..."F":
                 value += UInt64(scalar.value - UnicodeScalar("A").value + 10)
+
             default:
                 return nil
             }
@@ -157,12 +160,14 @@ extension ISO_32000.`8`.`6`.Color {
             let g = Double((value >> 4) & 0xF) / 15.0
             let b = Double(value & 0xF) / 15.0
             self = .rgb(r: r, g: g, b: b)
+
         case 6:
             // RRGGBB
             let r = Double((value >> 16) & 0xFF) / 255.0
             let g = Double((value >> 8) & 0xFF) / 255.0
             let b = Double(value & 0xFF) / 255.0
             self = .rgb(r: r, g: g, b: b)
+
         default:
             return nil
         }
@@ -177,8 +182,10 @@ extension ISO_32000.`8`.`6`.Color {
         switch self {
         case .gray:
             return "DeviceGray"
+
         case .rgb:
             return "DeviceRGB"
+
         case .cmyk:
             return "DeviceCMYK"
         }
@@ -189,8 +196,10 @@ extension ISO_32000.`8`.`6`.Color {
         switch self {
         case .gray:
             return 1
+
         case .rgb:
             return 3
+
         case .cmyk:
             return 4
         }
@@ -201,8 +210,10 @@ extension ISO_32000.`8`.`6`.Color {
         switch self {
         case .gray(let g):
             return [g]
+
         case .rgb(let r, let g, let b):
             return [r, g, b]
+
         case .cmyk(let c, let m, let y, let k):
             return [c, m, y, k]
         }
@@ -219,9 +230,11 @@ extension ISO_32000.`8`.`6`.Color {
         switch self {
         case .gray:
             return self
+
         case .rgb(let r, let g, let b):
             let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
             return .gray(luminance)
+
         case .cmyk(let c, let m, let y, let k):
             // Convert CMYK to RGB first, then to gray
             let r = (1 - c) * (1 - k)
@@ -237,8 +250,10 @@ extension ISO_32000.`8`.`6`.Color {
         switch self {
         case .gray(let g):
             return .rgb(r: g, g: g, b: g)
+
         case .rgb:
             return self
+
         case .cmyk(let c, let m, let y, let k):
             let r = (1 - c) * (1 - k)
             let g = (1 - m) * (1 - k)

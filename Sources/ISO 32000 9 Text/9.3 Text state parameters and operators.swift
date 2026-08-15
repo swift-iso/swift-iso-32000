@@ -221,6 +221,7 @@ extension ISO_32000.Text.Rendering.Mode {
         switch self {
         case .fill, .fillStroke, .fillClip, .fillStrokeClip:
             true
+
         case .stroke, .invisible, .strokeClip, .clip:
             false
         }
@@ -231,6 +232,7 @@ extension ISO_32000.Text.Rendering.Mode {
         switch self {
         case .stroke, .fillStroke, .strokeClip, .fillStrokeClip:
             true
+
         case .fill, .invisible, .fillClip, .clip:
             false
         }
@@ -241,6 +243,7 @@ extension ISO_32000.Text.Rendering.Mode {
         switch self {
         case .fillClip, .strokeClip, .fillStrokeClip, .clip:
             true
+
         case .fill, .stroke, .fillStroke, .invisible:
             false
         }
