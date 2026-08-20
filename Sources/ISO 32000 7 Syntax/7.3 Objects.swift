@@ -18,7 +18,7 @@ public import Binary_Primitives
 internal import Binary_Primitives_Standard_Library_Integration
 public import Binary_Serializable_Primitives
 public import Format_Primitives
-public import Formatter_Primitives
+import Formatter_Primitives
 import IEEE_754
 import ISO_32000_Annex_D
 public import ISO_32000_Shared

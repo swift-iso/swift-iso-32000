@@ -2,7 +2,7 @@
 
 public import Binary_Primitives
 public import Binary_Serializable_Primitives
-public import Byte_Primitives
+import Byte_Primitives
 import ISO_32000_9_Text
 import Ownership_Primitives
 import RFC_4648

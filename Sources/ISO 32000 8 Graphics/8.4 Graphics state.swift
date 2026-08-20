@@ -8,7 +8,7 @@
 
 public import Geometry_Primitives
 public import ISO_32000_Shared
-public import Real_Primitives
+import Real_Primitives
 
 extension ISO_32000.`8` {
     /// ISO 32000-2:2020, 8.4 Graphics state

@@ -41,7 +41,7 @@ extension ISO_32000.`9`.`8` {
 
 // MARK: - FontDesign Tagged Arithmetic
 
-extension Tagged: AdditiveArithmetic
+extension Tagged: @retroactive AdditiveArithmetic
 where Tag == ISO_32000.`9`.`8`.FontDesign, Underlying: AdditiveArithmetic {
     /// The zero value in font design units.
     @inlinable
