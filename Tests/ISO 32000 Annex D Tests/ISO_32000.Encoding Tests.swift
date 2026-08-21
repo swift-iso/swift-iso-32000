@@ -1,6 +1,3 @@
-// ISO_32000.Encoding Tests.swift
-// Unit tests for ISO 32000-2:2020 Annex D - Character sets and encodings
-
 import Byte_Primitives
 import Foundation
 import ISO_32000_Shared
@@ -11,36 +8,30 @@ import Testing
 @Suite
 struct `ISO_32000.Encoding Tests` {
 
-    // MARK: - Cross-Encoding Comparison Tests
-
     @Suite
     struct CrossEncodingTests {
 
         @Test
         func `WinAnsi vs PDFDoc Euro position differs`() {
-            // WinAnsi: Euro at 0x80
-            // PDFDoc: Euro at 0xA0
+
             #expect(ISO_32000.WinAnsiEncoding.decode(0x80) == "\u{20AC}")
             #expect(ISO_32000.PDFDocEncoding.decode(0xA0) == "\u{20AC}")
 
-            // They differ at these positions
             #expect(ISO_32000.WinAnsiEncoding.decode(0xA0) != ISO_32000.PDFDocEncoding.decode(0xA0))
         }
 
         @Test
         func `Standard vs WinAnsi quote handling differs`() {
-            // StandardEncoding: 0x27 = RIGHT SINGLE QUOTATION MARK
-            // WinAnsiEncoding: 0x27 = APOSTROPHE (ASCII)
-            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")  // U+2019
-            #expect(ISO_32000.WinAnsiEncoding.decode(0x27) == "'")  // U+0027
+
+            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")
+            #expect(ISO_32000.WinAnsiEncoding.decode(0x27) == "'")
         }
 
         @Test
         func `MacRoman vs WinAnsi ligatures at different positions`() {
-            // MacRoman: fi at 0xDE, fl at 0xDF
-            // WinAnsi: no ligatures (uses separate characters)
-            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")  // fi
-            #expect(ISO_32000.WinAnsiEncoding.decode(0xDE) == "\u{00DE}")  // Thorn
+
+            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")
+            #expect(ISO_32000.WinAnsiEncoding.decode(0xDE) == "\u{00DE}")
         }
 
         @Test
@@ -54,8 +45,6 @@ struct `ISO_32000.Encoding Tests` {
             #expect(ISO_32000.ZapfDingbatsEncoding.name == "ZapfDingbatsEncoding")
         }
     }
-
-    // MARK: - Protocol Conformance Tests
 
     @Suite
     struct ProtocolConformanceTests {
@@ -105,14 +94,13 @@ struct `ISO_32000.Encoding Tests` {
     }
 }
 
-// MARK: - WinAnsiEncoding Tests (Table D.2 WIN column)
 extension ISO_32000.WinAnsiEncoding {
     @Suite
     struct Test {
 
         @Test
         func `Euro sign at 0x80`() {
-            // PDF 1.3+ maps 0x80 to Euro sign
+
             #expect(ISO_32000.WinAnsiEncoding.encode("\u{20AC}") == 0x80)
             #expect(ISO_32000.WinAnsiEncoding.decode(0x80) == "\u{20AC}")
         }
@@ -131,14 +119,14 @@ extension ISO_32000.WinAnsiEncoding {
 
         @Test
         func `Bullet at 0x95`() {
-            // Note: PDF spec maps to BULLET, not MIDDLE DOT
+
             #expect(ISO_32000.WinAnsiEncoding.encode("\u{2022}") == 0x95)
             #expect(ISO_32000.WinAnsiEncoding.decode(0x95) == "\u{2022}")
         }
 
         @Test
         func `ASCII range preserved`() {
-            // Standard ASCII printable characters
+
             #expect(ISO_32000.WinAnsiEncoding.decode(0x20) == " ")
             #expect(ISO_32000.WinAnsiEncoding.decode(0x41) == "A")
             #expect(ISO_32000.WinAnsiEncoding.decode(0x61) == "a")
@@ -147,16 +135,16 @@ extension ISO_32000.WinAnsiEncoding {
 
         @Test
         func `Smart quotes encoding`() {
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2018}") == 0x91)  // Left single quote
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2019}") == 0x92)  // Right single quote
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{201C}") == 0x93)  // Left double quote
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{201D}") == 0x94)  // Right double quote
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2018}") == 0x91)
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2019}") == 0x92)
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{201C}") == 0x93)
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{201D}") == 0x94)
         }
 
         @Test
         func `Dashes encoding`() {
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2013}") == 0x96)  // En dash
-            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2014}") == 0x97)  // Em dash
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2013}") == 0x96)
+            #expect(ISO_32000.WinAnsiEncoding.encode("\u{2014}") == 0x97)
         }
 
         @Test
@@ -167,7 +155,7 @@ extension ISO_32000.WinAnsiEncoding {
 
         @Test
         func `Undefined bytes return nil`() {
-            // Bytes 0x81, 0x8D, 0x8F, 0x90, 0x9D are undefined
+
             #expect(ISO_32000.WinAnsiEncoding.decode(0x81) == nil)
             #expect(ISO_32000.WinAnsiEncoding.decode(0x8D) == nil)
             #expect(ISO_32000.WinAnsiEncoding.decode(0x8F) == nil)
@@ -183,55 +171,54 @@ extension ISO_32000.WinAnsiEncoding {
         @Test
         func `canEncode returns true for encodable scalars`() {
             #expect(ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar("A")))
-            #expect(ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x20AC)!))  // Euro
-            #expect(ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x00FC)!))  // u with umlaut
+            #expect(ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x20AC)!))
+            #expect(ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x00FC)!))
         }
 
         @Test
         func `canEncode returns false for non-encodable scalars`() {
-            // Chinese character
+
             #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x4F60)!))
-            // Emoji
+
             #expect(!ISO_32000.WinAnsiEncoding.canEncode(Unicode.Scalar(0x1F389)!))
         }
 
         @Test
         func `Collection wrapper isValid`() {
-            let validBytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
+            let validBytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
             #expect(validBytes.winAnsi.isValid)
         }
     }
 }
 
-// MARK: - PDFDocEncoding Tests (Table D.3)
 extension ISO_32000.PDFDocEncoding {
     @Suite
     struct Test {
 
         @Test
         func `Euro at 0xA0 differs from WinAnsi`() {
-            // PDFDocEncoding has Euro at 160 (0xA0), not NBSP
+
             #expect(ISO_32000.PDFDocEncoding.decode(0xA0) == "\u{20AC}")
-            // WinAnsiEncoding would have NBSP at 160
+
         }
 
         @Test
         func `Bullet at 0x80`() {
-            // PDFDocEncoding has BULLET at 0x80
+
             #expect(ISO_32000.PDFDocEncoding.decode(0x80) == "\u{2022}")
         }
 
         @Test
         func `Diacritics in 0x18-0x1F range`() {
-            // Table D.3 puts diacritical marks in bytes 24-31
-            #expect(ISO_32000.PDFDocEncoding.decode(0x18) == "\u{02D8}")  // breve
-            #expect(ISO_32000.PDFDocEncoding.decode(0x19) == "\u{02C7}")  // caron
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1A) == "\u{02C6}")  // circumflex
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1B) == "\u{02D9}")  // dotaccent
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1C) == "\u{02DD}")  // hungarumlaut
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1D) == "\u{02DB}")  // ogonek
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1E) == "\u{02DA}")  // ring
-            #expect(ISO_32000.PDFDocEncoding.decode(0x1F) == "\u{02DC}")  // tilde
+
+            #expect(ISO_32000.PDFDocEncoding.decode(0x18) == "\u{02D8}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x19) == "\u{02C7}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1A) == "\u{02C6}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1B) == "\u{02D9}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1C) == "\u{02DD}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1D) == "\u{02DB}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1E) == "\u{02DA}")
+            #expect(ISO_32000.PDFDocEncoding.decode(0x1F) == "\u{02DC}")
         }
 
         @Test
@@ -241,73 +228,72 @@ extension ISO_32000.PDFDocEncoding {
 
         @Test
         func `Complete 256-byte mapping`() {
-            // PDFDocEncoding should have all 256 positions defined
+
             var definedCount = 0
             for byte in 0..<256 {
                 if ISO_32000.PDFDocEncoding.decode(Byte(UInt8(byte))) != nil {
                     definedCount += 1
                 }
             }
-            // Most positions should be defined (some control characters may be nil)
+
             #expect(definedCount > 200)
         }
 
         @Test
         func `detectEncoding UTF16BE`() {
-            let utf16Data: [Byte] = [0xFE, 0xFF, 0x00, 0x48]  // BOM + "H"
+            let utf16Data: [Byte] = [0xFE, 0xFF, 0x00, 0x48]
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(utf16Data)
             #expect(detected == .utf16BE)
         }
 
         @Test
         func `detectEncoding UTF8`() {
-            let utf8Data: [Byte] = [0xEF, 0xBB, 0xBF, 0x48]  // BOM + "H"
+            let utf8Data: [Byte] = [0xEF, 0xBB, 0xBF, 0x48]
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(utf8Data)
             #expect(detected == .utf8)
         }
 
         @Test
         func `detectEncoding PDFDocEncoding`() {
-            let pdfDocData: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello"
+            let pdfDocData: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
             let detected = ISO_32000.PDFDocEncoding.detectEncoding(pdfDocData)
             #expect(detected == .pdfDocEncoding)
         }
     }
 }
 
-// MARK: - StandardEncoding Tests (Table D.2 STD column)
 extension ISO_32000.StandardEncoding {
     @Suite
     struct Test {
 
         @Test
         func `Encoding name not predefined`() {
-            // Note: PDF processors shall NOT have this as a predefined encoding name
+
             #expect(ISO_32000.StandardEncoding.name == "StandardEncoding")
         }
 
         @Test
         func `Quote characters differ from ASCII`() {
-            // StandardEncoding maps 0x27 to RIGHT SINGLE QUOTATION MARK, not apostrophe
-            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")  // U+2019
-            // And 0x60 to LEFT SINGLE QUOTATION MARK, not grave
-            #expect(ISO_32000.StandardEncoding.decode(0x60) == "\u{2018}")  // U+2018
+
+            #expect(ISO_32000.StandardEncoding.decode(0x27) == "\u{2019}")
+
+            #expect(ISO_32000.StandardEncoding.decode(0x60) == "\u{2018}")
         }
 
         @Test
         func `Ligatures in extended range`() {
-            #expect(ISO_32000.StandardEncoding.decode(0xAE) == "\u{FB01}")  // fi
-            #expect(ISO_32000.StandardEncoding.decode(0xAF) == "\u{FB02}")  // fl
+            #expect(ISO_32000.StandardEncoding.decode(0xAE) == "\u{FB01}")
+            #expect(ISO_32000.StandardEncoding.decode(0xAF) == "\u{FB02}")
         }
 
         @Test
         func `Fraction slash`() {
-            #expect(ISO_32000.StandardEncoding.decode(0xA4) == "\u{2044}")  // FRACTION SLASH
+            #expect(ISO_32000.StandardEncoding.decode(0xA4) == "\u{2044}")
         }
 
         @Test
         func `Em dash`() {
-            #expect(ISO_32000.StandardEncoding.decode(0xD0) == "\u{2014}")  // U+2014
+            #expect(ISO_32000.StandardEncoding.decode(0xD0) == "\u{2014}")
         }
 
         @Test
@@ -320,7 +306,7 @@ extension ISO_32000.StandardEncoding {
 
         @Test
         func `Many positions undefined`() {
-            // StandardEncoding leaves many positions undefined
+
             #expect(ISO_32000.StandardEncoding.decode(0x00) == nil)
             #expect(ISO_32000.StandardEncoding.decode(0x7F) == nil)
             #expect(ISO_32000.StandardEncoding.decode(0x80) == nil)
@@ -328,7 +314,6 @@ extension ISO_32000.StandardEncoding {
     }
 }
 
-// MARK: - MacRomanEncoding Tests (Table D.2 MAC column)
 extension ISO_32000.MacRomanEncoding {
     @Suite
     struct Test {
@@ -340,28 +325,28 @@ extension ISO_32000.MacRomanEncoding {
 
         @Test
         func `Currency symbol at 0xDB not Euro`() {
-            // Note 1: PDF maintains original Mac Roman mapping (currency), NOT Apple's later Euro
-            #expect(ISO_32000.MacRomanEncoding.decode(0xDB) == "\u{00A4}")  // U+00A4 CURRENCY SIGN
+
+            #expect(ISO_32000.MacRomanEncoding.decode(0xDB) == "\u{00A4}")
         }
 
         @Test
         func `Non-breaking space at 0xCA`() {
-            // Note 6: Code 312 (0xCA) is NBSP
-            #expect(ISO_32000.MacRomanEncoding.decode(0xCA) == "\u{00A0}")  // NBSP
+
+            #expect(ISO_32000.MacRomanEncoding.decode(0xCA) == "\u{00A0}")
         }
 
         @Test
         func `Extended ASCII characters`() {
-            #expect(ISO_32000.MacRomanEncoding.decode(0x80) == "\u{00C4}")  // A with umlaut
-            #expect(ISO_32000.MacRomanEncoding.decode(0x81) == "\u{00C5}")  // A with ring
-            #expect(ISO_32000.MacRomanEncoding.decode(0x82) == "\u{00C7}")  // C with cedilla
-            #expect(ISO_32000.MacRomanEncoding.decode(0x83) == "\u{00C9}")  // E with acute
+            #expect(ISO_32000.MacRomanEncoding.decode(0x80) == "\u{00C4}")
+            #expect(ISO_32000.MacRomanEncoding.decode(0x81) == "\u{00C5}")
+            #expect(ISO_32000.MacRomanEncoding.decode(0x82) == "\u{00C7}")
+            #expect(ISO_32000.MacRomanEncoding.decode(0x83) == "\u{00C9}")
         }
 
         @Test
         func `Ligatures`() {
-            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")  // fi
-            #expect(ISO_32000.MacRomanEncoding.decode(0xDF) == "\u{FB02}")  // fl
+            #expect(ISO_32000.MacRomanEncoding.decode(0xDE) == "\u{FB01}")
+            #expect(ISO_32000.MacRomanEncoding.decode(0xDF) == "\u{FB02}")
         }
 
         @Test
@@ -373,7 +358,6 @@ extension ISO_32000.MacRomanEncoding {
     }
 }
 
-// MARK: - MacExpertEncoding Tests (Table D.4)
 extension ISO_32000.MacExpertEncoding {
     @Suite
     struct Test {
@@ -385,43 +369,42 @@ extension ISO_32000.MacExpertEncoding {
 
         @Test
         func `Small capitals`() {
-            // Uses Unicode small capital letters
-            #expect(ISO_32000.MacExpertEncoding.decode(0x61) == "\u{1D00}")  // Asmall
-            #expect(ISO_32000.MacExpertEncoding.decode(0x62) == "\u{0299}")  // Bsmall
-            #expect(ISO_32000.MacExpertEncoding.decode(0x63) == "\u{1D04}")  // Csmall
+
+            #expect(ISO_32000.MacExpertEncoding.decode(0x61) == "\u{1D00}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x62) == "\u{0299}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x63) == "\u{1D04}")
         }
 
         @Test
         func `Ligatures`() {
-            #expect(ISO_32000.MacExpertEncoding.decode(0x56) == "\u{FB00}")  // ff
-            #expect(ISO_32000.MacExpertEncoding.decode(0x57) == "\u{FB01}")  // fi
-            #expect(ISO_32000.MacExpertEncoding.decode(0x58) == "\u{FB02}")  // fl
-            #expect(ISO_32000.MacExpertEncoding.decode(0x59) == "\u{FB03}")  // ffi
-            #expect(ISO_32000.MacExpertEncoding.decode(0x5A) == "\u{FB04}")  // ffl
+            #expect(ISO_32000.MacExpertEncoding.decode(0x56) == "\u{FB00}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x57) == "\u{FB01}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x58) == "\u{FB02}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x59) == "\u{FB03}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x5A) == "\u{FB04}")
         }
 
         @Test
         func `Fractions`() {
-            #expect(ISO_32000.MacExpertEncoding.decode(0x47) == "\u{00BC}")  // onequarter
-            #expect(ISO_32000.MacExpertEncoding.decode(0x48) == "\u{00BD}")  // onehalf
-            #expect(ISO_32000.MacExpertEncoding.decode(0x49) == "\u{00BE}")  // threequarters
+            #expect(ISO_32000.MacExpertEncoding.decode(0x47) == "\u{00BC}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x48) == "\u{00BD}")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x49) == "\u{00BE}")
         }
 
         @Test
         func `Oldstyle digits`() {
-            #expect(ISO_32000.MacExpertEncoding.decode(0x30) == "0")  // zerooldstyle
-            #expect(ISO_32000.MacExpertEncoding.decode(0x31) == "1")  // oneoldstyle
-            #expect(ISO_32000.MacExpertEncoding.decode(0x39) == "9")  // nineoldstyle
+            #expect(ISO_32000.MacExpertEncoding.decode(0x30) == "0")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x31) == "1")
+            #expect(ISO_32000.MacExpertEncoding.decode(0x39) == "9")
         }
 
         @Test
         func `Fraction slash`() {
-            #expect(ISO_32000.MacExpertEncoding.decode(0x2F) == "\u{2044}")  // FRACTION SLASH
+            #expect(ISO_32000.MacExpertEncoding.decode(0x2F) == "\u{2044}")
         }
     }
 }
 
-// MARK: - SymbolEncoding Tests (Table D.5)
 extension ISO_32000.SymbolEncoding {
     @Suite
     struct Test {
@@ -433,50 +416,50 @@ extension ISO_32000.SymbolEncoding {
 
         @Test
         func `Greek uppercase letters`() {
-            #expect(ISO_32000.SymbolEncoding.decode(0x41) == "\u{0391}")  // Alpha
-            #expect(ISO_32000.SymbolEncoding.decode(0x42) == "\u{0392}")  // Beta
-            #expect(ISO_32000.SymbolEncoding.decode(0x47) == "\u{0393}")  // Gamma
-            #expect(ISO_32000.SymbolEncoding.decode(0x44) == "\u{0394}")  // Delta
-            #expect(ISO_32000.SymbolEncoding.decode(0x57) == "\u{03A9}")  // Omega
+            #expect(ISO_32000.SymbolEncoding.decode(0x41) == "\u{0391}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x42) == "\u{0392}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x47) == "\u{0393}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x44) == "\u{0394}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x57) == "\u{03A9}")
         }
 
         @Test
         func `Greek lowercase letters`() {
-            #expect(ISO_32000.SymbolEncoding.decode(0x61) == "\u{03B1}")  // alpha
-            #expect(ISO_32000.SymbolEncoding.decode(0x62) == "\u{03B2}")  // beta
-            #expect(ISO_32000.SymbolEncoding.decode(0x67) == "\u{03B3}")  // gamma
-            #expect(ISO_32000.SymbolEncoding.decode(0x64) == "\u{03B4}")  // delta
-            #expect(ISO_32000.SymbolEncoding.decode(0x77) == "\u{03C9}")  // omega
+            #expect(ISO_32000.SymbolEncoding.decode(0x61) == "\u{03B1}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x62) == "\u{03B2}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x67) == "\u{03B3}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x64) == "\u{03B4}")
+            #expect(ISO_32000.SymbolEncoding.decode(0x77) == "\u{03C9}")
         }
 
         @Test
         func `Mathematical symbols`() {
-            #expect(ISO_32000.SymbolEncoding.decode(0xB1) == "\u{00B1}")  // plusminus
-            #expect(ISO_32000.SymbolEncoding.decode(0xB4) == "\u{00D7}")  // multiply
-            #expect(ISO_32000.SymbolEncoding.decode(0xB8) == "\u{00F7}")  // divide
-            #expect(ISO_32000.SymbolEncoding.decode(0xB9) == "\u{2260}")  // notequal
+            #expect(ISO_32000.SymbolEncoding.decode(0xB1) == "\u{00B1}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xB4) == "\u{00D7}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xB8) == "\u{00F7}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xB9) == "\u{2260}")
         }
 
         @Test
         func `Set theory symbols`() {
-            #expect(ISO_32000.SymbolEncoding.decode(0xC7) == "\u{2229}")  // intersection
-            #expect(ISO_32000.SymbolEncoding.decode(0xC8) == "\u{222A}")  // union
-            #expect(ISO_32000.SymbolEncoding.decode(0xCE) == "\u{2208}")  // element
-            #expect(ISO_32000.SymbolEncoding.decode(0xCF) == "\u{2209}")  // notelement
+            #expect(ISO_32000.SymbolEncoding.decode(0xC7) == "\u{2229}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xC8) == "\u{222A}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xCE) == "\u{2208}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xCF) == "\u{2209}")
         }
 
         @Test
         func `Logic symbols`() {
-            // 0xD9 = logicaland (∧), 0xDB = arrowdblboth (⇔)
-            #expect(ISO_32000.SymbolEncoding.decode(0xD9) == "\u{2227}")  // logicaland
-            // arrowdblboth / equivalence
+
+            #expect(ISO_32000.SymbolEncoding.decode(0xD9) == "\u{2227}")
+
             #expect(ISO_32000.SymbolEncoding.decode(0xDB) == "\u{21D4}")
         }
 
         @Test
         func `Pi and infinity`() {
-            #expect(ISO_32000.SymbolEncoding.decode(0x70) == "\u{03C0}")  // pi
-            #expect(ISO_32000.SymbolEncoding.decode(0xA5) == "\u{221E}")  // infinity
+            #expect(ISO_32000.SymbolEncoding.decode(0x70) == "\u{03C0}")
+            #expect(ISO_32000.SymbolEncoding.decode(0xA5) == "\u{221E}")
         }
 
         @Test
@@ -487,7 +470,6 @@ extension ISO_32000.SymbolEncoding {
     }
 }
 
-// MARK: - ZapfDingbatsEncoding Tests (Table D.6)
 extension ISO_32000.ZapfDingbatsEncoding {
     @Suite
     struct Test {
@@ -499,55 +481,53 @@ extension ISO_32000.ZapfDingbatsEncoding {
 
         @Test
         func `Scissors and pointing hands`() {
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x21) == "\u{2701}")  // a1 - scissors
-            // a11 - pointing hand
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x21) == "\u{2701}")
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2A) == "\u{261B}")
-            // a14 - writing hand
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x2D) == "\u{270D}")
         }
 
         @Test
         func `Checkmarks and crosses`() {
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x33) == "\u{2713}")  // a19 - check mark
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x37) == "\u{2717}")  // a23 - ballot x
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x33) == "\u{2713}")
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x37) == "\u{2717}")
         }
 
         @Test
         func `Stars`() {
-            // a35 - black star ★
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x48) == "\u{2605}")
-            // a36 - stress outlined white star ✩
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0x49) == "\u{2729}")
         }
 
         @Test
         func `Playing card suits`() {
-            // Playing card suits are at 0xA8-0xAB per ISO 32000-2 Table D.6
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xA8) == "\u{2663}")  // a112 - club ♣
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xA9) == "\u{2666}")  // a111 - diamond ♦
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAA) == "\u{2665}")  // a110 - heart ♥
-            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAB) == "\u{2660}")  // a109 - spade ♠
+
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xA8) == "\u{2663}")
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xA9) == "\u{2666}")
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAA) == "\u{2665}")
+            #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAB) == "\u{2660}")
         }
 
         @Test
         func `Circled numbers`() {
-            // Circled numbers exist in ZapfDingbats
-            // Should have some characters
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xAC) != nil)
         }
 
         @Test
         func `Arrows`() {
-            // Arrow characters per ISO 32000-2 Table D.6
-            // a160 - heavy right arrow ➔
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD4) == "\u{2794}")
-            // a161 - rightward arrow →
+
             #expect(ISO_32000.ZapfDingbatsEncoding.decode(0xD5) == "\u{2192}")
         }
 
         @Test
         func `Dingbats Unicode block`() {
-            // Most ZapfDingbats characters are in Unicode Dingbats block U+2700-U+27BF
+
             if let scissors = ISO_32000.ZapfDingbatsEncoding.decode(0x21) {
                 let value = scissors.value
                 #expect(value >= 0x2700 && value <= 0x27BF)

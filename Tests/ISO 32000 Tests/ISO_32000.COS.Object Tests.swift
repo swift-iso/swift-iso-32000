@@ -1,5 +1,3 @@
-// ISO_32000.COS.Object Tests.swift
-
 import Testing
 
 @testable import ISO_32000
@@ -7,19 +5,15 @@ import Testing
 @Suite
 struct `ISO_32000.COS.Object Tests` {
 
-    // MARK: - Null
-
     @Test
     func `Null object`() {
         let object = ISO_32000.COS.Object.null
         if case .null = object {
-            // pass
+
         } else {
             Issue.record("Expected null object")
         }
     }
-
-    // MARK: - Boolean
 
     @Test
     func `Boolean true`() {
@@ -46,8 +40,6 @@ struct `ISO_32000.COS.Object Tests` {
         let object: ISO_32000.COS.Object = true
         #expect(object == .boolean(true))
     }
-
-    // MARK: - Integer
 
     @Test
     func `Integer positive`() {
@@ -81,8 +73,6 @@ struct `ISO_32000.COS.Object Tests` {
         #expect(object == .integer(100))
     }
 
-    // MARK: - Real
-
     @Test
     func `Real positive`() {
         let object = ISO_32000.COS.Object.real(3.14159)
@@ -113,8 +103,6 @@ struct `ISO_32000.COS.Object Tests` {
         }
     }
 
-    // MARK: - Name
-
     @Test
     func `Name object`() {
         let object = ISO_32000.COS.Object.name(.type)
@@ -140,8 +128,6 @@ struct `ISO_32000.COS.Object Tests` {
         #expect(object == nil)
     }
 
-    // MARK: - String
-
     @Test
     func `String object`() {
         let object = ISO_32000.COS.Object.string(ISO_32000.COS.StringValue("Hello"))
@@ -161,8 +147,6 @@ struct `ISO_32000.COS.Object Tests` {
             Issue.record("Expected string object")
         }
     }
-
-    // MARK: - Array
 
     @Test
     func `Array object`() {
@@ -192,7 +176,7 @@ struct `ISO_32000.COS.Object Tests` {
             #expect(elements.count == 3)
             #expect(elements[0] == .integer(1))
             if case .real = elements[1] {
-                // pass
+
             } else {
                 Issue.record("Expected real at index 1")
             }
@@ -201,8 +185,6 @@ struct `ISO_32000.COS.Object Tests` {
             Issue.record("Expected array object")
         }
     }
-
-    // MARK: - Dictionary
 
     @Test
     func `Dictionary object`() {
@@ -215,8 +197,6 @@ struct `ISO_32000.COS.Object Tests` {
         }
     }
 
-    // MARK: - Reference
-
     @Test
     func `Indirect reference`() {
         let ref = ISO_32000.COS.IndirectReference(objectNumber: 5, generation: 0)
@@ -228,8 +208,6 @@ struct `ISO_32000.COS.Object Tests` {
             Issue.record("Expected reference object")
         }
     }
-
-    // MARK: - Equality
 
     @Test
     func `Objects of same type and value are equal`() {

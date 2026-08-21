@@ -1,17 +1,3 @@
-// ISO 32000-2:2020, 7.3 Objects
-//
-// Sections:
-//   7.3.1  General
-//   7.3.2  Boolean objects
-//   7.3.3  Numeric objects
-//   7.3.4  String objects
-//   7.3.5  Name objects
-//   7.3.6  Array objects
-//   7.3.7  Dictionary objects
-//   7.3.8  Stream objects
-//   7.3.9  Null object
-//   7.3.10 Indirect objects
-
 public import ASCII_Primitives
 internal import Binary_Endianness_Primitives
 public import Binary_Primitives
@@ -25,79 +11,46 @@ public import ISO_32000_Shared
 import Standard_Library_Extensions
 
 extension ISO_32000.`7` {
-    /// ISO 32000-2:2020, 7.3 Objects
-    ///
-    /// Per Section 7.3.1:
-    /// > PDF includes nine basic types of objects: Boolean values, Integer and Real numbers,
-    /// > Strings, Names, Arrays, Dictionaries, Streams, the null object, and Indirect objects.
-    ///
-    /// This namespace also provides the Carousel Object System (COS) API for working
-    /// with these primitive types in a type-safe manner.
+
     public enum `3` {}
 }
-
-// MARK: - Table 3: Escape Sequences
 
 extension ISO_32000.`7`.`3` {
     public enum Table {}
 }
 
 extension ISO_32000.`7`.`3`.Table {
-    /// ISO 32000-2:2020, Table 3 — Escape sequences in literal strings
+
     public enum `3` {}
 }
 
 extension ISO_32000.`7`.`3`.Table.`3` {
-    /// Escape table for literal strings (ISO 32000-2 Table 3)
-    ///
-    /// Per Section 7.3.4.2:
-    /// > Within a literal string, the REVERSE SOLIDUS is used as an escape character.
-    ///
-    /// Legacy dictionary version - kept for compatibility.
-    /// Use `serializeLiteralString` which uses optimized array lookup.
+
     public static let escapeTable: [Byte: [Byte]] = [
-        .ascii.lf: [.ascii.backslash, .ascii.n],  // \n
-        .ascii.cr: [.ascii.backslash, .ascii.r],  // \r
-        .ascii.htab: [.ascii.backslash, .ascii.t],  // \t
-        .ascii.bs: [.ascii.backslash, .ascii.b],  // \b
-        .ascii.ff: [.ascii.backslash, .ascii.f],  // \f
-        .ascii.leftParenthesis: [.ascii.backslash, .ascii.leftParenthesis],  // \(
-        .ascii.rightParenthesis: [.ascii.backslash, .ascii.rightParenthesis],  // \)
-        .ascii.backslash: [.ascii.backslash, .ascii.backslash],  // \\
+        .ascii.lf: [.ascii.backslash, .ascii.n],
+        .ascii.cr: [.ascii.backslash, .ascii.r],
+        .ascii.htab: [.ascii.backslash, .ascii.t],
+        .ascii.bs: [.ascii.backslash, .ascii.b],
+        .ascii.ff: [.ascii.backslash, .ascii.f],
+        .ascii.leftParenthesis: [.ascii.backslash, .ascii.leftParenthesis],
+        .ascii.rightParenthesis: [.ascii.backslash, .ascii.rightParenthesis],
+        .ascii.backslash: [.ascii.backslash, .ascii.backslash],
     ]
 
-    /// Optimized escape lookup - 256-entry array for O(1) access
-    ///
-    /// Returns the escape character for bytes that need escaping, or 0 for passthrough.
-    /// Format: (needsEscape: Bool, escapeChar: UInt8)
-    /// - For escaped bytes: returns the character after backslash (n, r, t, b, f, (, ), \)
-    /// - For non-escaped bytes: returns 0
     @usableFromInline
     internal static let escapeCharLookup: [Byte] = {
         var table = [Byte](repeating: 0, count: 256)
-        table[Int(UInt8.ascii.lf)] = .ascii.n  // \n
-        table[Int(UInt8.ascii.cr)] = .ascii.r  // \r
-        table[Int(UInt8.ascii.htab)] = .ascii.t  // \t
-        table[Int(UInt8.ascii.bs)] = .ascii.b  // \b
-        table[Int(UInt8.ascii.ff)] = .ascii.f  // \f
-        table[Int(UInt8.ascii.leftParenthesis)] = .ascii.leftParenthesis  // \(
-        table[Int(UInt8.ascii.rightParenthesis)] = .ascii.rightParenthesis  // \)
-        table[Int(UInt8.ascii.backslash)] = .ascii.backslash  // \\
+        table[Int(UInt8.ascii.lf)] = .ascii.n
+        table[Int(UInt8.ascii.cr)] = .ascii.r
+        table[Int(UInt8.ascii.htab)] = .ascii.t
+        table[Int(UInt8.ascii.bs)] = .ascii.b
+        table[Int(UInt8.ascii.ff)] = .ascii.f
+        table[Int(UInt8.ascii.leftParenthesis)] = .ascii.leftParenthesis
+        table[Int(UInt8.ascii.rightParenthesis)] = .ascii.rightParenthesis
+        table[Int(UInt8.ascii.backslash)] = .ascii.backslash
         return table
     }()
 
-    /// Serialize pre-encoded bytes as a PDF literal string.
-    ///
-    /// This is the canonical function for creating PDF literal strings from
-    /// already-encoded bytes (e.g., WinAnsiEncoding bytes for content streams).
-    ///
-    /// Output format: `(bytes with escaping)`
-    ///
-    /// Uses O(1) array lookup instead of dictionary for performance.
-    ///
-    /// - Parameters:
-    ///   - bytes: Pre-encoded bytes to serialize
-    ///   - buffer: Output buffer to append to
     @inlinable
     public static func serializeLiteralString<
         Bytes: Collection,
@@ -119,13 +72,6 @@ extension ISO_32000.`7`.`3`.Table.`3` {
         buffer.append(.ascii.rightParenthesis)
     }
 
-    /// Create a PDF literal string from pre-encoded bytes.
-    ///
-    /// This is the canonical function for creating PDF literal strings from
-    /// already-encoded bytes (e.g., WinAnsiEncoding bytes for content streams).
-    ///
-    /// - Parameter bytes: Pre-encoded bytes to serialize
-    /// - Returns: PDF literal string bytes including delimiters and escaping
     @inlinable
     public static func literalString<Bytes: Collection>(
         from bytes: Bytes
@@ -137,56 +83,13 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     }
 }
 
-// MARK: - 7.3.3 Numeric Objects
-
 extension ISO_32000.`7`.`3` {
-    /// ISO 32000-2:2020, 7.3.3 Numeric objects
-    ///
-    /// Per Section 7.3.3:
-    /// > PDF provides two types of numeric objects: integer and real.
-    /// > An integer shall be written as one or more decimal digits optionally
-    /// > preceded by a sign. The value shall be interpreted as a signed decimal integer.
-    /// > A real value shall be written as one or more decimal digits with an optional sign
-    /// > and a leading, trailing, or embedded PERIOD (2Eh) (decimal point).
+
     public enum `3` {}
 }
 
 extension ISO_32000.`7`.`3`.`3` {
-    /// PDF number format style
-    ///
-    /// Per ISO 32000-2:2020 Section 7.3.3:
-    /// > An integer shall be written as one or more decimal digits optionally preceded by a sign.
-    /// >
-    /// > A real value shall be written as one or more decimal digits with an optional sign and a
-    /// > leading, trailing, or embedded PERIOD (2Eh) (decimal point).
-    /// >
-    /// > Wherever a real number is expected, an integer may be used instead.
-    /// > For example, it is not necessary to write the number 1.0 in real format;
-    /// > the integer 1 is sufficient.
-    /// >
-    /// > A PDF writer shall not use the PostScript language syntax for numbers with
-    /// > non-decimal radices (such as 16#FFFE) or in exponential format (such as 6.02E23).
-    ///
-    /// This format style outputs numbers following PDF syntax rules:
-    /// - Integers output without decimal point (e.g., `42` not `42.0`)
-    /// - Reals output with decimal point, trailing zeros stripped
-    /// - **Never** uses exponential notation (e.g., `0.00001` not `1E-5`)
-    /// - Maximum 5 decimal places (per Annex C portability recommendations)
-    /// - No grouping separators
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let x: UserSpace.X = 72.5
-    /// let formatted = x.formatted(.pdf)  // "72.5"
-    ///
-    /// let whole: Double = 42.0
-    /// whole.formatted(.pdf)  // "42" (integer form)
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.3 — Numeric objects
+
     public struct RealFormatStyle: Formatter.`Protocol`, Sendable {
         public init() {}
     }
@@ -197,16 +100,6 @@ extension ISO_32000.`7`.`3`.`3`.RealFormatStyle {
     public typealias Output = String
     public typealias Failure = Never
 
-    /// Formats a Double per ISO 32000-2:2020 §7.3.3.
-    ///
-    /// Delegates to the single canonical byte-domain real serializer
-    /// (`PDFNumber.serializeReal`), also shared by `PDFNumber.serialize` and
-    /// `COS.serialize`'s `.real` case. Per F-002 remediation: this format
-    /// style used to carry its own, independently-written copy of the same
-    /// integer/fraction-split logic, which shared a fractional
-    /// rounding-carry defect and an `Int64` overflow trap with the
-    /// byte-domain formatter — fixing the two copies in lockstep is exactly
-    /// the kind of drift a single canonical implementation prevents.
     public func format(_ value: Double) -> String {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &bytes)
@@ -215,53 +108,23 @@ extension ISO_32000.`7`.`3`.`3`.RealFormatStyle {
 }
 
 extension Formatter.`Protocol` where Self == ISO_32000.`7`.`3`.`3`.RealFormatStyle {
-    /// PDF number format style
-    ///
-    /// Formats numbers according to ISO 32000-2:2020 Section 7.3.3 (Numeric objects):
-    /// - Integers output without decimal point
-    /// - Never uses exponential notation
-    /// - Maximum 5 decimal places, trailing zeros stripped
+
     public static var pdf: ISO_32000.`7`.`3`.`3`.RealFormatStyle {
         ISO_32000.`7`.`3`.`3`.RealFormatStyle()
     }
 }
 
-// MARK: - 7.3.5 Name Objects
-
 extension ISO_32000.`7`.`3` {
-    /// ISO 32000-2:2020, 7.3.5 Name objects
+
     public enum `5` {}
 }
 
 extension ISO_32000.`7`.`3`.`5` {
-    /// PDF Name object - a unique identifier
-    ///
-    /// Per ISO 32000-2 Section 7.3.5:
-    /// > A name object is an atomic symbol uniquely defined by a sequence of any
-    /// > characters (8-bit values) except NULL (character code 0).
-    ///
-    /// ## Constraints
-    ///
-    /// - Maximum length: 127 bytes (UTF-8 encoded)
-    /// - Cannot contain null bytes (0x00)
-    /// - Cannot contain whitespace characters
-    ///
-    /// ## Serialization
-    ///
-    /// Names are serialized with a leading solidus (/):
-    /// - `/Type`
-    /// - `/Page`
-    ///
-    /// Special characters are escaped as `#XX` where XX is the hex code.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.5 — Name objects
+
     public struct Name: Sendable, Hashable {
-        /// The raw string value of the name
+
         public let rawValue: String
 
-        /// Creates a name without validation (internal use only)
         @usableFromInline
         init(
             __unchecked: Void,
@@ -270,10 +133,6 @@ extension ISO_32000.`7`.`3`.`5` {
             self.rawValue = rawValue
         }
 
-        /// Creates a name with validation
-        ///
-        /// - Parameter rawValue: The name string (without leading /)
-        /// - Throws: `Error` if validation fails
         public init(_ rawValue: String) throws(Error) {
             guard !rawValue.isEmpty else {
                 throw .empty
@@ -298,12 +157,12 @@ extension ISO_32000.`7`.`3`.`5` {
 }
 
 extension ISO_32000.`7`.`3`.`5`.Name {
-    /// Package-internal limits
+
     package enum Limits {}
 }
 
 extension ISO_32000.`7`.`3`.`5`.Name.Limits {
-    /// Maximum name length in UTF-8 bytes (ISO 32000-2 Annex C)
+
     static let maxLength = 127
 }
 
@@ -413,8 +272,6 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     }
 }
 
-// MARK: - Name Error
-
 extension ISO_32000.`7`.`3`.`5`.Name {
     public enum Error: Swift.Error, Sendable, Equatable {
         case empty
@@ -443,32 +300,26 @@ extension ISO_32000.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
     }
 }
 
-// MARK: - Name CustomStringConvertible
-
 extension ISO_32000.`7`.`3`.`5`.Name: CustomStringConvertible {
     public var description: String {
         "/\(rawValue)"
     }
 }
 
-// MARK: - Well-Known Names
-
 extension ISO_32000.`7`.`3`.`5`.Name {
-    // Document structure
+
     public static let type = Self(__unchecked: (), rawValue: "Type")
     public static let catalog = Self(__unchecked: (), rawValue: "Catalog")
     public static let pages = Self(__unchecked: (), rawValue: "Pages")
     public static let page = Self(__unchecked: (), rawValue: "Page")
     public static let outlines = Self(__unchecked: (), rawValue: "Outlines")
 
-    // Outline entries (Table 150, 151)
     public static let first = Self(__unchecked: (), rawValue: "First")
     public static let last = Self(__unchecked: (), rawValue: "Last")
     public static let next = Self(__unchecked: (), rawValue: "Next")
     public static let prev = Self(__unchecked: (), rawValue: "Prev")
     public static let dest = Self(__unchecked: (), rawValue: "Dest")
 
-    // Destination types (Table 149)
     public static let xyz = Self(__unchecked: (), rawValue: "XYZ")
     public static let fit = Self(__unchecked: (), rawValue: "Fit")
     public static let fitH = Self(__unchecked: (), rawValue: "FitH")
@@ -478,7 +329,6 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let fitBH = Self(__unchecked: (), rawValue: "FitBH")
     public static let fitBV = Self(__unchecked: (), rawValue: "FitBV")
 
-    // Page attributes
     public static let parent = Self(__unchecked: (), rawValue: "Parent")
     public static let kids = Self(__unchecked: (), rawValue: "Kids")
     public static let count = Self(__unchecked: (), rawValue: "Count")
@@ -488,13 +338,11 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let resources = Self(__unchecked: (), rawValue: "Resources")
     public static let rotate = Self(__unchecked: (), rawValue: "Rotate")
 
-    // Resources
     public static let font = Self(__unchecked: (), rawValue: "Font")
     public static let xObject = Self(__unchecked: (), rawValue: "XObject")
     public static let extGState = Self(__unchecked: (), rawValue: "ExtGState")
     public static let procSet = Self(__unchecked: (), rawValue: "ProcSet")
 
-    // Font attributes
     public static let subtype = Self(__unchecked: (), rawValue: "Subtype")
     public static let type1 = Self(__unchecked: (), rawValue: "Type1")
     public static let trueType = Self(__unchecked: (), rawValue: "TrueType")
@@ -502,13 +350,11 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let encoding = Self(__unchecked: (), rawValue: "Encoding")
     public static let winAnsiEncoding = Self(__unchecked: (), rawValue: "WinAnsiEncoding")
 
-    // Stream attributes
     public static let length = Self(__unchecked: (), rawValue: "Length")
     public static let filter = Self(__unchecked: (), rawValue: "Filter")
     public static let flateDecode = Self(__unchecked: (), rawValue: "FlateDecode")
     public static let decodeParms = Self(__unchecked: (), rawValue: "DecodeParms")
 
-    // Image XObject attributes (Table 87, 89)
     public static let image = Self(__unchecked: (), rawValue: "Image")
     public static let width = Self(__unchecked: (), rawValue: "Width")
     public static let height = Self(__unchecked: (), rawValue: "Height")
@@ -516,12 +362,10 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let bitsPerComponent = Self(__unchecked: (), rawValue: "BitsPerComponent")
     public static let dctDecode = Self(__unchecked: (), rawValue: "DCTDecode")
 
-    // Color spaces (Table 57)
     public static let deviceRGB = Self(__unchecked: (), rawValue: "DeviceRGB")
     public static let deviceGray = Self(__unchecked: (), rawValue: "DeviceGray")
     public static let deviceCMYK = Self(__unchecked: (), rawValue: "DeviceCMYK")
 
-    // Standard 14 font names (Table 111)
     public static let helvetica = Self(__unchecked: (), rawValue: "Helvetica")
     public static let helveticaBold = Self(__unchecked: (), rawValue: "Helvetica-Bold")
     public static let helveticaOblique = Self(__unchecked: (), rawValue: "Helvetica-Oblique")
@@ -540,10 +384,8 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let symbol = Self(__unchecked: (), rawValue: "Symbol")
     public static let zapfDingbats = Self(__unchecked: (), rawValue: "ZapfDingbats")
 
-    // Font descriptor entries (Table 121, Table 122)
     public static let fontDescriptor = Self(__unchecked: (), rawValue: "FontDescriptor")
-    // swift-format-ignore: DontRepeatTypeInStaticProperties
-    // Reason: mirrors the distinct PDF spec key "/FontName" (Table 122); `.font` already exists for "/Font" (line 524), so shortening to `.font` would collide/ambiguate.
+
     public static let fontName = Self(__unchecked: (), rawValue: "FontName")
     public static let fontFlags = Self(__unchecked: (), rawValue: "Flags")
     public static let fontBBox = Self(__unchecked: (), rawValue: "FontBBox")
@@ -563,14 +405,12 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let length1 = Self(__unchecked: (), rawValue: "Length1")
     public static let toUnicode = Self(__unchecked: (), rawValue: "ToUnicode")
 
-    // Procedure sets
     public static let pdf = Self(__unchecked: (), rawValue: "PDF")
     public static let text = Self(__unchecked: (), rawValue: "Text")
     public static let imageb = Self(__unchecked: (), rawValue: "ImageB")
     public static let imagec = Self(__unchecked: (), rawValue: "ImageC")
     public static let imagei = Self(__unchecked: (), rawValue: "ImageI")
 
-    // Document info
     public static let title = Self(__unchecked: (), rawValue: "Title")
     public static let author = Self(__unchecked: (), rawValue: "Author")
     public static let subject = Self(__unchecked: (), rawValue: "Subject")
@@ -580,12 +420,10 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let creationDate = Self(__unchecked: (), rawValue: "CreationDate")
     public static let modDate = Self(__unchecked: (), rawValue: "ModDate")
 
-    // Trailer
     public static let size = Self(__unchecked: (), rawValue: "Size")
     public static let root = Self(__unchecked: (), rawValue: "Root")
     public static let info = Self(__unchecked: (), rawValue: "Info")
 
-    // Annotations
     public static let annots = Self(__unchecked: (), rawValue: "Annots")
     public static let annot = Self(__unchecked: (), rawValue: "Annot")
     public static let link = Self(__unchecked: (), rawValue: "Link")
@@ -595,7 +433,6 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let s = Self(__unchecked: (), rawValue: "S")
     public static let uri = Self(__unchecked: (), rawValue: "URI")
 
-    // Table 371 — Table structure type names (14.8.4.8.3)
     public static let table = Self(__unchecked: (), rawValue: "Table")
     public static let tr = Self(__unchecked: (), rawValue: "TR")
     public static let th = Self(__unchecked: (), rawValue: "TH")
@@ -604,10 +441,8 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let tbody = Self(__unchecked: (), rawValue: "TBody")
     public static let tfoot = Self(__unchecked: (), rawValue: "TFoot")
 
-    // Table 372 — Caption structure type name (14.8.4.8.4)
     public static let caption = Self(__unchecked: (), rawValue: "Caption")
 
-    // Table 384 — Standard table attribute names (14.8.5.7)
     public static let rowSpan = Self(__unchecked: (), rawValue: "RowSpan")
     public static let colSpan = Self(__unchecked: (), rawValue: "ColSpan")
     public static let headers = Self(__unchecked: (), rawValue: "Headers")
@@ -615,59 +450,32 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let summary = Self(__unchecked: (), rawValue: "Summary")
     public static let short = Self(__unchecked: (), rawValue: "Short")
 
-    // Table 384 — Scope attribute values
     public static let row = Self(__unchecked: (), rawValue: "Row")
     public static let column = Self(__unchecked: (), rawValue: "Column")
     public static let both = Self(__unchecked: (), rawValue: "Both")
 
-    // Marked content (Section 14.9.4)
     public static let span = Self(__unchecked: (), rawValue: "Span")
     public static let actualText = Self(__unchecked: (), rawValue: "ActualText")
 }
 
-// MARK: - 7.3.8 Stream Objects
-
 extension ISO_32000.`7`.`3` {
-    /// ISO 32000-2:2020, 7.3.8 Stream objects
+
     public enum `8` {}
 }
 
 extension ISO_32000.`7`.`3`.`8` {
-    /// PDF Stream object
-    ///
-    /// Per ISO 32000-2 Section 7.3.8:
-    /// > A stream object, like a string object, is a sequence of bytes.
-    /// > Furthermore, a stream may be of unlimited length, whereas a string
-    /// > shall be subject to an implementation limit.
-    ///
-    /// Streams are used for page contents, images, embedded files, and other binary data.
-    ///
-    /// ## Serialization
-    ///
-    /// ```
-    /// << /Length 44 >>
-    /// stream
-    /// BT /F1 12 Tf 100 700 Td (Hello World) Tj ET
-    /// endstream
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.8 — Stream objects
+
     public struct Stream: Sendable, Hashable {
-        /// Stream dictionary (contains /Length, /Filter, and similar entries)
+
         public var dictionary: ISO_32000.`7`.`3`.COS.Dictionary
 
-        /// Raw stream data (may be compressed)
         public var data: [Byte]
 
-        /// Create a stream with dictionary and data
         public init(dictionary: ISO_32000.`7`.`3`.COS.Dictionary = [:], data: [Byte] = []) {
             self.dictionary = dictionary
             self.data = data
         }
 
-        /// Create a stream with just data (dictionary will have /Length set)
         public init(data: [Byte]) {
             self.dictionary = [:]
             self.data = data
@@ -681,40 +489,19 @@ extension ISO_32000.`7`.`3`.`8`.Stream: CustomStringConvertible {
     }
 }
 
-// MARK: - 7.3.10 Indirect Objects
-
 extension ISO_32000.`7`.`3` {
-    /// ISO 32000-2:2020, 7.3.10 Indirect objects
+
     public enum `10` {}
 }
 
 extension ISO_32000.`7`.`3`.`10` {
-    /// Indirect object reference
-    ///
-    /// Per ISO 32000-2 Section 7.3.10:
-    /// > Any object in a PDF file may be labelled as an indirect object.
-    /// > This gives the object a unique object identifier by which other
-    /// > objects can refer to it.
-    ///
-    /// ## Serialization
-    ///
-    /// ```
-    /// 12 0 R
-    /// ```
-    ///
-    /// Where 12 is the object number and 0 is the generation number.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.10 — Indirect objects
+
     public struct IndirectReference: Sendable, Hashable {
-        /// Object number (unique identifier within the PDF)
+
         public let objectNumber: Int
 
-        /// Generation number (for incremental updates, usually 0)
         public let generation: Int
 
-        /// Create a reference to an object
         public init(objectNumber: Int, generation: Int = 0) {
             self.objectNumber = objectNumber
             self.generation = generation
@@ -732,59 +519,26 @@ extension ISO_32000.`7`.`3`.`10`.IndirectReference: CustomStringConvertible {
     }
 }
 
-// MARK: - COS Namespace
-
 extension ISO_32000.`7`.`3` {
-    /// Carousel Object System (COS) - PDF's low-level object model
-    ///
-    /// COS defines the fundamental data types used in PDF files:
-    /// - Boolean, Integer, Real, String, Name, Array, Dictionary, Stream
-    /// - Null and Indirect References
-    ///
-    /// All PDF content is built from these primitive types.
-    ///
-    /// ## See Also
-    ///
-    /// - ISO 32000-2:2020 Section 7.3: Objects
+
     public enum CarouselObjectSystem {}
 }
 
-/// Typealiases for convenient COS access
 extension ISO_32000.`7`.`3` {
     public typealias COS = CarouselObjectSystem
 }
 
-// MARK: - COS Type Aliases
-
 extension ISO_32000.`7`.`3`.COS {
-    /// Name object (Section 7.3.5)
+
     public typealias Name = ISO_32000.`7`.`3`.`5`.Name
 
-    /// Stream object (Section 7.3.8)
     public typealias Stream = ISO_32000.`7`.`3`.`8`.Stream
 
-    /// Indirect reference (Section 7.3.10)
     public typealias IndirectReference = ISO_32000.`7`.`3`.`10`.IndirectReference
 }
 
-// MARK: - COS Dictionary (7.3.7)
-
 extension ISO_32000.`7`.`3`.COS {
-    /// PDF Dictionary object
-    ///
-    /// Per ISO 32000-2 Section 7.3.7:
-    /// > A dictionary object is an associative table containing pairs of
-    /// > objects, known as the dictionary's entries.
-    ///
-    /// ## Serialization
-    ///
-    /// ```
-    /// << /Type /Catalog /Pages 2 0 R >>
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.7 — Dictionary objects
+
     public struct Dictionary: Sendable, Hashable {
         public var storage: [Name: Object]
 
@@ -823,7 +577,6 @@ extension ISO_32000.`7`.`3`.COS.Dictionary {
         storage.isEmpty
     }
 
-    /// Iterate over entries in a consistent order (sorted by key)
     public var sortedEntries:
         [(key: ISO_32000.`7`.`3`.COS.Name, value: ISO_32000.`7`.`3`.COS.Object)]
     {
@@ -839,66 +592,38 @@ extension ISO_32000.`7`.`3`.COS.Dictionary: ExpressibleByDictionaryLiteral {
     }
 }
 
-// MARK: - COS Object
-
 extension ISO_32000.`7`.`3`.COS {
-    /// A PDF object (COS object)
-    ///
-    /// Per ISO 32000-2 Section 7.3, PDF supports these object types:
-    /// - Boolean, Integer, Real (numeric)
-    /// - String (literal or hexadecimal)
-    /// - Name (symbolic identifier)
-    /// - Array (ordered collection)
-    /// - Dictionary (key-value mapping)
-    /// - Stream (dictionary + binary data)
-    /// - Null
-    /// - Indirect Reference (pointer to another object)
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3 — Objects
+
     public enum Object: Sendable, Hashable {
-        /// Null object (Section 7.3.9)
+
         case null
 
-        /// Boolean value (Section 7.3.2)
         case boolean(Bool)
 
-        /// Integer value (Section 7.3.3)
         case integer(Int64)
 
-        /// Real (floating-point) value (Section 7.3.3)
         case real(Double)
 
-        /// PDF Name object (Section 7.3.5)
         case name(Name)
 
-        /// PDF String object (Section 7.3.4)
         case string(StringValue)
 
-        /// Array of objects (Section 7.3.6)
         case array([Object])
 
-        /// Dictionary (name -> object mapping) (Section 7.3.7)
         case dictionary(Dictionary)
 
-        /// Stream (dictionary + binary data) (Section 7.3.8)
         case stream(Stream)
 
-        /// Indirect reference to another object (Section 7.3.10)
         case reference(IndirectReference)
     }
 }
 
-// MARK: - COS Object Convenience Initializers
-
 extension ISO_32000.`7`.`3`.COS.Object {
-    /// Create an integer object
+
     public static func integer(_ value: Int) -> Self {
         .integer(Int64(value))
     }
 
-    /// Create a name object from a string
     public static func name(_ value: String) -> Self? {
         let name: ISO_32000.`7`.`3`.COS.Name
         do throws(ISO_32000.`7`.`3`.COS.Name.Error) {
@@ -909,13 +634,10 @@ extension ISO_32000.`7`.`3`.COS.Object {
         return .name(name)
     }
 
-    /// Create a string object
     public static func string(_ value: String) -> Self {
         .string(ISO_32000.`7`.`3`.COS.StringValue(value))
     }
 }
-
-// MARK: - COS Object ExpressibleBy Protocols
 
 extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByBooleanLiteral {
     public init(booleanLiteral value: Bool) {
@@ -941,23 +663,12 @@ extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByArrayLiteral {
     }
 }
 
-// MARK: - COS StringValue (7.3.4)
-
 extension ISO_32000.`7`.`3`.COS {
-    /// PDF String object
-    ///
-    /// Per ISO 32000-2 Section 7.3.4, strings can be:
-    /// - Literal strings: `(Hello World)`
-    /// - Hexadecimal strings: `<48656C6C6F>`
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Section 7.3.4 — String objects
+
     public struct StringValue: Sendable, Hashable, Codable {
-        /// The string content
+
         public let value: String
 
-        /// Create a string value
         public init(_ value: String) {
             self.value = value
         }
@@ -976,10 +687,8 @@ extension ISO_32000.`7`.`3`.COS.StringValue: ExpressibleByStringLiteral {
     }
 }
 
-// MARK: - COS Serialization
-
 extension ISO_32000.`7`.`3`.COS {
-    /// Serialize a COS object to PDF syntax
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Object,
         into buffer: inout Buffer
@@ -998,10 +707,7 @@ extension ISO_32000.`7`.`3`.COS {
             buffer.append(contentsOf: Swift.String(value).utf8)
 
         case .real(let value):
-            // Calls the canonical byte-domain real serializer directly
-            // (F-002): previously routed through `RealFormatStyle` via a
-            // String round-trip, and independently duplicated its
-            // rounding-carry/overflow bugs before that.
+
             ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &buffer)
 
         case .name(let name):
@@ -1032,12 +738,8 @@ extension ISO_32000.`7`.`3`.COS {
     }
 }
 
-// MARK: - Binary.Serializable Conformances
-
 extension ISO_32000.`7`.`3`.COS.Object: Binary.Serializable {
-    /// Serialize a COS object to PDF syntax
-    ///
-    /// Conforms to `Binary.Serializable` for streaming output.
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Self,
         into buffer: inout Buffer
@@ -1047,9 +749,7 @@ extension ISO_32000.`7`.`3`.COS.Object: Binary.Serializable {
 }
 
 extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
-    /// Serialize a PDF Dictionary to bytes
-    ///
-    /// Format: `<< /Key1 Value1 /Key2 Value2 >>`
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ dict: Self,
         into buffer: inout Buffer
@@ -1070,10 +770,7 @@ extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
 }
 
 extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
-    /// Serialize a PDF Name to bytes
-    ///
-    /// Names are serialized with a leading solidus: `/Name`
-    /// Special characters are escaped as `#XX`.
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ name: Self,
         into buffer: inout Buffer
@@ -1092,7 +789,6 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
         }
     }
 
-    /// Check if a byte needs escaping in a name
     private static func shouldEscapeNameByte(_ byte: UInt8) -> Bool {
         if !byte.ascii.isVisible { return true }
         if byte == .ascii.numberSign { return true }
@@ -1105,25 +801,13 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
         return false
     }
 
-    /// Get the uppercase hex ASCII character for a nibble (0–15).
-    ///
-    /// Adopts the ecosystem nibble→hex primitive
-    /// (`ASCII.Hexadecimal.code(_:case:)`) rather than hand-rolling the
-    /// `'0' + nibble` offset. A masked 0–15 nibble is always a valid hex digit,
-    /// so the result is never nil.
     private static func hexChar(_ nibble: UInt8) -> ASCII.Code {
         ASCII.Hexadecimal.code(nibble, case: .upper) ?? 0x30
     }
 }
 
 extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
-    /// Serialize a PDF String per ISO 32000-2 §7.9.2.2.
-    ///
-    /// PDFDocEncoding (single-byte) when every Unicode scalar is encodable;
-    /// otherwise UTF-16BE with `0xFE 0xFF` BOM. The result is wrapped in
-    /// literal-string `(...)` syntax with the Table-3 escape set applied
-    /// per emitted byte. `.utf16` iteration emits surrogate pairs for
-    /// scalars beyond U+FFFF.
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ str: Self,
         into buffer: inout Buffer
@@ -1145,7 +829,7 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
             buffer.append(0xFE)
             buffer.append(0xFF)
             for codeUnit in str.value.utf16 {
-                // Serialize each UTF-16BE code unit as two big-endian bytes.
+
                 for byte in codeUnit.bytes(endianness: .big) {
                     if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[byte] {
                         buffer.append(contentsOf: escaped)
@@ -1160,15 +844,7 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
 }
 
 extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
-    /// Serialize a PDF Stream to bytes
-    ///
-    /// Format:
-    /// ```
-    /// << /Length N ... >>
-    /// stream
-    /// ...data...
-    /// endstream
-    /// ```
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ stream: Self,
         into buffer: inout Buffer
@@ -1184,7 +860,7 @@ extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
 }
 
 extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
-    /// Serialize an indirect reference: `12 0 R`
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ ref: Self,
         into buffer: inout Buffer
@@ -1193,38 +869,15 @@ extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
     }
 }
 
-// MARK: - PDF Number Serialization (Namespace Pattern)
-
 extension Double {
-    /// PDF serialization namespace
-    ///
-    /// Provides PDF-specific number serialization following ISO 32000-2:2020 Section 7.3.3.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// var buffer: [Byte] = []
-    /// (72.5).pdf.serialize(into: &buffer)
-    /// // buffer contains [0x37, 0x32, 0x2E, 0x35] ("72.5")
-    /// ```
+
     public var pdf: ISO_32000.`7`.`3`.`3`.PDFNumber {
         ISO_32000.`7`.`3`.`3`.PDFNumber(value: self)
     }
 }
 
 extension ISO_32000.`7`.`3`.`3` {
-    /// PDF number serialization wrapper
-    ///
-    /// Provides bytes-canonical serialization for Double values following
-    /// ISO 32000-2:2020 Section 7.3.3 (Numeric objects).
-    ///
-    /// ## Format Rules
-    ///
-    /// - Integers output without decimal point (e.g., `42` not `42.0`)
-    /// - Reals output with decimal point, trailing zeros stripped
-    /// - Never uses exponential notation
-    /// - Maximum 5 decimal places
-    /// - Non-finite values (infinity, NaN) output as `0`
+
     public struct PDFNumber: Sendable, Binary.Serializable {
         public let value: Double
     }
@@ -1238,50 +891,15 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
         serializeReal(number.value, into: &buffer)
     }
 
-    /// Maximum decimal places for real numbers (per Annex C recommendations)
     private static let maxDecimalPlaces = 5
 
-    /// Multiplier for extracting fractional digits (10^maxDecimalPlaces)
     private static let multiplier: Double = 100_000
 
-    /// The single canonical byte-domain real-number serializer for ISO
-    /// 32000-2:2020 §7.3.3 (Numeric objects).
-    ///
-    /// F-002 remediation: prior to this fix, `RealFormatStyle.format` (the
-    /// `String`-returning formatter) and this type's `serialize` each carried
-    /// their own, independently-written copy of the integer/fraction-split
-    /// logic below, and both copies shared the same two defects:
-    ///
-    /// 1. **Fractional rounding-carry defect.** Rounding the fractional
-    ///    remainder to 5 decimal places can itself reach the next whole
-    ///    unit — e.g. `0.999995` rounds to `fracDigits == 100_000`
-    ///    (10^`maxDecimalPlaces`) — which the old code emitted verbatim as
-    ///    an invalid 6-digit fraction (`"43.100000"` stripped to `"43.1"` —
-    ///    silently wrong — instead of carrying into the integer part to
-    ///    produce `"44"`). This implementation computes the carry
-    ///    explicitly and folds it into the integer part before emitting
-    ///    anything.
-    /// 2. **`Int64` overflow trap.** The old code called `Int64(absValue)`
-    ///    unconditionally once a value failed the "is this exactly an
-    ///    integer under `Int64.max`" fast path, so any finite `Double` with
-    ///    magnitude at or beyond `Double(Int64.max)` (== 2^63, since
-    ///    `Int64.max` itself is not exactly representable as a `Double`)
-    ///    trapped instead of formatting. This implementation converts into
-    ///    `UInt64` (doubling the safe magnitude ceiling to 2^64, since the
-    ///    value is already non-negative) and explicitly clamps to
-    ///    `UInt64.max` for anything at or beyond that — a deliberate,
-    ///    documented saturation for magnitudes no real PDF document
-    ///    (finite user space) will ever produce, not a silent precision
-    ///    loss for any realistic input.
-    ///
-    /// `RealFormatStyle.format` and `COS.serialize`'s `.real` case both call
-    /// this function directly now, so there is exactly one place the
-    /// rounding/overflow logic can go wrong.
     static func serializeReal<Buffer: RangeReplaceableCollection>(
         _ value: Double,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        // Handle special cases (PDF doesn't support infinity/NaN)
+
         guard IEEE_754.Classification.isFinite(value) else {
             buffer.append(.ascii.0)
             return
@@ -1290,35 +908,20 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
         let magnitude = value.magnitude
         let isNegative = value.sign == .minus
 
-        // Guard the magnitude before any UInt64 conversion (fix 2 above).
-        // `0x1p64` is the exact Double value of 2^64; any finite value at or
-        // beyond it is clamped to `UInt64.max` rather than handed to
-        // `UInt64(_:)`, which traps out of range.
         let intPart: UInt64 = magnitude >= 0x1p64 ? UInt64.max : UInt64(magnitude)
 
-        // Every finite Double with magnitude >= 2^53 has no fractional bits
-        // left in its 52-bit mantissa — it is already an exact integer — so
-        // skip the fractional extraction (and the subtraction against a
-        // possibly-saturated `intPart`) for those values instead of doing
-        // meaningless arithmetic on them.
         var fracDigits: UInt64 = 0
         if magnitude < 0x1p53 {
             let fracPart = magnitude - Double(intPart)
             fracDigits = UInt64((fracPart * Self.multiplier).rounded())
         }
 
-        // Rounding-carry (fix 1 above): fold a fractional remainder that
-        // rounded up to a whole unit into the integer part instead of
-        // emitting an invalid 6-digit fraction.
         var carriedIntPart = intPart
         if fracDigits >= UInt64(Self.multiplier) {
             fracDigits = 0
             if carriedIntPart < UInt64.max { carriedIntPart += 1 }
         }
 
-        // Suppress a bare "-0" for negative values whose magnitude rounds
-        // away to nothing (e.g. negative subnormals) — PDF has no negative
-        // zero.
         if isNegative && !(carriedIntPart == 0 && fracDigits == 0) {
             buffer.append(.ascii.hyphen)
         }
@@ -1326,19 +929,15 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
 
         if fracDigits != 0 {
             buffer.append(.ascii.period)
-            // Emit fractional digits with leading zeros, then strip trailing
-            // zeros. InlineArray gives fixed-size stack storage (no heap
-            // allocation); digits are ASCII.Code via the ecosystem
-            // decimal-digit primitive (`ASCII.Decimal.code`).
+
             var fracValue = fracDigits
             let zero = ASCII.Code.`0`
 
             func digit(_ value: UInt64) -> ASCII.Code {
-                // value % 10 is always 0–9, so `digit(_:)` never returns nil.
+
                 ASCII.Decimal.code(UInt8(value % 10)) ?? 0x30
             }
 
-            // Build digits in reverse order (most significant at index 0).
             var digits = InlineArray<5, ASCII.Code>(repeating: zero)
             digits[4] = digit(fracValue)
             fracValue /= 10
@@ -1350,13 +949,11 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
             fracValue /= 10
             digits[0] = digit(fracValue)
 
-            // Find last non-zero digit (strip trailing zeros)
             var count = 5
             while count > 1 && digits[count - 1] == zero {
                 count -= 1
             }
 
-            // Append digits (ASCII.Code → Byte buffer, direct).
             for i in 0..<count {
                 buffer.append(digits[i])
             }

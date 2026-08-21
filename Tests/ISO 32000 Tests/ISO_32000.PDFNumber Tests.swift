@@ -1,12 +1,3 @@
-// ISO_32000.PDFNumber Tests.swift
-//
-// Fable-448 F-002 regression coverage: the real-number formatters in
-// "ISO 32000 7 Syntax/7.3 Objects.swift" (`RealFormatStyle`, `PDFNumber`,
-// and `COS.serialize`'s `.real` case) used to carry two independently-coded
-// copies of the same integer/fraction-split logic, sharing a fractional
-// rounding-carry defect and an `Int64` overflow trap. All three surfaces now
-// delegate to one canonical byte-domain serializer.
-
 import Binary_Serializable_Primitives
 import Format_Primitives_Standard_Library_Integration
 import Testing
@@ -39,11 +30,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Unit {
 }
 
 extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.`Edge Case` {
-    // F-002, defect 1: fractional rounding-carry. Rounding the fractional
-    // remainder to 5 decimal places can itself reach the next whole unit
-    // (e.g. 0.999995 -> fracDigits == 10^5); the historical bug emitted that
-    // as an invalid 6-digit fraction instead of carrying into the integer
-    // part.
+
     @Test
     func `fractional rounding carries into the integer part (0-point-999995)`() {
         #expect(String(0.999995.pdf) == "1")
@@ -59,15 +46,9 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.`Edge Case` {
         #expect(String((-0.999995).pdf) == "-1")
     }
 
-    // F-002, defect 2: Int64 overflow trap. `Double(Int64.max)` rounds up to
-    // exactly 2^63 (`Int64.max` itself is not exactly representable as a
-    // `Double`), so any finite value at or beyond that magnitude used to be
-    // handed straight to `Int64(_:)`, which traps for out-of-range
-    // conversions. This implementation converts through `UInt64` instead
-    // (doubling the safe ceiling to 2^64) and explicitly clamps beyond that.
     @Test
     func `does not trap at positive 2 to the 63rd power`() {
-        let boundary = 9_223_372_036_854_775_808.0  // 2^63, == Double(Int64.max)
+        let boundary = 9_223_372_036_854_775_808.0
         #expect(String(boundary.pdf) == "9223372036854775808")
     }
 
@@ -97,10 +78,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.`Edge Case` {
 }
 
 extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Integration {
-    // Proposed end state: "a property test asserting the String and byte
-    // paths agree" — `RealFormatStyle` (String) and `PDFNumber` (bytes) must
-    // produce identical digits for the same input now that both delegate to
-    // the same canonical serializer.
+
     @Test(
         arguments: [
             0.0, 42.0, 72.5, -3.25,
@@ -118,8 +96,6 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Integration {
         #expect(bytePath == stringPath)
     }
 
-    // `COS.serialize`'s `.real` case now calls the canonical serializer
-    // directly rather than round-tripping through `RealFormatStyle`.
     @Test
     func `COS serialize real case matches the canonical byte serializer`() {
         var cosBuffer: [Byte] = []

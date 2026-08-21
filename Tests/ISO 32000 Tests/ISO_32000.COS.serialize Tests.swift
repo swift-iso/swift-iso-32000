@@ -1,5 +1,3 @@
-// ISO_32000.COS.serialize Tests.swift
-
 import Testing
 
 @testable import ISO_32000
@@ -7,16 +5,12 @@ import Testing
 @Suite
 struct `ISO_32000.COS.serialize Tests` {
 
-    // MARK: - Null
-
     @Test
     func `Serializes null`() {
         var buffer: [Byte] = []
         ISO_32000.COS.serialize(.null, into: &buffer)
         #expect(String(decoding: buffer, as: UTF8.self) == "null")
     }
-
-    // MARK: - Boolean
 
     @Test
     func `Serializes true`() {
@@ -31,8 +25,6 @@ struct `ISO_32000.COS.serialize Tests` {
         ISO_32000.COS.serialize(.boolean(false), into: &buffer)
         #expect(String(decoding: buffer, as: UTF8.self) == "false")
     }
-
-    // MARK: - Integer
 
     @Test
     func `Serializes positive integer`() {
@@ -54,8 +46,6 @@ struct `ISO_32000.COS.serialize Tests` {
         ISO_32000.COS.serialize(.integer(0), into: &buffer)
         #expect(String(decoding: buffer, as: UTF8.self) == "0")
     }
-
-    // MARK: - Real
 
     @Test
     func `Serializes real with decimals`() {
@@ -79,8 +69,6 @@ struct `ISO_32000.COS.serialize Tests` {
         #expect(String(decoding: buffer, as: UTF8.self) == "-2.5")
     }
 
-    // MARK: - Name
-
     @Test
     func `Serializes simple name`() {
         var buffer: [Byte] = []
@@ -101,10 +89,8 @@ struct `ISO_32000.COS.serialize Tests` {
         let name = try ISO_32000.COS.Name("Test#Value")
         ISO_32000.COS.serialize(.name(name), into: &buffer)
         let result = String(decoding: buffer, as: UTF8.self)
-        #expect(result.contains("#23"))  // # is escaped as #23
+        #expect(result.contains("#23"))
     }
-
-    // MARK: - String
 
     @Test
     func `Serializes string as literal`() {
@@ -112,8 +98,6 @@ struct `ISO_32000.COS.serialize Tests` {
         ISO_32000.COS.serialize(.string("Hello"), into: &buffer)
         #expect(String(decoding: buffer, as: UTF8.self) == "(Hello)")
     }
-
-    // MARK: - Array
 
     @Test
     func `Serializes empty array`() {
@@ -140,8 +124,6 @@ struct `ISO_32000.COS.serialize Tests` {
         #expect(result.contains("/Type"))
         #expect(result.contains("true"))
     }
-
-    // MARK: - Dictionary
 
     @Test
     func `Serializes empty dictionary`() {
@@ -183,8 +165,6 @@ struct `ISO_32000.COS.serialize Tests` {
         #expect(countPos < typePos)
     }
 
-    // MARK: - Reference
-
     @Test
     func `Serializes indirect reference`() {
         var buffer: [Byte] = []
@@ -200,8 +180,6 @@ struct `ISO_32000.COS.serialize Tests` {
         ISO_32000.COS.serialize(.reference(ref), into: &buffer)
         #expect(String(decoding: buffer, as: UTF8.self) == "10 2 R")
     }
-
-    // MARK: - Stream
 
     @Test
     func `Serializes stream with length`() {

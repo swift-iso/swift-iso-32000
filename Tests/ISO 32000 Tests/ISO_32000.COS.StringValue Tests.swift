@@ -1,13 +1,9 @@
-// ISO_32000.COS.StringValue Tests.swift
-
 import Testing
 
 @testable import ISO_32000
 
 @Suite
 struct `ISO_32000.COS.StringValue Tests` {
-
-    // MARK: - Construction
 
     @Test
     func `Creates string from value`() {
@@ -20,8 +16,6 @@ struct `ISO_32000.COS.StringValue Tests` {
         let str: ISO_32000.COS.StringValue = "World"
         #expect(str.value == "World")
     }
-
-    // MARK: - Literal Serialization
 
     @Test
     func `Serializes simple string as literal`() {
@@ -71,8 +65,6 @@ struct `ISO_32000.COS.StringValue Tests` {
         #expect(result.contains("\\t"))
     }
 
-    // MARK: - Hexadecimal Serialization
-
     @Test
     func `Serializes simple string as hex`() {
         let str = ISO_32000.COS.StringValue("Hi")
@@ -89,19 +81,17 @@ struct `ISO_32000.COS.StringValue Tests` {
 
     @Test
     func `Hex uses uppercase letters`() {
-        // Use a character NOT in PDFDocEncoding to trigger UTF-16BE
-        let str = ISO_32000.COS.StringValue("\u{4F60}")  // 你 (Chinese character)
+
+        let str = ISO_32000.COS.StringValue("\u{4F60}")
         let bytes = str.asHexadecimal()
         let result = String(decoding: bytes, as: UTF8.self)
-        #expect(result.contains("FEFF"))  // UTF-16BE BOM
+        #expect(result.contains("FEFF"))
     }
-
-    // MARK: - Unicode Support
 
     @Test
     func `Literal includes BOM for Unicode`() {
-        // Use character NOT in PDFDocEncoding to trigger UTF-16BE with BOM
-        let str = ISO_32000.COS.StringValue("\u{4F60}")  // 你 (Chinese character)
+
+        let str = ISO_32000.COS.StringValue("\u{4F60}")
         let bytes = str.asLiteral()
         #expect(bytes[0] == Byte(UInt8(ascii: "(")))
         #expect(bytes.contains(0xFE))
@@ -113,10 +103,8 @@ struct `ISO_32000.COS.StringValue Tests` {
         let str = ISO_32000.COS.StringValue("日本語")
         let bytes = str.asHexadecimal()
         let result = String(decoding: bytes, as: UTF8.self)
-        #expect(result.hasPrefix("<FEFF"))  // UTF-16BE BOM
+        #expect(result.hasPrefix("<FEFF"))
     }
-
-    // MARK: - Preferred Format
 
     @Test
     func `Prefers literal for simple strings`() {
@@ -130,15 +118,11 @@ struct `ISO_32000.COS.StringValue Tests` {
         #expect(str.preferredFormat == .hexadecimal)
     }
 
-    // MARK: - Description
-
     @Test
     func `Description shows parenthesized form`() {
         let str = ISO_32000.COS.StringValue("Test")
         #expect(str.description == "(Test)")
     }
-
-    // MARK: - Equality
 
     @Test
     func `Strings are equal when values match`() {

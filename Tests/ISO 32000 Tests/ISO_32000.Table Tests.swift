@@ -1,16 +1,9 @@
-// ISO_32000.Table Tests.swift
-// Tests for ISO 32000-2:2020 Table structure types (14.8.4.8.3)
-
 import Testing
 
 @testable import ISO_32000
 
-// MARK: - Table Structure Type Tests (Table 371)
-
 @Suite
 struct `ISO_32000.Table Tests` {
-
-    // MARK: - Table
 
     @Test
     func `Table with summary`() {
@@ -24,15 +17,11 @@ struct `ISO_32000.Table Tests` {
         #expect(table.summary == nil)
     }
 
-    // MARK: - TR (Table Row)
-
     @Test
     func `TR creation`() {
         let row = ISO_32000.`14`.`8`.`4`.`8`.`3`.TR()
         #expect(row == ISO_32000.`14`.`8`.`4`.`8`.`3`.TR())
     }
-
-    // MARK: - TH (Table Header)
 
     @Test
     func `TH with default values`() {
@@ -104,8 +93,6 @@ struct `ISO_32000.Table Tests` {
         #expect(header.short == "Region")
     }
 
-    // MARK: - TD (Table Data)
-
     @Test
     func `TD with default values`() {
         let cell = ISO_32000.TD()
@@ -132,8 +119,6 @@ struct `ISO_32000.Table Tests` {
         #expect(cell.headers == ["name-header", "date-header"])
     }
 
-    // MARK: - THead, TBody, TFoot
-
     @Test
     func `THead creation`() {
         let thead = ISO_32000.THead()
@@ -152,8 +137,6 @@ struct `ISO_32000.Table Tests` {
         #expect(tfoot == ISO_32000.TFoot())
     }
 }
-
-// MARK: - Scope Tests (Table 384)
 
 @Suite
 struct `ISO_32000.TH.Scope Tests` {
@@ -175,8 +158,6 @@ struct `ISO_32000.TH.Scope Tests` {
     }
 }
 
-// MARK: - Caption Tests (Table 372)
-
 @Suite
 struct `ISO_32000.Caption Tests` {
 
@@ -186,8 +167,6 @@ struct `ISO_32000.Caption Tests` {
         #expect(caption == ISO_32000.`14`.`8`.`4`.`8`.`4`.Caption())
     }
 }
-
-// MARK: - Hashable Tests
 
 @Suite
 struct `ISO_32000.Table.Hashable Tests` {
@@ -216,8 +195,6 @@ struct `ISO_32000.Table.Hashable Tests` {
         #expect(set.count == 1)
     }
 }
-
-// MARK: - Serialization Tests
 
 @Suite
 struct `ISO_32000.Table.Serialization Tests` {
@@ -274,7 +251,7 @@ struct `ISO_32000.Table.Serialization Tests` {
         ISO_32000.TH.serialize(header, into: &buffer)
 
         let output = String(decoding: buffer, as: UTF8.self)
-        // Default span=1 should be omitted
+
         #expect(!output.contains("/RowSpan"))
         #expect(!output.contains("/ColSpan"))
         #expect(!output.contains("/Headers"))
@@ -282,8 +259,6 @@ struct `ISO_32000.Table.Serialization Tests` {
         #expect(!output.contains("/Short"))
     }
 }
-
-// MARK: - Well-Known Name Tests
 
 @Suite
 struct `ISO_32000.Table.Name Tests` {
@@ -303,11 +278,7 @@ struct `ISO_32000.Table.Name Tests` {
     func `Table attribute names`() {
         #expect(ISO_32000.COS.Name.rowSpan.rawValue == "RowSpan")
         #expect(ISO_32000.COS.Name.colSpan.rawValue == "ColSpan")
-        // Note: These names are defined but may be in a different location
-        // #expect(ISO_32000.COS.Name.headersAttr.rawValue == "Headers")
-        // #expect(ISO_32000.COS.Name.scopeAttr.rawValue == "Scope")
-        // #expect(ISO_32000.COS.Name.summaryAttr.rawValue == "Summary")
-        // #expect(ISO_32000.COS.Name.shortAttr.rawValue == "Short")
+
     }
 
     @Test

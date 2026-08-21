@@ -1,5 +1,3 @@
-// PDFOutput.swift
-
 import Byte_Primitives
 import Foundation
 

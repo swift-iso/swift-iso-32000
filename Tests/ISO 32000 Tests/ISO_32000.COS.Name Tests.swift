@@ -1,13 +1,9 @@
-// ISO_32000.COS.Name Tests.swift
-
 import Testing
 
 @testable import ISO_32000
 
 @Suite
 struct `ISO_32000.COS.Name Tests` {
-
-    // MARK: - Construction
 
     @Test
     func `Creates valid name`() throws {
@@ -33,8 +29,6 @@ struct `ISO_32000.COS.Name Tests` {
         let name = try ISO_32000.COS.Name(maxName)
         #expect(name.rawValue.utf8.count == 127)
     }
-
-    // MARK: - Validation Errors
 
     @Test
     func `Rejects empty name`() {
@@ -79,8 +73,6 @@ struct `ISO_32000.COS.Name Tests` {
         }
     }
 
-    // MARK: - Well-Known Names
-
     @Test
     func `Document structure names`() {
         #expect(ISO_32000.COS.Name.type.rawValue == "Type")
@@ -111,8 +103,6 @@ struct `ISO_32000.COS.Name Tests` {
         #expect(ISO_32000.COS.Name.flateDecode.rawValue == "FlateDecode")
     }
 
-    // MARK: - Equality
-
     @Test
     func `Names are equal when raw values match`() throws {
         let a = try ISO_32000.COS.Name("Test")
@@ -127,15 +117,11 @@ struct `ISO_32000.COS.Name Tests` {
         #expect(lower != upper)
     }
 
-    // MARK: - Description
-
     @Test
     func `Description includes leading slash`() throws {
         let name = try ISO_32000.COS.Name("Type")
         #expect(name.description == "/Type")
     }
-
-    // MARK: - Error Descriptions
 
     @Test
     func `Error descriptions are informative`() {

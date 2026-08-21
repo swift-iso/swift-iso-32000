@@ -2,7 +2,6 @@
 
 import PackageDescription
 
-// ISO 32000: Document management — Portable document format
 let package = Package(
     name: "swift-iso-32000",
     platforms: [
@@ -40,7 +39,7 @@ let package = Package(
         .library(name: "ISO 32000 Annex D", targets: ["ISO 32000 Annex D"]),
     ],
     dependencies: [
-        // Primitives
+
         .package(
             url: "https://github.com/swift-primitives/swift-geometry-primitives.git",
             branch: "main"
@@ -81,7 +80,7 @@ let package = Package(
             url: "https://github.com/swift-primitives/swift-ownership-primitives.git",
             branch: "main"
         ),
-        // Standards
+
         .package(url: "https://github.com/swift-iso/swift-iso-9899.git", branch: "main"),
         .package(url: "https://github.com/swift-ieee/swift-ieee-754.git", branch: "main"),
         .package(
@@ -93,10 +92,10 @@ let package = Package(
         .package(url: "https://github.com/swift-iec/swift-iec-61966.git", branch: "main"),
         .package(url: "https://github.com/swift-w3c/swift-w3c-png.git", branch: "main"),
         .package(url: "https://github.com/swift-iso/swift-iso-14496-22.git", branch: "main"),
-        // .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.18.0")
+
     ],
     targets: [
-        // MARK: - Shared
+
         .target(
             name: "ISO 32000 Shared",
             dependencies: [
@@ -105,7 +104,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Clause Targets (literal spec encoding)
         .target(
             name: "ISO 32000 3 Terms and definitions",
             dependencies: [
@@ -194,7 +192,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - High-level API
         .target(
             name: "ISO 32000",
             dependencies: [

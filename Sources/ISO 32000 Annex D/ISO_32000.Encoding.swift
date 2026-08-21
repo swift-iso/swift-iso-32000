@@ -1,105 +1,33 @@
-// swift-format-ignore-file: AlwaysUseLowerCamelCase
-// Reason: glyph-name enum cases (Aacute, Ccedilla, …) are spec-mirroring PDF encoding glyph names (API-NAME-003).
-// ISO_32000.Encoding.swift
-// ISO 32000-2:2020 Annex D - Character sets and encodings
-//
-// This file defines the PDFEncoding protocol and common types for PDF character encodings.
-// Per ISO 32000-2 Section D.1, these encodings shall be predefined in any PDF processor.
-
 public import Byte_Primitives
 public import Byte_Primitives_Standard_Library_Integration
 public import ISO_32000_Shared
 
-// MARK: - Encoding Protocol
-
 extension ISO_32000 {
-    /// PDF Character Encoding Protocol
-    ///
-    /// Per ISO 32000-2 Annex D.1, these encodings shall be predefined in any PDF processor.
-    /// Encodings define the mapping between single-byte character codes (0-255) and
-    /// Unicode scalar values.
-    ///
-    /// ## Predefined Encodings
-    ///
-    /// | Encoding | Description |
-    /// |----------|-------------|
-    /// | StandardEncoding | Built-in encoding for Type 1 Latin-text fonts |
-    /// | MacRomanEncoding | Mac OS standard Latin encoding |
-    /// | WinAnsiEncoding | Windows Code Page 1252 |
-    /// | PDFDocEncoding | Text strings outside content streams |
-    /// | MacExpertEncoding | Expert fonts with small caps, ligatures, fractions |
-    /// | SymbolEncoding | Symbol font built-in encoding |
-    /// | ZapfDingbatsEncoding | ZapfDingbats font built-in encoding |
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Encode a Unicode character to a byte
-    /// if let byte = ISO_32000.WinAnsiEncoding.encode("€") {
-    ///     print(byte)  // 128
-    /// }
-    ///
-    /// // Decode a byte to Unicode
-    /// if let scalar = ISO_32000.WinAnsiEncoding.decode(0x80) {
-    ///     print(scalar)  // "€"
-    /// }
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Annex D (normative) - Character sets and encodings
+
     public protocol Encoding: Sendable {
-        /// The encoding name as used in PDF (for example, "WinAnsiEncoding")
-        ///
-        /// This name is used in PDF encoding dictionaries:
-        /// ```
-        /// << /Type /Encoding /BaseEncoding /WinAnsiEncoding >>
-        /// ```
+
         static var name: String { get }
 
-        /// Convert a Unicode scalar to an encoded byte
-        ///
-        /// - Parameter scalar: The Unicode scalar value to encode
-        /// - Returns: The encoded byte, or `nil` if the character cannot be encoded
         static func encode(_ scalar: Unicode.Scalar) -> Byte?
 
-        /// Convert an encoded byte to a Unicode scalar
-        ///
-        /// - Parameter byte: The encoded byte value (0-255)
-        /// - Returns: The Unicode scalar, or `nil` if the byte is undefined in this encoding
         static func decode(_ byte: Byte) -> Unicode.Scalar?
 
-        /// Check if a Unicode scalar can be encoded
-        ///
-        /// - Parameter scalar: The Unicode scalar value to check
-        /// - Returns: `true` if the scalar can be encoded, `false` otherwise
         static func canEncode(_ scalar: Unicode.Scalar) -> Bool
 
-        /// The complete decode table (256 entries, nil for undefined)
-        ///
-        /// Index by byte value to get the corresponding Unicode scalar.
-        /// This is useful for batch decoding operations.
         static var decodeTable: [Unicode.Scalar?] { get }
     }
 }
 
-// MARK: - Default Implementation
-
 extension ISO_32000.Encoding {
-    /// Default implementation using encode()
+
     @inlinable
     public static func canEncode(_ scalar: Unicode.Scalar) -> Bool {
         encode(scalar) != nil
     }
 }
 
-// MARK: - Byte-Level Encoding Extensions
-
 extension ISO_32000.Encoding {
-    /// Encode Unicode scalars to bytes
-    ///
-    /// - Parameter scalars: The Unicode scalars to encode
-    /// - Returns: The encoded bytes, or `nil` if any scalar cannot be encoded
+
     @inlinable
     public static func encode<Scalars: Sequence>(
         _ scalars: Scalars
@@ -112,12 +40,6 @@ extension ISO_32000.Encoding {
         return result
     }
 
-    /// Encode Unicode scalars to bytes with fallback
-    ///
-    /// Scalars that cannot be encoded are replaced with `?` (0x3F).
-    ///
-    /// - Parameter scalars: The Unicode scalars to encode
-    /// - Returns: The encoded bytes (never nil, uses fallback for unencodable scalars)
     @inlinable
     public static func encodeWithFallback<Scalars: Sequence>(
         _ scalars: Scalars
@@ -130,116 +52,76 @@ extension ISO_32000.Encoding {
     }
 }
 
-// MARK: - Unicode Fallback Map
-
 extension ISO_32000 {
-    /// Fallback mappings for common Unicode characters to ASCII equivalents.
-    ///
-    /// When a Unicode character cannot be encoded in WinAnsiEncoding (or other PDF encodings),
-    /// this map provides sensible ASCII fallbacks instead of just using `?`.
-    ///
-    /// ## Categories
-    ///
-    /// - **Checkmarks and crosses**: ✓✔✕✗✘ → ASCII representations
-    /// - **Arrows**: →←↑↓ → ASCII arrow sequences
-    /// - **Math symbols**: ≤≥≠≈ → ASCII approximations
-    /// - **Dashes**: Various dash types → hyphen-minus
-    /// - **Quotes**: Fancy quotes → ASCII quotes
-    /// - **Bullets and symbols**: •◦▪ → ASCII bullets
-    ///
-    /// ## Usage
-    ///
-    /// This map is automatically consulted by `[Byte].init(_:encoding:withFallback:)`
-    /// when a character cannot be directly encoded.
-    ///
-    /// ## Reference
-    ///
-    /// Provides graceful degradation when full Unicode support (font embedding,
-    /// ToUnicode CMaps) is not available. Based on common typographic conventions
-    /// for ASCII-only environments.
+
     public static let unicodeFallbackMap: [UInt32: [Byte]] = [
-        // MARK: Checkmarks and crosses (ZapfDingbats U+2700 block)
-        0x2713: [0x2A],  // ✓ CHECK MARK → *
-        0x2714: [0x2A],  // ✔ HEAVY CHECK MARK → *
-        0x2715: [0x78],  // ✕ MULTIPLICATION X → x
-        0x2716: [0x78],  // ✖ HEAVY MULTIPLICATION X → x
-        0x2717: [0x78],  // ✗ BALLOT X → x
-        0x2718: [0x58],  // ✘ HEAVY BALLOT X → X
-        0x2610: [0x5B, 0x20, 0x5D],  // ☐ BALLOT BOX → [ ]
-        0x2611: [0x5B, 0x2A, 0x5D],  // ☑ BALLOT BOX WITH CHECK → [*]
-        0x2612: [0x5B, 0x78, 0x5D],  // ☒ BALLOT BOX WITH X → [x]
 
-        // MARK: Arrows
-        0x2190: [0x3C, 0x2D],  // ← LEFTWARDS ARROW → <-
-        0x2191: [0x5E],  // ↑ UPWARDS ARROW → ^
-        0x2192: [0x2D, 0x3E],  // → RIGHTWARDS ARROW → ->
-        0x2193: [0x76],  // ↓ DOWNWARDS ARROW → v
-        0x2194: [0x3C, 0x2D, 0x3E],  // ↔ LEFT RIGHT ARROW → <->
-        0x21D0: [0x3C, 0x3D],  // ⇐ LEFTWARDS DOUBLE ARROW → <=
-        0x21D2: [0x3D, 0x3E],  // ⇒ RIGHTWARDS DOUBLE ARROW → =>
-        0x21D4: [0x3C, 0x3D, 0x3E],  // ⇔ LEFT RIGHT DOUBLE ARROW → <=>
-        0x27A1: [0x2D, 0x3E],  // ➡ BLACK RIGHTWARDS ARROW → ->
+        0x2713: [0x2A],
+        0x2714: [0x2A],
+        0x2715: [0x78],
+        0x2716: [0x78],
+        0x2717: [0x78],
+        0x2718: [0x58],
+        0x2610: [0x5B, 0x20, 0x5D],
+        0x2611: [0x5B, 0x2A, 0x5D],
+        0x2612: [0x5B, 0x78, 0x5D],
 
-        // MARK: Math symbols
-        0x2260: [0x21, 0x3D],  // ≠ NOT EQUAL TO → !=
-        0x2264: [0x3C, 0x3D],  // ≤ LESS-THAN OR EQUAL TO → <=
-        0x2265: [0x3E, 0x3D],  // ≥ GREATER-THAN OR EQUAL TO → >=
-        0x2248: [0x7E, 0x3D],  // ≈ ALMOST EQUAL TO → ~=
-        0x221E: [0x69, 0x6E, 0x66],  // ∞ INFINITY → inf
-        0x2212: [0x2D],  // − MINUS SIGN → -
+        0x2190: [0x3C, 0x2D],
+        0x2191: [0x5E],
+        0x2192: [0x2D, 0x3E],
+        0x2193: [0x76],
+        0x2194: [0x3C, 0x2D, 0x3E],
+        0x21D0: [0x3C, 0x3D],
+        0x21D2: [0x3D, 0x3E],
+        0x21D4: [0x3C, 0x3D, 0x3E],
+        0x27A1: [0x2D, 0x3E],
 
-        // MARK: Dashes (beyond WinAnsi)
-        0x2010: [0x2D],  // ‐ HYPHEN → -
-        0x2011: [0x2D],  // ‑ NON-BREAKING HYPHEN → -
-        0x2012: [0x2D],  // ‒ FIGURE DASH → -
-        0x2015: [0x2D, 0x2D],  // ― HORIZONTAL BAR → --
+        0x2260: [0x21, 0x3D],
+        0x2264: [0x3C, 0x3D],
+        0x2265: [0x3E, 0x3D],
+        0x2248: [0x7E, 0x3D],
+        0x221E: [0x69, 0x6E, 0x66],
+        0x2212: [0x2D],
 
-        // MARK: Quotes (beyond WinAnsi)
-        0x2018: [0x27],  // ' LEFT SINGLE QUOTATION MARK → '
-        0x2019: [0x27],  // ' RIGHT SINGLE QUOTATION MARK → '
-        0x201A: [0x2C],  // ‚ SINGLE LOW-9 QUOTATION MARK → ,
-        0x201C: [0x22],  // " LEFT DOUBLE QUOTATION MARK → "
-        0x201D: [0x22],  // " RIGHT DOUBLE QUOTATION MARK → "
-        0x201E: [0x2C, 0x2C],  // „ DOUBLE LOW-9 QUOTATION MARK → ,,
-        0x2039: [0x3C],  // ‹ SINGLE LEFT-POINTING ANGLE QUOTATION → <
-        0x203A: [0x3E],  // › SINGLE RIGHT-POINTING ANGLE QUOTATION → >
+        0x2010: [0x2D],
+        0x2011: [0x2D],
+        0x2012: [0x2D],
+        0x2015: [0x2D, 0x2D],
 
-        // MARK: Bullets and list markers
-        0x2022: [0x2A],  // • BULLET → *
-        0x25CF: [0x2A],  // ● BLACK CIRCLE → *
-        0x25CB: [0x6F],  // ○ WHITE CIRCLE → o
-        0x25A0: [0x23],  // ■ BLACK SQUARE → #
-        0x25A1: [0x5B, 0x5D],  // □ WHITE SQUARE → []
-        0x25AA: [0x2A],  // ▪ BLACK SMALL SQUARE → *
-        0x25AB: [0x2D],  // ▫ WHITE SMALL SQUARE → -
-        0x25B6: [0x3E],  // ▶ BLACK RIGHT-POINTING TRIANGLE → >
-        0x25C0: [0x3C],  // ◀ BLACK LEFT-POINTING TRIANGLE → <
-        0x25B2: [0x5E],  // ▲ BLACK UP-POINTING TRIANGLE → ^
-        0x25BC: [0x76],  // ▼ BLACK DOWN-POINTING TRIANGLE → v
+        0x2018: [0x27],
+        0x2019: [0x27],
+        0x201A: [0x2C],
+        0x201C: [0x22],
+        0x201D: [0x22],
+        0x201E: [0x2C, 0x2C],
+        0x2039: [0x3C],
+        0x203A: [0x3E],
 
-        // MARK: Stars
-        0x2605: [0x2A],  // ★ BLACK STAR → *
-        0x2606: [0x2A],  // ☆ WHITE STAR → *
+        0x2022: [0x2A],
+        0x25CF: [0x2A],
+        0x25CB: [0x6F],
+        0x25A0: [0x23],
+        0x25A1: [0x5B, 0x5D],
+        0x25AA: [0x2A],
+        0x25AB: [0x2D],
+        0x25B6: [0x3E],
+        0x25C0: [0x3C],
+        0x25B2: [0x5E],
+        0x25BC: [0x76],
 
-        // MARK: Zero-width and invisible characters
-        0x00A0: [0x20],  // NO-BREAK SPACE → regular space
-        0x200B: [],  // ZERO WIDTH SPACE → nothing
-        0x200C: [],  // ZERO WIDTH NON-JOINER → nothing
-        0x200D: [],  // ZERO WIDTH JOINER → nothing
-        0xFEFF: [],  // BYTE ORDER MARK → nothing
+        0x2605: [0x2A],
+        0x2606: [0x2A],
+
+        0x00A0: [0x20],
+        0x200B: [],
+        0x200C: [],
+        0x200D: [],
+        0xFEFF: [],
     ]
 }
 
-// MARK: - String → Bytes (Encoding)
-
 extension Array where Element == Byte {
-    /// Initialize bytes by encoding a string using a PDF encoding
-    ///
-    /// Returns `nil` if any character cannot be encoded.
-    ///
-    /// - Parameters:
-    ///   - string: The string to encode
-    ///   - encoding: The PDF encoding type to use
+
     @inlinable
     public init?<E: ISO_32000.Encoding>(
         _ string: some StringProtocol,
@@ -253,21 +135,6 @@ extension Array where Element == Byte {
         self = result
     }
 
-    /// Initialize bytes by encoding a string using a PDF encoding, with fallback
-    ///
-    /// Characters that cannot be encoded directly are handled as follows:
-    /// 1. First, try the encoding's direct mapping
-    /// 2. If that fails, look up in `ISO_32000.unicodeFallbackMap` for a sensible ASCII replacement
-    /// 3. If no fallback exists, use `?` (0x3F)
-    ///
-    /// Control characters (0x00-0x1F) are preserved as-is when `preservingControlChars` is true,
-    /// allowing the tokenizer to handle newlines, tabs, etc. specially.
-    ///
-    /// - Parameters:
-    ///   - string: The string to encode
-    ///   - encoding: The PDF encoding type to use
-    ///   - withFallback: Must be `true` to use fallback mode
-    ///   - preservingControlChars: If true, control characters pass through unchanged (default: false)
     @inlinable
     public init<E: ISO_32000.Encoding>(
         _ string: some StringProtocol,
@@ -278,17 +145,17 @@ extension Array where Element == Byte {
         var result: [Byte] = []
         for scalar in string.unicodeScalars {
             let value = scalar.value
-            // Preserve control characters (0x00-0x1F) if requested
+
             if preservingControlChars && value < 0x20 {
                 result.append(Byte(UInt8(value)))
             } else if let byte = E.encode(scalar) {
-                // Direct encoding succeeded
+
                 result.append(byte)
             } else if let fallback = ISO_32000.unicodeFallbackMap[value] {
-                // Use smart fallback from the map
+
                 result.append(contentsOf: fallback)
             } else {
-                // Last resort: question mark
+
                 result.append(0x3F)
             }
         }
@@ -296,16 +163,8 @@ extension Array where Element == Byte {
     }
 }
 
-// MARK: - Bytes → String (Decoding)
-
 extension String {
-    /// Initialize from bytes using a PDF encoding
-    ///
-    /// Returns `nil` if any byte cannot be decoded.
-    ///
-    /// - Parameters:
-    ///   - bytes: The bytes to decode
-    ///   - encoding: The PDF encoding type to use
+
     @inlinable
     public init?<E: ISO_32000.Encoding, Bytes: Collection>(
         _ bytes: Bytes,
@@ -320,14 +179,6 @@ extension String {
         self.init(scalars)
     }
 
-    /// Initialize from bytes using a PDF encoding, with replacement for invalid bytes
-    ///
-    /// Invalid bytes are replaced with U+FFFD (replacement character).
-    ///
-    /// - Parameters:
-    ///   - bytes: The bytes to decode
-    ///   - encoding: The PDF encoding type to use
-    ///   - withReplacement: Must be `true` to use replacement mode
     @inlinable
     public init<E: ISO_32000.Encoding, Bytes: Collection>(
         _ bytes: Bytes,
@@ -343,42 +194,18 @@ extension String {
     }
 }
 
-// MARK: - Glyph Name
-
 extension ISO_32000 {
-    /// Adobe glyph name for PDF font encoding
-    ///
-    /// Glyph names are used in encoding difference arrays and font programs.
-    /// These names follow the Adobe Glyph List specification.
-    ///
-    /// Glyph names are stored as ASCII bytes (the canonical representation).
-    /// Use `String.init(_:)` to convert to a String when needed.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let name = ISO_32000.GlyphName.Euro
-    /// print(String(name))   // "Euro"
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings
+
     @frozen
     public struct GlyphName: Hashable, Sendable {
-        /// The glyph name as ASCII bytes (canonical representation)
+
         public let bytes: [Byte]
 
-        /// Initialize from ASCII bytes
         @inlinable
         public init(bytes: [Byte]) {
             self.bytes = bytes
         }
 
-        /// Initialize from a static ASCII string literal
-        ///
-        /// This initializer is intended for compile-time constant glyph names.
-        /// The string must contain only ASCII characters.
         @inlinable
         public init(_ name: StaticString) {
             self.bytes = name.withUTF8Buffer { unsafe $0.map(Byte.init) }
@@ -386,12 +213,8 @@ extension ISO_32000 {
     }
 }
 
-// MARK: - GlyphName String Conversion
-
 extension String {
-    /// Initialize a String from a GlyphName
-    ///
-    /// Since glyph names are ASCII, this conversion is always valid.
+
     @inlinable
     public init(_ glyphName: ISO_32000.GlyphName) {
         self.init(decoding: glyphName.bytes, as: UTF8.self)
@@ -405,10 +228,8 @@ extension ISO_32000.GlyphName: CustomStringConvertible {
     }
 }
 
-// MARK: - Common Glyph Names
-
 extension ISO_32000.GlyphName {
-    // Uppercase letters
+
     public static let A = ISO_32000.GlyphName("A")
     public static let B = ISO_32000.GlyphName("B")
     public static let C = ISO_32000.GlyphName("C")
@@ -436,7 +257,6 @@ extension ISO_32000.GlyphName {
     public static let Y = ISO_32000.GlyphName("Y")
     public static let Z = ISO_32000.GlyphName("Z")
 
-    // Lowercase letters
     public static let a = ISO_32000.GlyphName("a")
     public static let b = ISO_32000.GlyphName("b")
     public static let c = ISO_32000.GlyphName("c")
@@ -464,7 +284,6 @@ extension ISO_32000.GlyphName {
     public static let y = ISO_32000.GlyphName("y")
     public static let z = ISO_32000.GlyphName("z")
 
-    // Digits
     public static let zero = ISO_32000.GlyphName("zero")
     public static let one = ISO_32000.GlyphName("one")
     public static let two = ISO_32000.GlyphName("two")
@@ -476,7 +295,6 @@ extension ISO_32000.GlyphName {
     public static let eight = ISO_32000.GlyphName("eight")
     public static let nine = ISO_32000.GlyphName("nine")
 
-    // Special characters
     public static let space = ISO_32000.GlyphName("space")
     public static let exclam = ISO_32000.GlyphName("exclam")
     public static let quotedbl = ISO_32000.GlyphName("quotedbl")
@@ -511,7 +329,6 @@ extension ISO_32000.GlyphName {
     public static let braceright = ISO_32000.GlyphName("braceright")
     public static let asciitilde = ISO_32000.GlyphName("asciitilde")
 
-    // Currency and symbols
     public static let Euro = ISO_32000.GlyphName("Euro")
     public static let cent = ISO_32000.GlyphName("cent")
     public static let sterling = ISO_32000.GlyphName("sterling")
@@ -519,7 +336,6 @@ extension ISO_32000.GlyphName {
     public static let yen = ISO_32000.GlyphName("yen")
     public static let florin = ISO_32000.GlyphName("florin")
 
-    // Punctuation
     public static let bullet = ISO_32000.GlyphName("bullet")
     public static let ellipsis = ISO_32000.GlyphName("ellipsis")
     public static let emdash = ISO_32000.GlyphName("emdash")
@@ -538,14 +354,12 @@ extension ISO_32000.GlyphName {
     public static let guillemotleft = ISO_32000.GlyphName("guillemotleft")
     public static let guillemotright = ISO_32000.GlyphName("guillemotright")
 
-    // Ligatures
     public static let fi = ISO_32000.GlyphName("fi")
     public static let fl = ISO_32000.GlyphName("fl")
     public static let ff = ISO_32000.GlyphName("ff")
     public static let ffi = ISO_32000.GlyphName("ffi")
     public static let ffl = ISO_32000.GlyphName("ffl")
 
-    // Accented uppercase
     public static let Aacute = ISO_32000.GlyphName("Aacute")
     public static let Acircumflex = ISO_32000.GlyphName("Acircumflex")
     public static let Adieresis = ISO_32000.GlyphName("Adieresis")
@@ -582,7 +396,6 @@ extension ISO_32000.GlyphName {
     public static let Zcaron = ISO_32000.GlyphName("Zcaron")
     public static let Lslash = ISO_32000.GlyphName("Lslash")
 
-    // Accented lowercase
     public static let aacute = ISO_32000.GlyphName("aacute")
     public static let acircumflex = ISO_32000.GlyphName("acircumflex")
     public static let adieresis = ISO_32000.GlyphName("adieresis")
@@ -621,7 +434,6 @@ extension ISO_32000.GlyphName {
     public static let germandbls = ISO_32000.GlyphName("germandbls")
     public static let dotlessi = ISO_32000.GlyphName("dotlessi")
 
-    // Diacritical marks
     public static let acute = ISO_32000.GlyphName("acute")
     public static let breve = ISO_32000.GlyphName("breve")
     public static let caron = ISO_32000.GlyphName("caron")
@@ -635,7 +447,6 @@ extension ISO_32000.GlyphName {
     public static let ring = ISO_32000.GlyphName("ring")
     public static let tilde = ISO_32000.GlyphName("tilde")
 
-    // Fractions and math
     public static let onehalf = ISO_32000.GlyphName("onehalf")
     public static let onequarter = ISO_32000.GlyphName("onequarter")
     public static let threequarters = ISO_32000.GlyphName("threequarters")
@@ -651,7 +462,6 @@ extension ISO_32000.GlyphName {
     public static let mu = ISO_32000.GlyphName("mu")
     public static let logicalnot = ISO_32000.GlyphName("logicalnot")
 
-    // Other symbols
     public static let copyright = ISO_32000.GlyphName("copyright")
     public static let registered = ISO_32000.GlyphName("registered")
     public static let trademark = ISO_32000.GlyphName("trademark")

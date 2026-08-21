@@ -1,114 +1,55 @@
-// swift-format-ignore-file: AlwaysUseLowerCamelCase
-// Reason: devDepGS_* constants are spec-mirroring names (ISO 32000-2 device-dependent graphics state parameter mnemonics, API-NAME-003).
-// ISO 32000-2:2020, 12.8 Digital signatures
-//
-// Sections:
-//   12.8.1  General
-//   12.8.2  Transform methods
-//     12.8.2.1  General
-//     12.8.2.2  DocMDP (Table 257)
-//     12.8.2.3  UR (Table 258) - deprecated
-//     12.8.2.4  FieldMDP (Table 259)
-//   12.8.3  Signature interoperability (Table 260)
-//   12.8.4  Long term validation of signatures
-//     12.8.4.1  General
-//     12.8.4.2  Introduction to the DSS
-//     12.8.4.3  Document Security Store (Table 261)
-//     12.8.4.4  Validation-related information (Table 262)
-//     12.8.4.5  Usage of the DSS VRI
-//   12.8.5  Document timestamp (DTS) dictionary
-//   12.8.6  Permissions (Table 263)
-//   12.8.7  Legal content attestations (Table 264)
-
 public import Byte_Primitives
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 
 extension ISO_32000.`12` {
-    /// ISO 32000-2:2020, 12.8 Digital signatures
+
     public enum `8` {}
 }
 
-// MARK: - Digital Signature Namespace
-
 extension ISO_32000 {
-    /// Digital signature namespace
-    ///
-    /// Per ISO 32000-2:2020 Section 12.8.1:
-    /// > A digital signature (PDF 1.3) may be used to verify the integrity of the
-    /// > document's contents using verification information related to a signer.
-    ///
-    /// PDF supports four signature-related activities:
-    /// - Adding a digital signature to a document
-    /// - Verifying signature validity
-    /// - Adding DSS dictionaries and VRI for later verifications
-    /// - Adding document timestamp dictionaries (DTS)
+
     public enum DigitalSignature {}
 }
 
-// MARK: - 12.8.1 Signature Dictionary (Table 255)
-
 extension ISO_32000.DigitalSignature {
-    /// Signature dictionary (Table 255)
-    ///
-    /// Contains signature information for certification, approval, or timestamp signatures.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 255 — Entries in a signature dictionary
+
     public struct SignatureDictionary: Sendable, Hashable {
-        /// Dictionary type. Sig for signature, DocTimeStamp for timestamp.
+
         public var type: DictionaryType
 
-        /// Preferred signature handler name. Required, inheritable.
         public var filter: String
 
-        /// Encoding of signature value and key information. Optional.
         public var subFilter: SubFilter?
 
-        /// The signature value (byte range digest as hex string). Required.
         public var contents: [Byte]
 
-        /// X.509 certificate chain. Required when SubFilter is adbe.x509.rsa_sha1.
         public var cert: CertValue?
 
-        /// Byte ranges for digest calculation. Required for signature fields.
         public var byteRange: [ByteRangePair]?
 
-        /// Signature reference dictionaries for modification detection. Optional.
         public var reference: [SignatureReference]?
 
-        /// Changes since previous signature [pages altered, fields altered, fields filled].
         public var changes: Changes?
 
-        /// Name of person or authority signing. Optional.
         public var name: String?
 
-        /// Time of signing. Optional.
         public var signingTime: ISO_32000.`7`.`9`.`4`.Date?
 
-        /// CPU host name or physical location of signing. Optional.
         public var location: String?
 
-        /// Reason for signing. Optional.
         public var reason: String?
 
-        /// Contact information for signature verification. Optional.
         public var contactInfo: String?
 
-        /// Signature handler version. Deprecated in PDF 2.0.
         public var handlerVersion: Int?
 
-        /// Signature dictionary format version. Default: 0.
         public var formatVersion: Int
 
-        /// Build properties dictionary for signing environment. Optional.
-        public var propBuild: Int?  // Object reference
+        public var propBuild: Int?
 
-        /// Seconds since signer was last authenticated. Optional.
         public var propAuthTime: Int?
 
-        /// Authentication method used. Optional.
         public var propAuthType: AuthType?
 
         public init(
@@ -153,13 +94,8 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-// MARK: - SignatureDictionary PDF Key Mappings
-
 extension ISO_32000.DigitalSignature.SignatureDictionary {
-    /// PDF key mappings for serialization (Table 255 field names)
-    ///
-    /// Use these keys when serializing to/from PDF format.
-    /// Note: Swift property names use descriptive camelCase; PDF uses abbreviated keys.
+
     public enum PDFKey: String, CodingKey {
         case type = "Type"
         case filter = "Filter"
@@ -170,52 +106,47 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
         case reference = "Reference"
         case changes = "Changes"
         case name = "Name"
-        case signingTime = "M"  // PDF uses "M" for signing time (date Modified)
+        case signingTime = "M"
         case location = "Location"
         case reason = "Reason"
         case contactInfo = "ContactInfo"
-        case handlerVersion = "R"  // PDF uses "R" for handler version (Revision)
-        case formatVersion = "V"  // PDF uses "V" for format version (Version)
+        case handlerVersion = "R"
+        case formatVersion = "V"
         case propBuild = "Prop_Build"
         case propAuthTime = "Prop_AuthTime"
         case propAuthType = "Prop_AuthType"
     }
 }
 
-// MARK: - SignatureDictionary Supporting Types
-
 extension ISO_32000.DigitalSignature.SignatureDictionary {
-    /// Dictionary type for signature or timestamp
+
     public enum DictionaryType: String, Sendable, Hashable, Codable, CaseIterable {
-        /// Standard signature dictionary
+
         case sig = "Sig"
-        /// Document timestamp dictionary
+
         case docTimeStamp = "DocTimeStamp"
     }
 
-    /// SubFilter values specifying signature encoding (Table 260)
     public enum SubFilter: String, Sendable, Hashable, Codable, CaseIterable {
-        /// PKCS #1 RSA with SHA-1 digest (deprecated in PDF 2.0)
+
         case adbeX509RsaSha1 = "adbe.x509.rsa_sha1"
-        /// Detached PKCS #7 signature
+
         case adbePkcs7Detached = "adbe.pkcs7.detached"
-        /// PKCS #7 with SHA-1 (deprecated in PDF 2.0)
+
         case adbePkcs7Sha1 = "adbe.pkcs7.sha1"
-        /// CAdES detached signature (PDF 2.0)
+
         case etsiCadesDetached = "ETSI.CAdES.detached"
-        /// RFC 3161 timestamp (PDF 2.0)
+
         case etsiRfc3161 = "ETSI.RFC3161"
     }
 
-    /// Certificate value (single or chain)
     public enum CertValue: Sendable, Hashable {
-        /// Single certificate
+
         case single([Byte])
-        /// Certificate chain (signing cert first)
+
         case chain([[Byte]])
     }
 
-    /// Byte range pair (offset, length)
     public struct ByteRangePair: Sendable, Hashable {
         public var offset: Int
         public var length: Int
@@ -226,7 +157,6 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
         }
     }
 
-    /// Changes made between previous and current signature
     public struct Changes: Sendable, Hashable {
         public var pagesAltered: Int
         public var fieldsAltered: Int
@@ -239,7 +169,6 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
         }
     }
 
-    /// Authentication method for signature repudiation claims (Table 255)
     public enum AuthType: String, Sendable, Hashable, Codable, CaseIterable {
         case pin = "PIN"
         case password = "Password"
@@ -247,27 +176,16 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
     }
 }
 
-// MARK: - 12.8.2 Signature Reference Dictionary (Table 256)
-
 extension ISO_32000.DigitalSignature {
-    /// Signature reference dictionary (Table 256)
-    ///
-    /// Specifies a transform method for modification detection.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 256 — Entries in a signature reference dictionary
+
     public struct SignatureReference: Sendable, Hashable {
-        /// Transform method for modification analysis. Required.
+
         public var transformMethod: TransformMethod
 
-        /// Transform parameters specific to the method. Optional.
         public var transformParams: TransformParams?
 
-        /// Object for modification analysis. Required for FieldMDP.
-        public var data: Int?  // Indirect object reference
+        public var data: Int?
 
-        /// Digest algorithm. Required.
         public var digestMethod: DigestMethod
 
         public init(
@@ -284,58 +202,45 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-// MARK: - Transform Methods
-
 extension ISO_32000.DigitalSignature.SignatureReference {
-    /// Transform methods for modification detection (Table 256)
+
     public enum TransformMethod: String, Sendable, Hashable, Codable, CaseIterable {
-        /// Detect modifications relative to certification signature
+
         case docMDP = "DocMDP"
-        /// Detect modifications invalidating usage rights (deprecated)
+
         case ur = "UR"
-        /// Detect modifications to specified form fields
+
         case fieldMDP = "FieldMDP"
     }
 
-    /// Transform parameters (union type for all transform methods)
     public enum TransformParams: Sendable, Hashable {
         case docMDP(DocMDPParams)
         case ur(URParams)
         case fieldMDP(FieldMDPParams)
     }
 
-    /// Digest algorithms (Table 256)
     public enum DigestMethod: String, Sendable, Hashable, Codable, CaseIterable {
-        /// MD5 (deprecated in PDF 2.0)
+
         case md5 = "MD5"
-        /// SHA-1 (deprecated in PDF 2.0)
+
         case sha1 = "SHA1"
-        /// SHA-256
+
         case sha256 = "SHA256"
-        /// SHA-384
+
         case sha384 = "SHA384"
-        /// SHA-512
+
         case sha512 = "SHA512"
-        /// RIPEMD-160
+
         case ripemd160 = "RIPEMD160"
     }
 }
 
-// MARK: - 12.8.2.2 DocMDP Transform Parameters (Table 257)
-
 extension ISO_32000.DigitalSignature.SignatureReference {
-    /// DocMDP transform parameters (Table 257)
-    ///
-    /// Specifies modification permissions for certification signatures.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 257 — Entries in the DocMDP transform parameters dictionary
+
     public struct DocMDPParams: Sendable, Hashable {
-        /// Access permissions level. Default: 2.
+
         public var permissions: Permission
 
-        /// Dictionary version. Only valid value is "1.2". Default: "1.2".
         public var version: String
 
         public init(
@@ -349,50 +254,35 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.DocMDPParams {
-    /// DocMDP permission levels (Table 257, P entry)
+
     public enum Permission: Int, Sendable, Hashable, Codable, CaseIterable {
-        /// No changes permitted (document is final)
+
         case noChanges = 1
-        /// Form filling, page templates, signing permitted
+
         case formFillingAndSigning = 2
-        /// Same as formFillingAndSigning plus annotation changes
+
         case formFillingSigningAndAnnotations = 3
     }
 }
 
-// MARK: - 12.8.2.3 UR Transform Parameters (Table 258) - Deprecated
-
 extension ISO_32000.DigitalSignature.SignatureReference {
-    /// UR transform parameters (Table 258)
-    ///
-    /// Specifies additional usage rights. Deprecated in PDF 2.0.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 258 — Entries in the UR transform parameters dictionary
+
     public struct URParams: Sendable, Hashable {
-        /// Document-wide usage rights.
+
         public var document: DocumentRights
 
-        /// Arbitrary information message.
         public var message: String?
 
-        /// Dictionary version. Value shall be "2.2". Default: "2.2".
         public var version: String
 
-        /// Annotation-related rights.
         public var annots: AnnotRights
 
-        /// Form field-related rights.
         public var form: FormRights
 
-        /// Signature-related rights.
         public var signature: SignatureRights
 
-        /// Embedded file rights (PDF 1.6).
         public var embeddedFiles: EmbeddedFileRights
 
-        /// If false, restrictions may be ignored.
         public var enforceRestrictions: Bool
 
         public init(
@@ -418,31 +308,27 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams {
-    /// Document-wide rights (Table 258, Document entry)
+
     public struct DocumentRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
     }
 
-    /// Annotation rights (Table 258, Annots entry)
     public struct AnnotRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
     }
 
-    /// Form rights (Table 258, Form entry)
     public struct FormRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
     }
 
-    /// Signature rights (Table 258, Signature entry)
     public struct SignatureRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
     }
 
-    /// Embedded file rights (Table 258, EF entry)
     public struct EmbeddedFileRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
@@ -450,7 +336,7 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams {
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights {
-    /// Permit saving with modified form/annotation data
+
     public static let fullSave = ISO_32000.DigitalSignature.SignatureReference.URParams
         .DocumentRights(rawValue: 1 << 0)
 }
@@ -474,11 +360,11 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights {
     public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 5
     )
-    /// PDF 1.6: Online commenting
+
     public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 6
     )
-    /// PDF 1.6: Summary view
+
     public static let summaryView = ISO_32000.DigitalSignature.SignatureReference.URParams
         .AnnotRights(rawValue: 1 << 7)
 }
@@ -503,17 +389,17 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights {
         .FormRights(rawValue: 1 << 5)
     public static let spawnTemplate = ISO_32000.DigitalSignature.SignatureReference.URParams
         .FormRights(rawValue: 1 << 6)
-    /// PDF 1.6
+
     public static let barcodePlaintext = ISO_32000.DigitalSignature.SignatureReference.URParams
         .FormRights(rawValue: 1 << 7)
-    /// PDF 1.6
+
     public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 8
     )
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights {
-    /// Permit applying/clearing digital signatures
+
     public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams
         .SignatureRights(rawValue: 1 << 0)
 }
@@ -529,24 +415,14 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRig
         .EmbeddedFileRights(rawValue: 1 << 3)
 }
 
-// MARK: - 12.8.2.4 FieldMDP Transform Parameters (Table 259)
-
 extension ISO_32000.DigitalSignature.SignatureReference {
-    /// FieldMDP transform parameters (Table 259)
-    ///
-    /// Specifies form fields that cannot change after signing.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 259 — Entries in the FieldMDP transform parameters dictionary
+
     public struct FieldMDPParams: Sendable, Hashable {
-        /// Action determining which fields are locked. Required.
+
         public var action: Action
 
-        /// Field names. Required if action is Include or Exclude.
         public var fields: [String]?
 
-        /// Dictionary version. Value shall be "1.2". Default: "1.2".
         public var version: String
 
         public init(
@@ -562,39 +438,28 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 }
 
 extension ISO_32000.DigitalSignature.SignatureReference.FieldMDPParams {
-    /// Field action type (Table 259, Action entry)
+
     public enum Action: String, Sendable, Hashable, Codable, CaseIterable {
-        /// All form fields locked
+
         case all = "All"
-        /// Only specified fields locked
+
         case include = "Include"
-        /// All except specified fields locked
+
         case exclude = "Exclude"
     }
 }
 
-// MARK: - 12.8.4.3 Document Security Store (Table 261)
-
 extension ISO_32000.DigitalSignature {
-    /// Document Security Store (Table 261)
-    ///
-    /// Contains validation information for long-term signature verification.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 261 — Entries in the document security store (DSS) dictionary
+
     public struct DSS: Sendable, Hashable {
-        /// VRI dictionaries keyed by SHA-1 hash of signature. Optional.
+
         public var vri: [String: VRI]?
 
-        /// Array of certificate streams (DER-encoded X.509). Optional.
-        public var certs: [Int]?  // Indirect references to streams
+        public var certs: [Int]?
 
-        /// Array of OCSP response streams. Optional.
-        public var ocsps: [Int]?  // Indirect references to streams
+        public var ocsps: [Int]?
 
-        /// Array of CRL streams (DER-encoded). Optional.
-        public var crls: [Int]?  // Indirect references to streams
+        public var crls: [Int]?
 
         public init(
             vri: [String: VRI]? = nil,
@@ -610,31 +475,19 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-// MARK: - 12.8.4.4 Validation-Related Information (Table 262)
-
 extension ISO_32000.DigitalSignature {
-    /// Validation-Related Information dictionary (Table 262)
-    ///
-    /// Contains validation data for a specific signature.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 262 — Entries in the signature validation-related information (VRI) dictionary
+
     public struct VRI: Sendable, Hashable {
-        /// Certificate streams used for validation. Optional.
-        public var cert: [Int]?  // Indirect references to streams
 
-        /// CRL streams used for validation. Required if CRL present.
-        public var crl: [Int]?  // Indirect references to streams
+        public var cert: [Int]?
 
-        /// OCSP response streams used for validation. Required if OCSP present.
-        public var ocsp: [Int]?  // Indirect references to streams
+        public var crl: [Int]?
 
-        /// Time at which this VRI was created. Optional.
+        public var ocsp: [Int]?
+
         public var createdTime: ISO_32000.`7`.`9`.`4`.Date?
 
-        /// Timestamp stream (DER-encoded RFC 3161). Optional.
-        public var timestamp: Int?  // Indirect reference to stream
+        public var timestamp: Int?
 
         public init(
             cert: [Int]? = nil,
@@ -653,34 +506,23 @@ extension ISO_32000.DigitalSignature {
 }
 
 extension ISO_32000.DigitalSignature.VRI {
-    /// PDF key mappings for serialization (Table 262 field names)
-    ///
-    /// Use these keys when serializing to/from PDF format.
+
     public enum PDFKey: String, CodingKey {
         case cert = "Cert"
         case crl = "CRL"
         case ocsp = "OCSP"
-        case createdTime = "TU"  // PDF uses "TU" for creation time (TimeStamp Unix)
-        case timestamp = "TS"  // PDF uses "TS" for timestamp stream
+        case createdTime = "TU"
+        case timestamp = "TS"
     }
 }
 
-// MARK: - 12.8.6 Permissions Dictionary (Table 263)
-
 extension ISO_32000.DigitalSignature {
-    /// Permissions dictionary (Table 263)
-    ///
-    /// Specifies permission handlers controlling document access.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 263 — Entries in a permissions dictionary
-    public struct Permissions: Sendable, Hashable {
-        /// Reference to certification signature with DocMDP transform. Optional.
-        public var docMDP: Int?  // Indirect reference to signature dictionary
 
-        /// Reference to usage rights signature (deprecated in PDF 2.0). Optional.
-        public var ur3: Int?  // Indirect reference to signature dictionary
+    public struct Permissions: Sendable, Hashable {
+
+        public var docMDP: Int?
+
+        public var ur3: Int?
 
         public init(
             docMDP: Int? = nil,
@@ -692,81 +534,52 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-// MARK: - 12.8.7 Legal Content Attestations (Table 264)
-
 extension ISO_32000.DigitalSignature {
-    /// Legal attestation dictionary (Table 264)
-    ///
-    /// Specifies content that may affect the legal integrity of a signed document.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table 264 — Entries in a legal attestation dictionary
+
     public struct LegalAttestation: Sendable, Hashable {
-        /// Number of ECMAScript actions found. Optional.
+
         public var javaScriptActions: Int?
 
-        /// Number of launch actions found. Optional.
         public var launchActions: Int?
 
-        /// Number of URI actions found. Optional.
         public var uriActions: Int?
 
-        /// Number of movie actions found (deprecated in PDF 2.0). Optional.
         public var movieActions: Int?
 
-        /// Number of sound actions found (deprecated in PDF 2.0). Optional.
         public var soundActions: Int?
 
-        /// Number of hide actions found. Optional.
         public var hideAnnotationActions: Int?
 
-        /// Number of remote go-to actions found. Optional.
         public var goToRemoteActions: Int?
 
-        /// Number of alternate images found. Optional.
         public var alternateImages: Int?
 
-        /// Number of external streams found. Optional.
         public var externalStreams: Int?
 
-        /// Number of TrueType fonts found. Optional.
         public var trueTypeFonts: Int?
 
-        /// Number of reference XObjects found. Optional.
         public var externalRefXobjects: Int?
 
-        /// Number of OPI dictionaries found (deprecated in PDF 2.0). Optional.
         public var externalOPIdicts: Int?
 
-        /// Number of non-embedded fonts found. Optional.
         public var nonEmbeddedFonts: Int?
 
-        /// Number of OP graphics state parameter references. Optional.
         public var devDepGS_OP: Int?
 
-        /// Number of HT graphics state parameter references. Optional.
         public var devDepGS_HT: Int?
 
-        /// Number of TR graphics state parameter references. Optional.
         public var devDepGS_TR: Int?
 
-        /// Number of UCR graphics state parameter references. Optional.
         public var devDepGS_UCR: Int?
 
-        /// Number of BG graphics state parameter references. Optional.
         public var devDepGS_BG: Int?
 
-        /// Number of FL graphics state parameter references. Optional.
         public var devDepGS_FL: Int?
 
-        /// Number of annotations found. Optional.
         public var annotations: Int?
 
-        /// Whether optional content is found. Optional.
         public var optionalContent: Bool?
 
-        /// Author's explanation of document contents. Optional.
         public var attestation: String?
 
         public init(
@@ -819,24 +632,17 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-// MARK: - Section Typealiases
-
 extension ISO_32000.`12`.`8` {
-    /// Signature dictionary (Table 255)
+
     public typealias SignatureDictionary = ISO_32000.DigitalSignature.SignatureDictionary
 
-    /// Signature reference dictionary (Table 256)
     public typealias SignatureReference = ISO_32000.DigitalSignature.SignatureReference
 
-    /// Document Security Store (Table 261)
     public typealias DSS = ISO_32000.DigitalSignature.DSS
 
-    /// Validation-Related Information (Table 262)
     public typealias VRI = ISO_32000.DigitalSignature.VRI
 
-    /// Permissions dictionary (Table 263)
     public typealias Permissions = ISO_32000.DigitalSignature.Permissions
 
-    /// Legal attestation dictionary (Table 264)
     public typealias LegalAttestation = ISO_32000.DigitalSignature.LegalAttestation
 }

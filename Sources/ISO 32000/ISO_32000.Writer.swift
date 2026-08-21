@@ -1,5 +1,3 @@
-// ISO_32000.Writer.swift
-
 public import Binary_Primitives
 public import Binary_Serializable_Primitives
 import Byte_Primitives
@@ -10,20 +8,11 @@ import Standard_Library_Extensions
 public import Witness_Primitives
 
 extension ISO_32000 {
-    /// PDF Writer - serializes documents to PDF format
-    ///
-    /// The writer handles:
-    /// - PDF header and version
-    /// - Object numbering and cross-references
-    /// - Document structure (catalog, pages, fonts)
-    /// - Trailer and xref table
+
     public struct Writer: Sendable {
-        /// Stream compression callback
+
         public var compression: StreamCompression?
 
-        /// Create a writer
-        ///
-        /// - Parameter compression: Optional compression for content streams
         public init(compression: StreamCompression? = nil) {
             self.compression = compression
         }
@@ -31,20 +20,17 @@ extension ISO_32000 {
 }
 
 extension ISO_32000.Writer {
-    /// Write a document to a buffer
+
     public mutating func write<Buffer: RangeReplaceableCollection>(
         _ document: ISO_32000.Document,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
         var state = State()
 
-        // Header
         writeHeader(document.version, into: &buffer)
 
-        // Binary marker (ensures file is treated as binary)
         buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8)
 
-        // Collect all fonts used
         var allFonts: [ISO_32000.COS.Name: ISO_32000.Font] = [:]
         for page in document.pages {
             for (name, font) in page.resources.fonts {
@@ -52,7 +38,6 @@ extension ISO_32000.Writer {
             }
         }
 
-        // Collect all images used
         var allImages: [ISO_32000.COS.Name: ISO_32000.Image] = [:]
         for page in document.pages {
             for (name, image) in page.resources.xObjects {
@@ -60,11 +45,10 @@ extension ISO_32000.Writer {
             }
         }
 
-        // Create font objects (and embedded font resources)
         var fontRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
         for (name, font) in allFonts.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
             if let embedded = font.embeddedSource {
-                // TrueType embedded font
+
                 let fontRef = writeEmbeddedTrueTypeFont(
                     font: font,
                     embedded: embedded,
@@ -73,7 +57,7 @@ extension ISO_32000.Writer {
                 )
                 fontRefs[name] = fontRef
             } else {
-                // Standard Type1 font (Standard 14)
+
                 let objNum = state.nextObjectNumber()
                 fontRefs[name] = ISO_32000.COS.IndirectReference(objectNumber: objNum)
 
@@ -82,8 +66,6 @@ extension ISO_32000.Writer {
                 fontDict[.subtype] = .name(.type1)
                 fontDict[.baseFont] = .name(font.baseFontName)
 
-                // ZapfDingbats and Symbol have built-in encodings (ISO 32000-2 Annex D)
-                // Other Standard 14 fonts use WinAnsiEncoding for proper glyph mapping
                 if font.family != .zapfDingbats && font.family != .symbol {
                     fontDict[.encoding] = .name(.winAnsiEncoding)
                 }
@@ -93,7 +75,6 @@ extension ISO_32000.Writer {
             }
         }
 
-        // Create image XObject streams
         var imageRefs: [ISO_32000.COS.Name: ISO_32000.COS.IndirectReference] = [:]
         for (name, image) in allImages.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
             let objNum = state.nextObjectNumber()
@@ -106,7 +87,6 @@ extension ISO_32000.Writer {
             imageDict[.height] = .integer(Int64(image.pixelHeight))
             imageDict[.bitsPerComponent] = .integer(Int64(image.bitsPerComponent))
 
-            // Color space
             switch image.colorSpace {
             case .deviceGray:
                 imageDict[.colorSpace] = .name(.deviceGray)
@@ -118,7 +98,6 @@ extension ISO_32000.Writer {
                 imageDict[.colorSpace] = .name(.deviceCMYK)
             }
 
-            // Filter
             switch image.filter {
             case .dctDecode:
                 imageDict[.filter] = .name(.dctDecode)
@@ -132,7 +111,6 @@ extension ISO_32000.Writer {
             writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
         }
 
-        // Create page content streams
         var contentRefs: [[ISO_32000.COS.IndirectReference]] = []
         for page in document.pages {
             var pageContentRefs: [ISO_32000.COS.IndirectReference] = []
@@ -140,12 +118,9 @@ extension ISO_32000.Writer {
                 let objNum = state.nextObjectNumber()
                 pageContentRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
 
-                // ContentStream.data, ISO_32000.COS.Stream.data, and the Flate compression
-                // callback are all [Byte] post-cascade; the data flows with no bridge.
                 var streamData = content.data
                 var streamDict = ISO_32000.COS.Dictionary()
 
-                // Apply compression if available
                 if let compress = compression {
                     var compressed: [Byte] = []
                     compress.compress(streamData, into: &compressed)
@@ -162,8 +137,6 @@ extension ISO_32000.Writer {
             contentRefs.append(pageContentRefs)
         }
 
-        // Pre-allocate page object numbers (needed for destination links)
-        // We allocate: 1 for pages dict + N for each page
         let pagesObjNum = state.nextObjectNumber()
         let pagesRef = ISO_32000.COS.IndirectReference(objectNumber: pagesObjNum)
 
@@ -173,7 +146,6 @@ extension ISO_32000.Writer {
             pageRefs.append(ISO_32000.COS.IndirectReference(objectNumber: objNum))
         }
 
-        // Create annotation objects for each page (now pageRefs are available)
         var annotRefs: [[ISO_32000.COS.IndirectReference]] = []
         for page in document.pages {
             var pageAnnotRefs: [ISO_32000.COS.IndirectReference] = []
@@ -186,7 +158,6 @@ extension ISO_32000.Writer {
                 annotDict[.subtype] = .name(annotation.subtype.name)
                 annotDict[.rect] = ISO_32000.COS.Object(annotation.rect)
 
-                // Border (common entry)
                 if let border = annotation.border {
                     annotDict[.border] = .array([
                         .real(border.horizontalRadius),
@@ -195,24 +166,23 @@ extension ISO_32000.Writer {
                     ])
                 }
 
-                // Serialize type-specific content
                 switch annotation.content {
                 case .link(let link):
                     switch link.target {
                     case .uri(let uri):
-                        // URI action for external links
+
                         var actionDict = ISO_32000.COS.Dictionary()
                         actionDict[.s] = .name(.uri)
                         actionDict[.uri] = .string(ISO_32000.COS.StringValue(uri))
                         annotDict[.a] = .dictionary(actionDict)
 
                     case .destination(let dest):
-                        // Direct destination for internal links
+
                         annotDict[.dest] = serializeDestination(dest, pageRefs: pageRefs)
                     }
 
                 default:
-                    // Other annotation types not yet fully implemented in serialization
+
                     break
                 }
 
@@ -222,7 +192,6 @@ extension ISO_32000.Writer {
             annotRefs.append(pageAnnotRefs)
         }
 
-        // Write page objects (object numbers already allocated above)
         for (i, page) in document.pages.enumerated() {
             let pageRef = pageRefs[i]
 
@@ -239,22 +208,18 @@ extension ISO_32000.Writer {
                 pageDict[.rotate] = .integer(Int64(rotation.underlying))
             }
 
-            // Contents
             if contentRefs[i].count == 1 {
                 pageDict[.contents] = .reference(contentRefs[i][0])
             } else if contentRefs[i].count > 1 {
                 pageDict[.contents] = .array(contentRefs[i].map { .reference($0) })
             }
 
-            // Annotations
             if !annotRefs[i].isEmpty {
                 pageDict[.annots] = .array(annotRefs[i].map { .reference($0) })
             }
 
-            // Resources
             var resourcesDict = ISO_32000.COS.Dictionary()
 
-            // ISO_32000.Font resources
             if !page.resources.fonts.isEmpty {
                 var fontResourceDict = ISO_32000.COS.Dictionary()
                 for name in page.resources.fonts.keys
@@ -267,7 +232,6 @@ extension ISO_32000.Writer {
                 resourcesDict[.font] = .dictionary(fontResourceDict)
             }
 
-            // XObject resources (images)
             if !page.resources.xObjects.isEmpty {
                 var xObjectDict = ISO_32000.COS.Dictionary()
                 for name in page.resources.xObjects.keys
@@ -280,11 +244,10 @@ extension ISO_32000.Writer {
                 resourcesDict[.xObject] = .dictionary(xObjectDict)
             }
 
-            // ProcSet - include ImageC/ImageB if we have images
             var procSetArray: [ISO_32000.COS.Object] = [.name(.pdf), .name(.text)]
             if !page.resources.xObjects.isEmpty {
-                procSetArray.append(ISO_32000.COS.Object.name(.imagec))  // Color images
-                procSetArray.append(ISO_32000.COS.Object.name(.imageb))  // Grayscale images
+                procSetArray.append(ISO_32000.COS.Object.name(.imagec))
+                procSetArray.append(ISO_32000.COS.Object.name(.imageb))
             }
             resourcesDict[.procSet] = .array(procSetArray)
 
@@ -298,7 +261,6 @@ extension ISO_32000.Writer {
             )
         }
 
-        // Pages dictionary
         var pagesDict = ISO_32000.COS.Dictionary()
         pagesDict[.type] = .name(.pages)
         pagesDict[.kids] = .array(pageRefs.map { .reference($0) })
@@ -307,13 +269,11 @@ extension ISO_32000.Writer {
         state.objectOffsets[pagesObjNum] = buffer.count
         writeIndirectObject(pagesObjNum, object: .dictionary(pagesDict), into: &buffer)
 
-        // ISO_32000.Outline (if present)
         var outlineRef: ISO_32000.COS.IndirectReference?
         if let outline = document.outline, !outline.isEmpty {
             outlineRef = writeOutline(outline, pageRefs: pageRefs, state: &state, into: &buffer)
         }
 
-        // Catalog
         let catalogObjNum = state.nextObjectNumber()
         var catalogDict = ISO_32000.COS.Dictionary()
         catalogDict[.type] = .name(.catalog)
@@ -326,7 +286,6 @@ extension ISO_32000.Writer {
         state.objectOffsets[catalogObjNum] = buffer.count
         writeIndirectObject(catalogObjNum, object: .dictionary(catalogDict), into: &buffer)
 
-        // Info dictionary (optional)
         var infoRef: ISO_32000.COS.IndirectReference?
         if let info = document.info {
             let infoObjNum = state.nextObjectNumber()
@@ -362,11 +321,9 @@ extension ISO_32000.Writer {
             writeIndirectObject(infoObjNum, object: .dictionary(infoDict), into: &buffer)
         }
 
-        // Cross-reference table
         let xrefOffset = buffer.count
         writeXref(state: state, into: &buffer)
 
-        // Trailer
         writeTrailer(
             size: state.objectCount + 1,
             rootRef: ISO_32000.COS.IndirectReference(objectNumber: catalogObjNum),
@@ -376,14 +333,11 @@ extension ISO_32000.Writer {
         )
     }
 
-    /// Convenience: write and return bytes
     public mutating func write(_ document: ISO_32000.Document) -> [Byte] {
         var buffer: [Byte] = []
         write(document, into: &buffer)
         return buffer
     }
-
-    // MARK: - Private Helpers
 
     private func writeHeader<Buffer: RangeReplaceableCollection>(
         _ version: ISO_32000.Version,
@@ -409,10 +363,8 @@ extension ISO_32000.Writer {
         buffer.append(contentsOf: "xref\n".utf8)
         buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8)
 
-        // Entry 0: free object (head of free list)
         buffer.append(contentsOf: "0000000000 65535 f \n".utf8)
 
-        // Object entries
         for i in 1...state.objectCount {
             let offset = state.objectOffsets[i] ?? 0
             var offsetStr = Swift.String(offset)
@@ -424,9 +376,6 @@ extension ISO_32000.Writer {
         }
     }
 
-    // MARK: - ISO_32000.Outline Writing
-
-    /// Helper type for tracking outline item metadata during serialization
     private struct OutlineFlatItem {
         let item: ISO_32000.Outline.Item
         let objNum: Int
@@ -443,13 +392,11 @@ extension ISO_32000.Writer {
         state: inout State,
         into buffer: inout Buffer
     ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
-        // ISO_32000.Outline root object number
+
         let outlineObjNum = state.nextObjectNumber()
         let outlineRef = ISO_32000.COS.IndirectReference(objectNumber: outlineObjNum)
 
-        // First pass: assign object numbers to all items in depth-first order
-        // We track items by their flat index
-        var itemObjNums: [Int] = []  // flatIndex -> objNum
+        var itemObjNums: [Int] = []
         var allItems: [ISO_32000.Outline.Item] = []
 
         func assignObjectNumbers(_ items: [ISO_32000.Outline.Item]) {
@@ -464,12 +411,11 @@ extension ISO_32000.Writer {
         }
         assignObjectNumbers(outline.items)
 
-        // Second pass: build flat list with correct references
         var flatItems: [OutlineFlatItem] = []
         var currentIndex = 0
 
         func buildFlatList(_ items: [ISO_32000.Outline.Item], parentObjNum: Int) {
-            // First, collect object numbers for all items at this level
+
             var siblingObjNums: [Int] = []
             var tempIndex = currentIndex
             for item in items {
@@ -478,21 +424,18 @@ extension ISO_32000.Writer {
                 tempIndex += countDescendants(item)
             }
 
-            // Now build the flat items with correct sibling references
             for (i, item) in items.enumerated() {
                 let myObjNum = itemObjNums[currentIndex]
                 currentIndex += 1
 
-                // Previous and next siblings from our pre-collected list
                 let prevObjNum = i > 0 ? siblingObjNums[i - 1] : nil
                 let nextObjNum = i < items.count - 1 ? siblingObjNums[i + 1] : nil
 
-                // First and last child
                 var firstChildObjNum: Int? = nil
                 var lastChildObjNum: Int? = nil
                 if !item.children.isEmpty {
-                    firstChildObjNum = itemObjNums[currentIndex]  // Next item is first child
-                    // Last child: need to find it
+                    firstChildObjNum = itemObjNums[currentIndex]
+
                     var lastChildIndex = currentIndex
                     for (j, child) in item.children.enumerated() {
                         if j == item.children.count - 1 {
@@ -521,7 +464,6 @@ extension ISO_32000.Writer {
             }
         }
 
-        // Helper to count all descendants of an item
         func countDescendants(_ item: ISO_32000.Outline.Item) -> Int {
             var count = 0
             for child in item.children {
@@ -533,7 +475,6 @@ extension ISO_32000.Writer {
 
         buildFlatList(outline.items, parentObjNum: outlineObjNum)
 
-        // Write outline root dictionary
         var outlineDict = ISO_32000.COS.Dictionary()
         outlineDict[.type] = .name(.outlines)
 
@@ -541,7 +482,7 @@ extension ISO_32000.Writer {
             outlineDict[.first] = .reference(
                 ISO_32000.COS.IndirectReference(objectNumber: itemObjNums[0])
             )
-            // Find last top-level item's object number
+
             var lastTopLevelIndex = 0
             for (i, item) in outline.items.enumerated() {
                 if i == outline.items.count - 1 {
@@ -560,7 +501,6 @@ extension ISO_32000.Writer {
         state.objectOffsets[outlineObjNum] = buffer.count
         writeIndirectObject(outlineObjNum, object: .dictionary(outlineDict), into: &buffer)
 
-        // Write all outline item dictionaries
         for fi in flatItems {
             var itemDict = ISO_32000.COS.Dictionary()
             itemDict[.title] = .string(ISO_32000.COS.StringValue(fi.item.title))
@@ -581,21 +521,19 @@ extension ISO_32000.Writer {
                 itemDict[.last] = .reference(ISO_32000.COS.IndirectReference(objectNumber: last))
             }
 
-            // Count: positive if open, negative if closed
             if !fi.item.children.isEmpty {
                 let descendantCount = fi.item.visibleDescendantCount - 1
                 let countValue = fi.item.isOpen ? descendantCount : -descendantCount
                 itemDict[.count] = .integer(Int64(countValue))
             }
 
-            // Target (destination or action)
             if let target = fi.item.target {
                 switch target {
                 case .destination(let destination):
                     itemDict[.dest] = serializeDestination(destination, pageRefs: pageRefs)
 
                 case .action:
-                    // Action serialization not yet implemented
+
                     break
                 }
             }
@@ -702,23 +640,13 @@ extension ISO_32000.Writer {
         buffer.append(contentsOf: "%%EOF\n".utf8)
     }
 
-    // MARK: - Embedded TrueType ISO_32000.Font Writing
-
-    /// Write an embedded TrueType font to the PDF.
-    ///
-    /// This creates:
-    /// 1. FontFile2 stream (raw TrueType data)
-    /// 2. FontDescriptor dictionary
-    /// 3. ISO_32000.Font dictionary (referencing the above)
-    ///
-    /// Per ISO 32000-2:2020, Section 9.6.3 (TrueType fonts) and 9.9.1 (ISO_32000.Font embedding).
     private mutating func writeEmbeddedTrueTypeFont<Buffer: RangeReplaceableCollection>(
         font: ISO_32000.Font,
         embedded: ISO_32000.`9`.`6`.Embedded,
         state: inout State,
         into buffer: inout Buffer
     ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
-        // 1. Write FontFile2 stream (the raw TrueType font program)
+
         let fontFileObjNum = state.nextObjectNumber()
         let fontFileRef = ISO_32000.COS.IndirectReference(objectNumber: fontFileObjNum)
 
@@ -726,7 +654,6 @@ extension ISO_32000.Writer {
         var fontFileDict = ISO_32000.COS.Dictionary()
         fontFileDict[.length1] = .integer(Int64(embedded.data.count))
 
-        // Apply compression if available
         if let compress = compression {
             var compressed: [Byte] = []
             compress.compress(fontFileData, into: &compressed)
@@ -740,7 +667,6 @@ extension ISO_32000.Writer {
         state.objectOffsets[fontFileObjNum] = buffer.count
         writeIndirectObject(fontFileObjNum, object: .stream(fontFileStream), into: &buffer)
 
-        // 2. Write FontDescriptor dictionary
         let descriptorObjNum = state.nextObjectNumber()
         let descriptorRef = ISO_32000.COS.IndirectReference(objectNumber: descriptorObjNum)
 
@@ -769,14 +695,12 @@ extension ISO_32000.Writer {
             into: &buffer
         )
 
-        // 3. Write ToUnicode CMap stream
         let toUnicodeObjNum = state.nextObjectNumber()
         let toUnicodeRef = ISO_32000.COS.IndirectReference(objectNumber: toUnicodeObjNum)
 
         var toUnicodeData = generateToUnicodeCMap()
         var toUnicodeDict = ISO_32000.COS.Dictionary()
 
-        // Apply compression if available
         if let compress = compression {
             var compressed: [Byte] = []
             compress.compress(toUnicodeData, into: &compressed)
@@ -790,7 +714,6 @@ extension ISO_32000.Writer {
         state.objectOffsets[toUnicodeObjNum] = buffer.count
         writeIndirectObject(toUnicodeObjNum, object: .stream(toUnicodeStream), into: &buffer)
 
-        // 4. Write ISO_32000.Font dictionary
         let fontObjNum = state.nextObjectNumber()
         let fontRef = ISO_32000.COS.IndirectReference(objectNumber: fontObjNum)
 
@@ -802,9 +725,6 @@ extension ISO_32000.Writer {
         fontDict[.encoding] = .name(.winAnsiEncoding)
         fontDict[.toUnicode] = .reference(toUnicodeRef)
 
-        // Build Widths array for WinAnsi range (32-255)
-        // Per ISO 32000-2, FirstChar and LastChar define the range,
-        // and Widths is an array of glyph widths for each character code
         let firstChar = 32
         let lastChar = 255
         fontDict[.firstChar] = .integer(Int64(firstChar))
@@ -813,9 +733,9 @@ extension ISO_32000.Writer {
         var widthsArray: [ISO_32000.COS.Object] = []
         let unitsPerEm = embedded.metrics.unitsPerEm
         for charCode in firstChar...lastChar {
-            // Get width for this character code
+
             let width = embedded.metrics.width(forCodePoint: UInt32(charCode))
-            // Scale to 1000 units (PDF standard for glyph widths)
+
             let scaledWidth = (width * 1000) / unitsPerEm
             widthsArray.append(.integer(Int64(scaledWidth)))
         }
@@ -827,17 +747,9 @@ extension ISO_32000.Writer {
         return fontRef
     }
 
-    /// Generate ToUnicode CMap for WinAnsi encoding
-    ///
-    /// Per ISO 32000-2:2020, Section 9.10.3:
-    /// > A ToUnicode CMap is used to map character codes to Unicode values.
-    /// > This is essential for text extraction and accessibility.
-    ///
-    /// - Returns: The CMap data as UTF-8 bytes
     private func generateToUnicodeCMap() -> [Byte] {
         var cmap = ""
 
-        // CMap header
         cmap += "/CIDInit /ProcSet findresource begin\n"
         cmap += "12 dict begin\n"
         cmap += "begincmap\n"
@@ -845,21 +757,16 @@ extension ISO_32000.Writer {
         cmap += "/CMapName /Adobe-Identity-UCS def\n"
         cmap += "/CMapType 2 def\n"
 
-        // Code space range (single byte: 00-FF)
         cmap += "1 begincodespacerange\n"
         cmap += "<00> <FF>\n"
         cmap += "endcodespacerange\n"
 
-        // Character mappings (WinAnsi to Unicode)
-        // WinAnsi codes 32-255 map to Unicode
         let mappings = Self.winAnsiToUnicode
         let mappingCount = mappings.count
 
         cmap += "\(mappingCount) beginbfchar\n"
         for (charCode, unicodeValue) in mappings.sorted(by: { $0.key < $1.key }) {
-            // Use RFC 4648 Base16 encoding (uppercase). Base16.encode writes ASCII
-            // hex digits, so its destination buffer element is ASCII.Code; bridge
-            // each scratch buffer back to [UInt8] for String(decoding:as:).
+
             var charCodeHex: [ASCII.Code] = []
             RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
             var unicodeHex: [ASCII.Code] = []
@@ -869,7 +776,6 @@ extension ISO_32000.Writer {
         }
         cmap += "endbfchar\n"
 
-        // CMap footer
         cmap += "endcmap\n"
         cmap += "CMapName currentdict /CMap defineresource pop\n"
         cmap += "end\n"
@@ -878,14 +784,9 @@ extension ISO_32000.Writer {
         return cmap.utf8.map(Byte.init)
     }
 
-    /// WinAnsi (Windows-1252) to Unicode mapping table
-    ///
-    /// Codes 32-127 and 160-255 map directly to the same Unicode code point.
-    /// Codes 128-159 have special mappings per Windows-1252.
     private static let winAnsiToUnicode: [Int: Int] = {
         var mapping: [Int: Int] = [:]
 
-        // Direct mappings: 32-127 (ASCII) and 160-255 (ISO-8859-1)
         for code in 32...127 {
             mapping[code] = code
         }
@@ -893,48 +794,44 @@ extension ISO_32000.Writer {
             mapping[code] = code
         }
 
-        // Windows-1252 specific mappings (128-159)
-        // These differ from ISO-8859-1
-        mapping[128] = 0x20AC  // € Euro sign
-        // 129 is undefined in Windows-1252
-        mapping[130] = 0x201A  // ‚ Single low-9 quotation mark
-        mapping[131] = 0x0192  // ƒ Latin small letter f with hook
-        mapping[132] = 0x201E  // „ Double low-9 quotation mark
-        mapping[133] = 0x2026  // … Horizontal ellipsis
-        mapping[134] = 0x2020  // † Dagger
-        mapping[135] = 0x2021  // ‡ Double dagger
-        mapping[136] = 0x02C6  // ˆ Modifier letter circumflex accent
-        mapping[137] = 0x2030  // ‰ Per mille sign
-        mapping[138] = 0x0160  // Š Latin capital letter S with caron
-        mapping[139] = 0x2039  // ‹ Single left-pointing angle quotation mark
-        mapping[140] = 0x0152  // Œ Latin capital ligature OE
-        // 141 is undefined in Windows-1252
-        mapping[142] = 0x017D  // Ž Latin capital letter Z with caron
-        // 143, 144 are undefined in Windows-1252
-        mapping[145] = 0x2018  // ' Left single quotation mark
-        mapping[146] = 0x2019  // ' Right single quotation mark
-        mapping[147] = 0x201C  // " Left double quotation mark
-        mapping[148] = 0x201D  // " Right double quotation mark
-        mapping[149] = 0x2022  // • Bullet
-        mapping[150] = 0x2013  // – En dash
-        mapping[151] = 0x2014  // — Em dash
-        mapping[152] = 0x02DC  // ˜ Small tilde
-        mapping[153] = 0x2122  // ™ Trade mark sign
-        mapping[154] = 0x0161  // š Latin small letter s with caron
-        mapping[155] = 0x203A  // › Single right-pointing angle quotation mark
-        mapping[156] = 0x0153  // œ Latin small ligature oe
-        // 157 is undefined in Windows-1252
-        mapping[158] = 0x017E  // ž Latin small letter z with caron
-        mapping[159] = 0x0178  // Ÿ Latin capital letter Y with diaeresis
+        mapping[128] = 0x20AC
+
+        mapping[130] = 0x201A
+        mapping[131] = 0x0192
+        mapping[132] = 0x201E
+        mapping[133] = 0x2026
+        mapping[134] = 0x2020
+        mapping[135] = 0x2021
+        mapping[136] = 0x02C6
+        mapping[137] = 0x2030
+        mapping[138] = 0x0160
+        mapping[139] = 0x2039
+        mapping[140] = 0x0152
+
+        mapping[142] = 0x017D
+
+        mapping[145] = 0x2018
+        mapping[146] = 0x2019
+        mapping[147] = 0x201C
+        mapping[148] = 0x201D
+        mapping[149] = 0x2022
+        mapping[150] = 0x2013
+        mapping[151] = 0x2014
+        mapping[152] = 0x02DC
+        mapping[153] = 0x2122
+        mapping[154] = 0x0161
+        mapping[155] = 0x203A
+        mapping[156] = 0x0153
+
+        mapping[158] = 0x017E
+        mapping[159] = 0x0178
 
         return mapping
     }()
 }
 
-// MARK: - Writer State
-
 extension ISO_32000.Writer {
-    /// Internal state for PDF writing
+
     struct State {
         var objectCount: Int = 0
         var objectOffsets: [Int: Int] = [:]
@@ -948,19 +845,11 @@ extension ISO_32000.Writer.State {
     }
 }
 
-// MARK: - Stream Compression
-
 extension ISO_32000 {
-    /// Stream compression callback
-    ///
-    /// This allows the core ISO 32000 module to support compression without
-    /// depending on RFC 1950/1951 directly.
-    ///
-    /// Uses `inout` pattern for consistency with RFC compress APIs.
+
     public struct StreamCompression: Sendable, Witness.`Protocol` {
         private let _compress: @Sendable ([Byte], inout [Byte]) -> Void
 
-        /// Create a compression callback
         public init(compress: @escaping @Sendable ([Byte], inout [Byte]) -> Void) {
             self._compress = compress
         }
@@ -968,30 +857,14 @@ extension ISO_32000 {
 }
 
 extension ISO_32000.StreamCompression {
-    /// Compress data into output buffer
+
     public func compress(_ input: [Byte], into output: inout [Byte]) {
         _compress(input, &output)
     }
 }
 
-// MARK: - Binary.Serializable
-
 extension ISO_32000.Document: Binary.Serializable {
-    /// Serialize a PDF document to bytes
-    ///
-    /// Uses a default Writer without compression.
-    /// For compression support, use `Writer.write(_:into:)` directly.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// // Simple usage with .bytes property
-    /// let pdfBytes = document.bytes
-    ///
-    /// // Streaming to a buffer
-    /// var buffer: [Byte] = []
-    /// document.serialize(into: &buffer)
-    /// ```
+
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ document: Self,
         into buffer: inout Buffer

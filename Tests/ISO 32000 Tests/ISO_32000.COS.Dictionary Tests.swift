@@ -1,13 +1,9 @@
-// ISO_32000.COS.Dictionary Tests.swift
-
 import Testing
 
 @testable import ISO_32000
 
 @Suite
 struct `ISO_32000.COS.Dictionary Tests` {
-
-    // MARK: - Construction
 
     @Test
     func `Creates empty dictionary`() {
@@ -26,8 +22,6 @@ struct `ISO_32000.COS.Dictionary Tests` {
         #expect(dict[.type] == .name(.catalog))
         #expect(dict[.pages] == .integer(5))
     }
-
-    // MARK: - Subscript Access
 
     @Test
     func `Gets existing entry`() throws {
@@ -66,8 +60,6 @@ struct `ISO_32000.COS.Dictionary Tests` {
         #expect(dict.isEmpty)
     }
 
-    // MARK: - Keys and Values
-
     @Test
     func `Keys collection`() throws {
         let dict: ISO_32000.COS.Dictionary = [
@@ -90,8 +82,6 @@ struct `ISO_32000.COS.Dictionary Tests` {
         #expect(values.count == 2)
     }
 
-    // MARK: - Sorted Entries
-
     @Test
     func `Sorted entries are alphabetical by key`() throws {
         let dict: ISO_32000.COS.Dictionary = [
@@ -104,8 +94,6 @@ struct `ISO_32000.COS.Dictionary Tests` {
         #expect(sorted[1].key == .count)
         #expect(sorted[2].key == .type)
     }
-
-    // MARK: - Equality
 
     @Test
     func `Equal dictionaries with same entries`() throws {
@@ -120,8 +108,6 @@ struct `ISO_32000.COS.Dictionary Tests` {
         let b: ISO_32000.COS.Dictionary = [.type: .name(.catalog)]
         #expect(a != b)
     }
-
-    // MARK: - Serialization
 
     @Test
     func `Serializes dictionary to PDF syntax`() throws {

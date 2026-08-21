@@ -1,5 +1,3 @@
-// ISO_32000.Font Tests.swift
-
 import Byte_Primitives
 import Testing
 
@@ -7,8 +5,6 @@ import Testing
 
 @Suite
 struct `ISO_32000.Font Tests` {
-
-    // MARK: - Standard 14 Fonts
 
     @Test
     func `Standard 14 fonts collection has 14 fonts`() {
@@ -28,8 +24,6 @@ struct `ISO_32000.Font Tests` {
         let uniqueResources = Set(resources)
         #expect(uniqueResources.count == 14)
     }
-
-    // MARK: - Helvetica Family
 
     @Test
     func `Helvetica regular font`() {
@@ -67,8 +61,6 @@ struct `ISO_32000.Font Tests` {
         #expect(!font.isMonospaced)
     }
 
-    // MARK: - Times Family
-
     @Test
     func `Times regular font`() {
         let font = ISO_32000.Font.Times.regular
@@ -104,8 +96,6 @@ struct `ISO_32000.Font Tests` {
         #expect(font.family == .times)
         #expect(!font.isMonospaced)
     }
-
-    // MARK: - Courier Family
 
     @Test
     func `Courier regular font`() {
@@ -143,8 +133,6 @@ struct `ISO_32000.Font Tests` {
         #expect(font.isMonospaced)
     }
 
-    // MARK: - Special Fonts
-
     @Test
     func `Symbol font`() {
         let font = ISO_32000.Font.Symbol.regular
@@ -162,8 +150,6 @@ struct `ISO_32000.Font Tests` {
         #expect(font.family == .zapfDingbats)
         #expect(!font.isMonospaced)
     }
-
-    // MARK: - Convenience Accessors
 
     @Test
     func `Helvetica accessor returns Helvetica regular`() {
@@ -183,8 +169,6 @@ struct `ISO_32000.Font Tests` {
         #expect(font == ISO_32000.Font.Courier.regular)
     }
 
-    // MARK: - Equality
-
     @Test
     func `Fonts are equal when same base font`() {
         let a = ISO_32000.Font.helvetica
@@ -198,8 +182,6 @@ struct `ISO_32000.Font Tests` {
         let b = ISO_32000.Font.times
         #expect(a != b)
     }
-
-    // MARK: - Font Variants
 
     @Test
     func `Bold variant of Helvetica`() {
@@ -225,8 +207,6 @@ struct `ISO_32000.Font Tests` {
         #expect(italic.family == .times)
     }
 
-    // MARK: - Text Measurement
-
     @Test
     func `String width calculation`() {
         let font = ISO_32000.Font.helvetica
@@ -237,7 +217,7 @@ struct `ISO_32000.Font Tests` {
     @Test
     func `Bytes width calculation`() {
         let font = ISO_32000.Font.helvetica
-        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]  // "Hello" in ASCII/WinAnsi
+        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
         let width = font.winAnsi.width(of: bytes, atSize: 12)
         #expect(width.underlying > 0)
     }

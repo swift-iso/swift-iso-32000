@@ -1,5 +1,3 @@
-// ISO_32000.Writer Tests.swift
-
 import Foundation
 import Testing
 
@@ -9,8 +7,6 @@ import Testing
 
 @Suite
 struct `ISO_32000.Writer Tests` {
-
-    // MARK: - PDF Structure
 
     @Test
     func `Writes valid PDF header`() {
@@ -104,8 +100,6 @@ struct `ISO_32000.Writer Tests` {
         #expect(str.contains("%%EOF"))
     }
 
-    // MARK: - Paper Sizes (Parameterized)
-
     @Test(arguments: [
         (ISO_32000.UserSpace.Rectangle.letter, 612.0, 792.0),
         (.a4, 595.276, 841.89),
@@ -126,8 +120,6 @@ struct `ISO_32000.Writer Tests` {
         #expect(str.contains("/MediaBox"))
     }
 
-    // MARK: - Document Info
-
     @Test
     func `Writes document info`() {
         let document = ISO_32000.Document(
@@ -147,8 +139,6 @@ struct `ISO_32000.Writer Tests` {
         #expect(str.contains("/Creator"))
         #expect(str.contains("/Info"))
     }
-
-    // MARK: - Compression
 
     @Test
     func `Writes compressed content with FlateDecode`() {
@@ -186,8 +176,6 @@ struct `ISO_32000.Writer Tests` {
         #expect(str.contains("/Filter /FlateDecode"))
     }
 
-    // MARK: - Multiple Pages
-
     @Test
     func `Writes multi-page document`() {
         let page1 = ISO_32000.Page.empty(size: .letter)
@@ -201,8 +189,6 @@ struct `ISO_32000.Writer Tests` {
 
         #expect(str.contains("/Count 2"))
     }
-
-    // MARK: - PDF Output for Visual Inspection
 
     @Test
     func `Outputs simple PDF for inspection`() throws {
@@ -284,18 +270,16 @@ struct `ISO_32000.Writer Tests` {
     #if os(macOS)
         @Test
         func `Outputs embedded TrueType font PDF for inspection`() throws {
-            // Load Geneva.ttf from system fonts
+
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
             let fontBytes = [Byte](fontData)
 
-            // Create embedded font with unique resource name (avoiding F1-F14 used by standard fonts)
             let customFont = try ISO_32000.Font(
                 data: fontBytes,
                 resourceName: try ISO_32000.COS.Name("CF1")
             )
 
-            // Also include Helvetica for comparison (uses F1 by default)
             let helvetica = ISO_32000.Font.helvetica
 
             let document = ISO_32000.Document(
@@ -309,17 +293,14 @@ struct `ISO_32000.Writer Tests` {
                         content: ISO_32000.ContentStream { builder in
                             builder.beginText()
 
-                            // Title with embedded font
                             builder.setFont(customFont, size: 24)
                             builder.moveText(dx: .init(72), dy: .init(700))
                             builder.showText("Embedded TrueType Font: Geneva")
 
-                            // Subtitle
                             builder.setFont(customFont, size: 14)
                             builder.moveText(dx: .init(0), dy: .init(-30))
                             builder.showText("This text uses Geneva.ttf embedded in the PDF.")
 
-                            // Sample text
                             builder.moveText(dx: .init(0), dy: .init(-25))
                             builder.showText("The quick brown fox jumps over the lazy dog.")
 
@@ -332,7 +313,6 @@ struct `ISO_32000.Writer Tests` {
                             builder.moveText(dx: .init(0), dy: .init(-25))
                             builder.showText("0123456789 !@#$%^&*()[]{}|;':\",./<>?")
 
-                            // Comparison with Helvetica
                             builder.setFont(helvetica, size: 14)
                             builder.moveText(dx: .init(0), dy: .init(-50))
                             builder.showText("--- Comparison: Helvetica (standard font) ---")
@@ -358,11 +338,10 @@ struct `ISO_32000.Writer Tests` {
 
             let path = try PDFOutput.write(pdf, name: "iso32000-embedded-truetype")
             #expect(!pdf.isEmpty)
-            #expect(pdf.count > 50000)  // Embedded font should make it larger
+            #expect(pdf.count > 50000)
             print("PDF written to: \(path)")
             print("PDF size: \(pdf.count) bytes")
 
-            // Verify the PDF contains TrueType markers
             let str = String(decoding: pdf, as: UTF8.self)
             #expect(str.contains("/Subtype /TrueType"))
             #expect(str.contains("/FontFile2"))
@@ -371,16 +350,14 @@ struct `ISO_32000.Writer Tests` {
 
         @Test
         func `Outputs subsetted TrueType font PDF for inspection`() throws {
-            // Load Geneva.ttf from system fonts
+
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
             let fontBytes = [Byte](fontData)
 
-            // Create embedded font
             let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)
             let fullSize = fullEmbedded.data.count
 
-            // Define ALL the text we'll use - must include every character that appears in the PDF
             let allText = """
                 Subsetted Font: Geneva
                 Hello World! This is a subset font test.
@@ -390,7 +367,6 @@ struct `ISO_32000.Writer Tests` {
             let usedChars = Set(allText)
             let text = "Hello World! This is a subset font test."
 
-            // Create subset
             let subsetEmbedded = try fullEmbedded.subsetted(for: usedChars)
             let subsetSize = subsetEmbedded.data.count
 
@@ -399,10 +375,8 @@ struct `ISO_32000.Writer Tests` {
             print("Reduction: \(100 - (subsetSize * 100 / fullSize))%")
             print("Characters used: \(usedChars.count)")
 
-            // Verify substantial reduction
             #expect(subsetSize < fullSize / 5)
 
-            // Create font from subset
             let customFont = try ISO_32000.Font(
                 embedded: subsetEmbedded,
                 resourceName: try ISO_32000.COS.Name("CF1")
@@ -419,12 +393,10 @@ struct `ISO_32000.Writer Tests` {
                         content: ISO_32000.ContentStream { builder in
                             builder.beginText()
 
-                            // Title
                             builder.setFont(customFont, size: 24)
                             builder.moveText(dx: .init(72), dy: .init(700))
                             builder.showText("Subsetted Font: Geneva")
 
-                            // Info
                             builder.setFont(customFont, size: 14)
                             builder.moveText(dx: .init(0), dy: .init(-30))
                             builder.showText(text)
@@ -452,10 +424,8 @@ struct `ISO_32000.Writer Tests` {
             print("PDF written to: \(path)")
             print("PDF size: \(pdf.count) bytes (vs ~740KB with full font)")
 
-            // Subsetted PDF should be much smaller than full font PDF
-            #expect(pdf.count < 100000)  // Should be under 100KB
+            #expect(pdf.count < 100000)
 
-            // Verify the PDF is valid
             let str = String(decoding: pdf, as: UTF8.self)
             #expect(str.contains("/Subtype /TrueType"))
             #expect(str.contains("/FontFile2"))

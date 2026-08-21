@@ -1,49 +1,8 @@
-// swift-format-ignore-file: AlwaysUseLowerCamelCase
-// Reason: glyph-name enum cases (Aacute, Ccedilla, …) are spec-mirroring PDF encoding glyph names (API-NAME-003).
-// Byte+ISO_32000.swift
-// ISO 32000-2:2020 Annex D - Byte-level encoding protocols and accessors
-//
-// Provides byte-level protocols and ergonomic accessors for PDF character encodings,
-// following the pattern established in swift-incits-4-1986 for ASCII.
-//
-// ## Philosophy
-//
-// Types conforming to Serializable protocols treat [Byte] as the canonical form.
-// String operations are derived through composition:
-//
-// ```
-// String → [Byte] (encoding) → Type  (parsing)
-// Type → [Byte] (bytes) → String     (serialization)
-// ```
-
 public import Byte_Primitives
 public import ISO_32000_Shared
 
-// MARK: - UInt8 Encoding Wrapper
-
 extension Byte {
-    /// WinAnsiEncoding byte constants and operations
-    ///
-    /// Provides ergonomic access to WinAnsiEncoding (Windows CP1252) byte values
-    /// for common characters, especially those that differ from ASCII.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Access common byte constants
-    /// Byte.winAnsi.euro        // 0x80 (€)
-    /// Byte.winAnsi.bullet      // 0x95 (•)
-    /// Byte.winAnsi.trademark   // 0x99 (™)
-    /// Byte.winAnsi.emdash      // 0x97 (—)
-    ///
-    /// // Decode a byte to Unicode
-    /// let byte: Byte = 0x80
-    /// byte.winAnsi.decoded      // "€" (Unicode.Scalar)
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (WIN column)
+
     @frozen
     public struct WinAnsi: Sendable {
         public let byte: Byte
@@ -54,91 +13,36 @@ extension Byte {
         }
     }
 
-    /// Access WinAnsiEncoding operations for this byte
     @inlinable
     public var winAnsi: WinAnsi {
         WinAnsi(self)
     }
 }
 
-// MARK: - WinAnsi Serializable Protocol
-
 extension Byte.WinAnsi {
-    /// Protocol for types with canonical WinAnsiEncoding byte-level transformations
-    ///
-    /// Types conforming to this protocol work at the byte level as the primitive form,
-    /// with string operations derived through composition via WinAnsiEncoding.
-    ///
-    /// ## Category Theory
-    ///
-    /// This protocol models the relationship between structured types and byte sequences:
-    /// - **Serialize**: `(T, Buffer) → Buffer` (buffer mutation, context-free)
-    /// - **Parse**: `(Context, [Byte]) → T` (may require context to interpret bytes)
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// struct PDFTextString: Byte.WinAnsi.Serializable {
-    ///     let rawValue: String
-    ///
-    ///     init<Bytes: Collection>(winAnsi bytes: Bytes, in context: Void) throws(Error) {
-    ///         self.rawValue = ISO_32000.WinAnsiEncoding.decode(bytes)
-    ///     }
-    ///
-    ///     static func serialize<Buffer: RangeReplaceableCollection>(
-    ///         winAnsi value: Self,
-    ///         into buffer: inout Buffer
-    ///     ) where Buffer.Element == Byte {
-    ///         if let bytes = ISO_32000.WinAnsiEncoding.encode(value.rawValue) {
-    ///             buffer.append(contentsOf: bytes)
-    ///         }
-    ///     }
-    /// }
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (WIN column)
+
     public protocol Serializable: Sendable {
-        /// The error type for parsing failures
+
         associatedtype Error: Swift.Error
 
-        /// The context type required for parsing (default: Void)
         associatedtype Context: Sendable = Void
 
-        /// Parse from canonical WinAnsiEncoding byte representation with context
-        ///
-        /// - Parameters:
-        ///   - bytes: The WinAnsiEncoding byte representation
-        ///   - context: Parsing context (use `()` for context-free types)
-        /// - Throws: Error if the bytes are malformed
         init<Bytes: Collection>(
             winAnsi bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
 
-        /// Serialize this value into a WinAnsiEncoding byte buffer
-        ///
-        /// - Parameters:
-        ///   - serializable: The value to serialize
-        ///   - buffer: The buffer to append bytes to
         static func serialize<Buffer: RangeReplaceableCollection>(
             winAnsi serializable: Self,
             into buffer: inout Buffer
         ) where Buffer.Element == Byte
     }
 
-    /// Protocol for WinAnsi types that need synthesized RawRepresentable conformance
-    ///
-    /// Use this protocol for struct types that need `rawValue` synthesized from
-    /// their WinAnsi serialization.
     public protocol RawRepresentable: Serializable, Swift.RawRepresentable {}
 }
 
-// MARK: - WinAnsi Context-Free Convenience
-
 extension Byte.WinAnsi.Serializable where Context == Void {
-    /// Parse from canonical WinAnsiEncoding byte representation (context-free)
+
     @inlinable
     public init<Bytes: Collection>(winAnsi bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
@@ -146,27 +50,13 @@ extension Byte.WinAnsi.Serializable where Context == Void {
     }
 }
 
-// MARK: - WinAnsi Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to WinAnsiEncoding bytes
-    ///
-    /// Returns `nil` if any character cannot be encoded.
-    ///
-    /// - Parameter string: The string to encode
+
     @inlinable
     public init?(winAnsi string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.WinAnsiEncoding.self)
     }
 
-    /// Encode a string to WinAnsiEncoding bytes with fallback
-    ///
-    /// Characters that cannot be encoded are replaced with `?` (0x3F).
-    ///
-    /// - Parameters:
-    ///   - string: The string to encode
-    ///   - withFallback: Must be `true` to use fallback mode
-    ///   - preservingControlChars: If true, control characters (0x00-0x1F) pass through unchanged (default: false)
     @inlinable
     public init(
         winAnsi string: some StringProtocol,
@@ -183,23 +73,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode WinAnsiEncoding bytes to a string
-    ///
-    /// Returns `nil` if any byte is undefined in WinAnsiEncoding.
-    ///
-    /// - Parameter bytes: The WinAnsiEncoding bytes to decode
+
     @inlinable
     public init?<Bytes: Collection>(winAnsi bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.WinAnsiEncoding.self)
     }
 
-    /// Decode WinAnsiEncoding bytes to a string with replacement
-    ///
-    /// Undefined bytes are replaced with U+FFFD.
-    ///
-    /// - Parameters:
-    ///   - bytes: The WinAnsiEncoding bytes to decode
-    ///   - withReplacement: Must be `true` to use replacement mode
     @inlinable
     public init<Bytes: Collection>(winAnsi bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -208,26 +87,7 @@ extension String {
 }
 
 extension Byte {
-    /// PDFDocEncoding byte constants and operations
-    ///
-    /// Provides ergonomic access to PDFDocEncoding byte values for text strings
-    /// outside content streams.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Access byte constants (note: differs from WinAnsi!)
-    /// Byte.pdfDoc.euro         // 0xA0 (€) - different from WinAnsi!
-    /// Byte.pdfDoc.bullet       // 0x80 (•)
-    ///
-    /// // Decode a byte
-    /// let byte: Byte = 0x80
-    /// byte.pdfDoc.decoded       // "•" (Unicode.Scalar)
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.3 — PDFDocEncoding
+
     @frozen
     public struct PDFDoc: Sendable {
         public let byte: Byte
@@ -238,27 +98,14 @@ extension Byte {
         }
     }
 
-    /// Access PDFDocEncoding operations for this byte
     @inlinable
     public var pdfDoc: PDFDoc {
         PDFDoc(self)
     }
 }
 
-// MARK: - PDFDoc Serializable Protocol
-
 extension Byte.PDFDoc {
-    /// Protocol for types with canonical PDFDocEncoding byte-level transformations
-    ///
-    /// Types conforming to this protocol work at the byte level as the primitive form,
-    /// with string operations derived through composition via PDFDocEncoding.
-    ///
-    /// PDFDocEncoding is used for text strings outside content streams, such as
-    /// document info dictionary values, bookmarks, and annotations.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.3 — PDFDocEncoding
+
     public protocol Serializable: Sendable {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
@@ -284,18 +131,13 @@ extension Byte.PDFDoc.Serializable where Context == Void {
     }
 }
 
-// MARK: - PDFDoc Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to PDFDocEncoding bytes
-    ///
-    /// Returns `nil` if any character cannot be encoded.
+
     @inlinable
     public init?(pdfDoc string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.PDFDocEncoding.self)
     }
 
-    /// Encode a string to PDFDocEncoding bytes with fallback
     @inlinable
     public init(pdfDoc string: some StringProtocol, withFallback: Bool) {
         self.init(string, encoding: ISO_32000.PDFDocEncoding.self, withFallback: withFallback)
@@ -303,13 +145,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode PDFDocEncoding bytes to a string
+
     @inlinable
     public init?<Bytes: Collection>(pdfDoc bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.PDFDocEncoding.self)
     }
 
-    /// Decode PDFDocEncoding bytes to a string with replacement
     @inlinable
     public init<Bytes: Collection>(pdfDoc bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -318,13 +159,7 @@ extension String {
 }
 
 extension Byte {
-    /// StandardEncoding byte constants and operations
-    ///
-    /// Provides access to StandardEncoding (Type 1 font built-in encoding).
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (STD column)
+
     @frozen
     public struct Standard: Sendable {
         public let byte: Byte
@@ -335,23 +170,14 @@ extension Byte {
         }
     }
 
-    /// Access StandardEncoding operations for this byte
     @inlinable
     public var standard: Standard {
         Standard(self)
     }
 }
 
-// MARK: - Standard Serializable Protocol
-
 extension Byte.Standard {
-    /// Protocol for types with canonical StandardEncoding byte-level transformations
-    ///
-    /// StandardEncoding is the built-in encoding for Type 1 Latin-text fonts.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (STD column)
+
     public protocol Serializable: Sendable {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
@@ -379,16 +205,13 @@ extension Byte.Standard.Serializable where Context == Void {
     }
 }
 
-// MARK: - Standard Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to StandardEncoding bytes
+
     @inlinable
     public init?(standard string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.StandardEncoding.self)
     }
 
-    /// Encode a string to StandardEncoding bytes with fallback
     @inlinable
     public init(standard string: some StringProtocol, withFallback: Bool) {
         self.init(string, encoding: ISO_32000.StandardEncoding.self, withFallback: withFallback)
@@ -396,13 +219,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode StandardEncoding bytes to a string
+
     @inlinable
     public init?<Bytes: Collection>(standard bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.StandardEncoding.self)
     }
 
-    /// Decode StandardEncoding bytes to a string with replacement
     @inlinable
     public init<Bytes: Collection>(standard bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -415,13 +237,7 @@ extension String {
 }
 
 extension Byte {
-    /// MacRomanEncoding byte constants and operations
-    ///
-    /// Provides access to MacRomanEncoding (Mac OS standard Latin encoding).
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (MAC column)
+
     @frozen
     public struct MacRoman: Sendable {
         public let byte: Byte
@@ -432,23 +248,14 @@ extension Byte {
         }
     }
 
-    /// Access MacRomanEncoding operations for this byte
     @inlinable
     public var macRoman: MacRoman {
         MacRoman(self)
     }
 }
 
-// MARK: - MacRoman Serializable Protocol
-
 extension Byte.MacRoman {
-    /// Protocol for types with canonical MacRomanEncoding byte-level transformations
-    ///
-    /// MacRomanEncoding is the Mac OS standard Latin encoding.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.2 — Latin character set and encodings (MAC column)
+
     public protocol Serializable: Sendable {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
@@ -475,16 +282,13 @@ extension Byte.MacRoman.Serializable where Context == Void {
     }
 }
 
-// MARK: - MacRoman Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to MacRomanEncoding bytes
+
     @inlinable
     public init?(macRoman string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.MacRomanEncoding.self)
     }
 
-    /// Encode a string to MacRomanEncoding bytes with fallback
     @inlinable
     public init(macRoman string: some StringProtocol, withFallback: Bool) {
         self.init(string, encoding: ISO_32000.MacRomanEncoding.self, withFallback: withFallback)
@@ -492,13 +296,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode MacRomanEncoding bytes to a string
+
     @inlinable
     public init?<Bytes: Collection>(macRoman bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.MacRomanEncoding.self)
     }
 
-    /// Decode MacRomanEncoding bytes to a string with replacement
     @inlinable
     public init<Bytes: Collection>(macRoman bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -511,13 +314,7 @@ extension String {
 }
 
 extension Byte {
-    /// SymbolEncoding byte constants and operations
-    ///
-    /// Provides access to SymbolEncoding (Symbol font built-in encoding).
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.5 — Symbol set and encoding
+
     @frozen
     public struct Symbol: Sendable {
         public let byte: Byte
@@ -528,23 +325,14 @@ extension Byte {
         }
     }
 
-    /// Access SymbolEncoding operations for this byte
     @inlinable
     public var symbol: Symbol {
         Symbol(self)
     }
 }
 
-// MARK: - Symbol Serializable Protocol
-
 extension Byte.Symbol {
-    /// Protocol for types with canonical SymbolEncoding byte-level transformations
-    ///
-    /// SymbolEncoding is the built-in encoding for the Symbol font.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.5 — Symbol set and encoding
+
     public protocol Serializable: Sendable {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
@@ -570,16 +358,13 @@ extension Byte.Symbol.Serializable where Context == Void {
     }
 }
 
-// MARK: - Symbol Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to SymbolEncoding bytes
+
     @inlinable
     public init?(symbol string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.SymbolEncoding.self)
     }
 
-    /// Encode a string to SymbolEncoding bytes with fallback
     @inlinable
     public init(symbol string: some StringProtocol, withFallback: Bool) {
         self.init(string, encoding: ISO_32000.SymbolEncoding.self, withFallback: withFallback)
@@ -587,13 +372,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode SymbolEncoding bytes to a string
+
     @inlinable
     public init?<Bytes: Collection>(symbol bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.SymbolEncoding.self)
     }
 
-    /// Decode SymbolEncoding bytes to a string with replacement
     @inlinable
     public init<Bytes: Collection>(symbol bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -602,13 +386,7 @@ extension String {
 }
 
 extension Byte {
-    /// ZapfDingbatsEncoding byte constants and operations
-    ///
-    /// Provides access to ZapfDingbatsEncoding (ZapfDingbats font encoding).
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.6 — ZapfDingbats set and encoding
+
     @frozen
     public struct ZapfDingbats: Sendable {
         public let byte: Byte
@@ -619,23 +397,14 @@ extension Byte {
         }
     }
 
-    /// Access ZapfDingbatsEncoding operations for this byte
     @inlinable
     public var zapfDingbats: ZapfDingbats {
         ZapfDingbats(self)
     }
 }
 
-// MARK: - ZapfDingbats Serializable Protocol
-
 extension Byte.ZapfDingbats {
-    /// Protocol for types with canonical ZapfDingbatsEncoding byte-level transformations
-    ///
-    /// ZapfDingbatsEncoding is the built-in encoding for the ZapfDingbats font.
-    ///
-    /// ## Reference
-    ///
-    /// ISO 32000-2:2020, Table D.6 — ZapfDingbats set and encoding
+
     public protocol Serializable: Sendable {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
@@ -662,16 +431,13 @@ extension Byte.ZapfDingbats.Serializable where Context == Void {
     }
 }
 
-// MARK: - ZapfDingbats Conversion Convenience
-
 extension Array where Element == Byte {
-    /// Encode a string to ZapfDingbatsEncoding bytes
+
     @inlinable
     public init?(zapfDingbats string: some StringProtocol) {
         self.init(string, encoding: ISO_32000.ZapfDingbatsEncoding.self)
     }
 
-    /// Encode a string to ZapfDingbatsEncoding bytes with fallback
     @inlinable
     public init(zapfDingbats string: some StringProtocol, withFallback: Bool) {
         self.init(string, encoding: ISO_32000.ZapfDingbatsEncoding.self, withFallback: withFallback)
@@ -679,13 +445,12 @@ extension Array where Element == Byte {
 }
 
 extension String {
-    /// Decode ZapfDingbatsEncoding bytes to a string
+
     @inlinable
     public init?<Bytes: Collection>(zapfDingbats bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.ZapfDingbatsEncoding.self)
     }
 
-    /// Decode ZapfDingbatsEncoding bytes to a string with replacement
     @inlinable
     public init<Bytes: Collection>(zapfDingbats bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
@@ -697,507 +462,352 @@ extension String {
     }
 }
 
-// MARK: - WinAnsi Instance Operations
-
 extension Byte.WinAnsi {
-    /// Decode this byte to its Unicode scalar in WinAnsiEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.WinAnsiEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in WinAnsiEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.WinAnsiEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - WinAnsi Static Constants (PDF 1.3+ mappings)
-
 extension Byte.WinAnsi {
-    // MARK: Extended Latin (0x80-0x9F) - PDF 1.3+
 
-    /// EURO SIGN (0x80) - €
-    /// Added in PDF 1.3
     public static let euro: Byte = 0x80
 
-    /// SINGLE LOW-9 QUOTATION MARK (0x82) - ‚
     public static let quotesinglbase: Byte = 0x82
 
-    /// LATIN SMALL LETTER F WITH HOOK (0x83) - ƒ
     public static let florin: Byte = 0x83
 
-    /// DOUBLE LOW-9 QUOTATION MARK (0x84) - „
     public static let quotedblbase: Byte = 0x84
 
-    /// HORIZONTAL ELLIPSIS (0x85) - …
     public static let ellipsis: Byte = 0x85
 
-    /// DAGGER (0x86) - †
     public static let dagger: Byte = 0x86
 
-    /// DOUBLE DAGGER (0x87) - ‡
     public static let daggerdbl: Byte = 0x87
 
-    /// MODIFIER LETTER CIRCUMFLEX ACCENT (0x88) - ˆ
     public static let circumflex: Byte = 0x88
 
-    /// PER MILLE SIGN (0x89) - ‰
     public static let perthousand: Byte = 0x89
 
-    /// LATIN CAPITAL LETTER S WITH CARON (0x8A) - Š
     public static let Scaron: Byte = 0x8A
 
-    /// SINGLE LEFT-POINTING ANGLE QUOTATION MARK (0x8B) - ‹
     public static let guilsinglleft: Byte = 0x8B
 
-    /// LATIN CAPITAL LIGATURE OE (0x8C) - Œ
     public static let OE: Byte = 0x8C
 
-    /// LATIN CAPITAL LETTER Z WITH CARON (0x8E) - Ž
-    /// Added in PDF 1.3
     public static let Zcaron: Byte = 0x8E
 
-    /// LEFT SINGLE QUOTATION MARK (0x91) - '
     public static let quoteleft: Byte = 0x91
 
-    /// RIGHT SINGLE QUOTATION MARK (0x92) - '
     public static let quoteright: Byte = 0x92
 
-    /// LEFT DOUBLE QUOTATION MARK (0x93) - "
     public static let quotedblleft: Byte = 0x93
 
-    /// RIGHT DOUBLE QUOTATION MARK (0x94) - "
     public static let quotedblright: Byte = 0x94
 
-    /// BULLET (0x95) - •
-    /// Note: PDF spec uses BULLET (U+2022), not MIDDLE DOT
     public static let bullet: Byte = 0x95
 
-    /// EN DASH (0x96) - –
     public static let endash: Byte = 0x96
 
-    /// EM DASH (0x97) - —
     public static let emdash: Byte = 0x97
 
-    /// SMALL TILDE (0x98) - ˜
     public static let tilde: Byte = 0x98
 
-    /// TRADE MARK SIGN (0x99) - ™
     public static let trademark: Byte = 0x99
 
-    /// LATIN SMALL LETTER S WITH CARON (0x9A) - š
     public static let scaron: Byte = 0x9A
 
-    /// SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (0x9B) - ›
     public static let guilsinglright: Byte = 0x9B
 
-    /// LATIN SMALL LIGATURE OE (0x9C) - œ
     public static let oe: Byte = 0x9C
 
-    /// LATIN SMALL LETTER Z WITH CARON (0x9E) - ž
-    /// Added in PDF 1.3
     public static let zcaron: Byte = 0x9E
 
-    /// LATIN CAPITAL LETTER Y WITH DIAERESIS (0x9F) - Ÿ
     public static let Ydieresis: Byte = 0x9F
 
-    // MARK: Latin-1 Supplement (0xA0-0xFF)
-
-    /// NO-BREAK SPACE (0xA0)
     public static let nbsp: Byte = 0xA0
 
-    /// INVERTED EXCLAMATION MARK (0xA1) - ¡
     public static let exclamdown: Byte = 0xA1
 
-    /// CENT SIGN (0xA2) - ¢
     public static let cent: Byte = 0xA2
 
-    /// POUND SIGN (0xA3) - £
     public static let sterling: Byte = 0xA3
 
-    /// CURRENCY SIGN (0xA4) - ¤
     public static let currency: Byte = 0xA4
 
-    /// YEN SIGN (0xA5) - ¥
     public static let yen: Byte = 0xA5
 
-    /// SECTION SIGN (0xA7) - §
     public static let section: Byte = 0xA7
 
-    /// COPYRIGHT SIGN (0xA9) - ©
     public static let copyright: Byte = 0xA9
 
-    /// LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (0xAB) - «
     public static let guillemotleft: Byte = 0xAB
 
-    /// REGISTERED SIGN (0xAE) - ®
     public static let registered: Byte = 0xAE
 
-    /// DEGREE SIGN (0xB0) - °
     public static let degree: Byte = 0xB0
 
-    /// PLUS-MINUS SIGN (0xB1) - ±
     public static let plusminus: Byte = 0xB1
 
-    /// PILCROW SIGN (0xB6) - ¶
     public static let paragraph: Byte = 0xB6
 
-    /// MIDDLE DOT (0xB7) - ·
     public static let periodcentered: Byte = 0xB7
 
-    /// RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (0xBB) - »
     public static let guillemotright: Byte = 0xBB
 
-    /// VULGAR FRACTION ONE QUARTER (0xBC) - ¼
     public static let onequarter: Byte = 0xBC
 
-    /// VULGAR FRACTION ONE HALF (0xBD) - ½
     public static let onehalf: Byte = 0xBD
 
-    /// VULGAR FRACTION THREE QUARTERS (0xBE) - ¾
     public static let threequarters: Byte = 0xBE
 
-    /// INVERTED QUESTION MARK (0xBF) - ¿
     public static let questiondown: Byte = 0xBF
 
-    /// MULTIPLICATION SIGN (0xD7) - ×
     public static let multiply: Byte = 0xD7
 
-    /// DIVISION SIGN (0xF7) - ÷
     public static let divide: Byte = 0xF7
 }
 
-// MARK: - PDFDoc Instance Operations
-
 extension Byte.PDFDoc {
-    /// Decode this byte to its Unicode scalar in PDFDocEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.PDFDocEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in PDFDocEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.PDFDocEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - PDFDoc Static Constants
-
 extension Byte.PDFDoc {
-    // MARK: Diacritical Marks (0x18-0x1F) - Unique to PDFDocEncoding
 
-    /// BREVE (0x18) - ˘
     public static let breve: Byte = 0x18
 
-    /// CARON (0x19) - ˇ
     public static let caron: Byte = 0x19
 
-    /// MODIFIER LETTER CIRCUMFLEX ACCENT (0x1A) - ˆ
     public static let circumflex: Byte = 0x1A
 
-    /// DOT ABOVE (0x1B) - ˙
     public static let dotaccent: Byte = 0x1B
 
-    /// DOUBLE ACUTE ACCENT (0x1C) - ˝
     public static let hungarumlaut: Byte = 0x1C
 
-    /// OGONEK (0x1D) - ˛
     public static let ogonek: Byte = 0x1D
 
-    /// RING ABOVE (0x1E) - ˚
     public static let ring: Byte = 0x1E
 
-    /// SMALL TILDE (0x1F) - ˜
     public static let tilde: Byte = 0x1F
 
-    // MARK: 0x80-0x9F range (differs from WinAnsi!)
-
-    /// BULLET (0x80) - •
-    /// Note: In PDFDocEncoding, bullet is at 0x80 (same byte as Euro in WinAnsi!)
     public static let bullet: Byte = 0x80
 
-    /// DAGGER (0x81) - †
     public static let dagger: Byte = 0x81
 
-    /// DOUBLE DAGGER (0x82) - ‡
     public static let daggerdbl: Byte = 0x82
 
-    /// HORIZONTAL ELLIPSIS (0x83) - …
     public static let ellipsis: Byte = 0x83
 
-    /// EM DASH (0x84) - —
     public static let emdash: Byte = 0x84
 
-    /// EN DASH (0x85) - –
     public static let endash: Byte = 0x85
 
-    /// LATIN SMALL LETTER F WITH HOOK (0x86) - ƒ
     public static let florin: Byte = 0x86
 
-    /// FRACTION SLASH (0x87) - ⁄
     public static let fraction: Byte = 0x87
 
-    /// SINGLE LEFT-POINTING ANGLE QUOTATION MARK (0x88) - ‹
     public static let guilsinglleft: Byte = 0x88
 
-    /// SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (0x89) - ›
     public static let guilsinglright: Byte = 0x89
 
-    /// MINUS SIGN (0x8A) - −
     public static let minus: Byte = 0x8A
 
-    /// PER MILLE SIGN (0x8B) - ‰
     public static let perthousand: Byte = 0x8B
 
-    /// SINGLE LOW-9 QUOTATION MARK (0x8C) - ‚
     public static let quotesinglbase: Byte = 0x8C
 
-    /// DOUBLE LOW-9 QUOTATION MARK (0x8D) - „
     public static let quotedblbase: Byte = 0x8D
 
-    /// LEFT DOUBLE QUOTATION MARK (0x8E) - "
     public static let quotedblleft: Byte = 0x8E
 
-    /// RIGHT DOUBLE QUOTATION MARK (0x8F) - "
     public static let quotedblright: Byte = 0x8F
 
-    /// LEFT SINGLE QUOTATION MARK (0x90) - '
     public static let quoteleft: Byte = 0x90
 
-    /// RIGHT SINGLE QUOTATION MARK (0x91) - '
     public static let quoteright: Byte = 0x91
 
-    /// TRADE MARK SIGN (0x95) - ™
     public static let trademark: Byte = 0x95
 
-    /// LATIN SMALL LIGATURE FI (0x96) - fi
     public static let fi: Byte = 0x96
 
-    /// LATIN SMALL LIGATURE FL (0x97) - fl
     public static let fl: Byte = 0x97
 
-    /// LATIN CAPITAL LIGATURE OE (0x9A) - Œ
     public static let OE: Byte = 0x9A
 
-    /// LATIN CAPITAL LETTER S WITH CARON (0x9B) - Š
     public static let Scaron: Byte = 0x9B
 
-    /// LATIN CAPITAL LETTER Y WITH DIAERESIS (0x9C) - Ÿ
     public static let Ydieresis: Byte = 0x9C
 
-    /// LATIN SMALL LIGATURE OE (0x9E) - œ
     public static let oe: Byte = 0x9E
 
-    /// LATIN SMALL LETTER S WITH CARON (0x9F) - š
     public static let scaron: Byte = 0x9F
 
-    // MARK: 0xA0 - Euro (key difference from WinAnsi!)
-
-    /// EURO SIGN (0xA0) - €
-    /// Note: In PDFDocEncoding, Euro is at 0xA0 (WinAnsi has NBSP here!)
     public static let euro: Byte = 0xA0
 }
 
-// MARK: - Standard Instance Operations
-
 extension Byte.Standard {
-    /// Decode this byte to its Unicode scalar in StandardEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.StandardEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in StandardEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.StandardEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - Standard Static Constants
-
 extension Byte.Standard {
-    // Key differences from ASCII
 
-    /// RIGHT SINGLE QUOTATION MARK (0x27) - '
-    /// Note: StandardEncoding maps 0x27 to ' (U+2019), not ASCII apostrophe!
     public static let quoteright: Byte = 0x27
 
-    /// LEFT SINGLE QUOTATION MARK (0x60) - '
-    /// Note: StandardEncoding maps 0x60 to ' (U+2018), not ASCII grave!
     public static let quoteleft: Byte = 0x60
 
-    // Ligatures and special characters
-
-    /// LATIN SMALL LIGATURE FI (0xAE) - fi
     public static let fi: Byte = 0xAE
 
-    /// LATIN SMALL LIGATURE FL (0xAF) - fl
     public static let fl: Byte = 0xAF
 
-    /// FRACTION SLASH (0xA4) - ⁄
     public static let fraction: Byte = 0xA4
 
-    /// EM DASH (0xD0) - —
     public static let emdash: Byte = 0xD0
 
-    /// EN DASH (0xB1) - –
     public static let endash: Byte = 0xB1
 }
 
-// MARK: - MacRoman Instance Operations
-
 extension Byte.MacRoman {
-    /// Decode this byte to its Unicode scalar in MacRomanEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.MacRomanEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in MacRomanEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.MacRomanEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - MacRoman Static Constants
-
 extension Byte.MacRoman {
-    /// CURRENCY SIGN (0xDB) - ¤
-    /// Note: PDF maintains original Mac Roman mapping, NOT Apple's later Euro
+
     public static let currency: Byte = 0xDB
 
-    /// NO-BREAK SPACE (0xCA)
     public static let nbsp: Byte = 0xCA
 
-    /// LATIN SMALL LIGATURE FI (0xDE) - fi
     public static let fi: Byte = 0xDE
 
-    /// LATIN SMALL LIGATURE FL (0xDF) - fl
     public static let fl: Byte = 0xDF
 }
 
-// MARK: - Symbol Instance Operations
-
 extension Byte.Symbol {
-    /// Decode this byte to its Unicode scalar in SymbolEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.SymbolEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in SymbolEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.SymbolEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - Symbol Static Constants
-
 extension Byte.Symbol {
-    // Greek uppercase
-    /// GREEK CAPITAL LETTER ALPHA (0x41) - Α
+
     public static let Alpha: Byte = 0x41
-    /// GREEK CAPITAL LETTER BETA (0x42) - Β
+
     public static let Beta: Byte = 0x42
-    /// GREEK CAPITAL LETTER GAMMA (0x47) - Γ
+
     public static let Gamma: Byte = 0x47
-    /// GREEK CAPITAL LETTER DELTA (0x44) - Δ
+
     public static let Delta: Byte = 0x44
-    /// GREEK CAPITAL LETTER OMEGA (0x57) - Ω
+
     public static let Omega: Byte = 0x57
 
-    // Greek lowercase
-    /// GREEK SMALL LETTER ALPHA (0x61) - α
     public static let alpha: Byte = 0x61
-    /// GREEK SMALL LETTER BETA (0x62) - β
+
     public static let beta: Byte = 0x62
-    /// GREEK SMALL LETTER GAMMA (0x67) - γ
+
     public static let gamma: Byte = 0x67
-    /// GREEK SMALL LETTER DELTA (0x64) - δ
+
     public static let delta: Byte = 0x64
-    /// GREEK SMALL LETTER PI (0x70) - π
+
     public static let pi: Byte = 0x70
-    /// GREEK SMALL LETTER OMEGA (0x77) - ω
+
     public static let omega: Byte = 0x77
 
-    // Mathematical symbols
-    /// INFINITY (0xA5) - ∞
     public static let infinity: Byte = 0xA5
-    /// PLUS-MINUS SIGN (0xB1) - ±
+
     public static let plusminus: Byte = 0xB1
-    /// MULTIPLICATION SIGN (0xB4) - ×
+
     public static let multiply: Byte = 0xB4
-    /// DIVISION SIGN (0xB8) - ÷
+
     public static let divide: Byte = 0xB8
-    /// NOT EQUAL TO (0xB9) - ≠
+
     public static let notequal: Byte = 0xB9
-    /// LESS-THAN OR EQUAL TO (0xA3) - ≤
+
     public static let lessequal: Byte = 0xA3
-    /// GREATER-THAN OR EQUAL TO (0xB3) - ≥
+
     public static let greaterequal: Byte = 0xB3
 
-    // Set theory
-    /// INTERSECTION (0xC7) - ∩
     public static let intersection: Byte = 0xC7
-    /// UNION (0xC8) - ∪
+
     public static let union: Byte = 0xC8
-    /// ELEMENT OF (0xCE) - ∈
+
     public static let element: Byte = 0xCE
-    /// NOT AN ELEMENT OF (0xCF) - ∉
+
     public static let notelement: Byte = 0xCF
 }
 
-// MARK: - ZapfDingbats Instance Operations
-
 extension Byte.ZapfDingbats {
-    /// Decode this byte to its Unicode scalar in ZapfDingbatsEncoding
+
     @inlinable
     public var decoded: Unicode.Scalar? {
         ISO_32000.ZapfDingbatsEncoding.decode(byte)
     }
 
-    /// Check if this byte is defined in ZapfDingbatsEncoding
     @inlinable
     public var isDefined: Bool {
         ISO_32000.ZapfDingbatsEncoding.decode(byte) != nil
     }
 }
 
-// MARK: - ZapfDingbats Static Constants
-
 extension Byte.ZapfDingbats {
-    // Common symbols
-    /// UPPER BLADE SCISSORS (0x21) - ✁
+
     public static let scissors: Byte = 0x21
-    /// WRITING HAND (0x2A) - ✍
+
     public static let writingHand: Byte = 0x2A
-    /// CHECK MARK (0x33) - ✓
+
     public static let checkmark: Byte = 0x33
-    /// BALLOT X (0x37) - ✗
+
     public static let ballotX: Byte = 0x37
-    /// BLACK STAR (0x48) - ★
+
     public static let blackStar: Byte = 0x48
-    /// WHITE STAR (0x49) - ☆
+
     public static let whiteStar: Byte = 0x49
 
-    // Playing card suits
-    /// BLACK CLUB SUIT (0xAB) - ♣
     public static let club: Byte = 0xAB
-    /// BLACK DIAMOND SUIT (0xAC) - ♦
+
     public static let diamond: Byte = 0xAC
-    /// BLACK HEART SUIT (0xAD) - ♥
+
     public static let heart: Byte = 0xAD
-    /// BLACK SPADE SUIT (0xAE) - ♠
+
     public static let spade: Byte = 0xAE
 
-    // Arrows
-    /// HEAVY WIDE-HEADED RIGHTWARDS ARROW (0xD5) - ➔
     public static let arrowRight: Byte = 0xD5
 }

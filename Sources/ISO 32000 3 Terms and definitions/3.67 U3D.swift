@@ -1,3 +1,1 @@
-// ISO 32000-2:2020, 3.67 U3D
-
 import ISO_32000_Shared

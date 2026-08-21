@@ -1,5 +1,3 @@
-// Performance Tests.swift
-
 import Byte_Primitives
 import Testing
 
@@ -13,8 +11,6 @@ extension ISO_32000.Font {
 
     @Suite("Performance Tests", .serialized, .tags(.performance))
     struct Performance {
-
-        // MARK: - String Width Calculation
 
         @Test
         func `String width: 10 chars`() {
@@ -40,8 +36,6 @@ extension ISO_32000.Font {
             let _ = font.width(of: text, atSize: 12)
         }
 
-        // MARK: - WinAnsi Bytes Width Calculation
-
         @Test
         func `WinAnsi width: 10 bytes`() {
             let font = ISO_32000.Font.helvetica
@@ -52,7 +46,7 @@ extension ISO_32000.Font {
         @Test
         func `WinAnsi width: 100 bytes`() {
             let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: 0x61, count: 100)  // 'a' repeated
+            let bytes = [Byte](repeating: 0x61, count: 100)
             let _ = font.winAnsi.width(of: bytes, atSize: 12)
         }
 
@@ -63,12 +57,10 @@ extension ISO_32000.Font {
             let _ = font.winAnsi.width(of: bytes, atSize: 12)
         }
 
-        // MARK: - Throughput Tests
-
         @Test
         func `String width throughput (5s)`() {
             let font = ISO_32000.Font.helvetica
-            let text = String(repeating: "Lorem ipsum dolor sit amet. ", count: 4)  // ~100 chars
+            let text = String(repeating: "Lorem ipsum dolor sit amet. ", count: 4)
             let duration: Duration = .seconds(5)
             let start = ContinuousClock.now
 
@@ -111,8 +103,6 @@ extension ISO_32000.Font {
             print("📊 WinAnsi width throughput: \(Int(throughput)) calculations/sec")
         }
 
-        // MARK: - Scaling Analysis
-
         @Test
         func `Width calculation scaling analysis`() {
             let font = ISO_32000.Font.helvetica
@@ -143,7 +133,6 @@ extension ISO_32000.Font {
                 print("Size \(size): \(Int(timeUs)) us total, \(Int(perByte * 1000)) ns/byte")
             }
 
-            // Verify linear scaling: last per-byte cost should not exceed 3x first
             if results.count >= 2 {
                 let firstPerByte = results.first!.time / Double(results.first!.size)
                 let lastPerByte = results.last!.time / Double(results.last!.size)
@@ -153,8 +142,6 @@ extension ISO_32000.Font {
         }
     }
 }
-
-// MARK: - Regression Guards
 
 extension ISO_32000.Font {
 
@@ -166,9 +153,6 @@ extension ISO_32000.Font {
             let font = ISO_32000.Font.helvetica
             let bytes = [Byte](repeating: 0x61, count: 100)
 
-            // Minimum acceptable: 10,000 calculations/sec for 100-byte strings
-            // Baseline (2025-12-17): ~17,000-22,000/sec (varies with system load)
-            // Threshold is ~50% of baseline to account for variance
             let minThroughput = 10_000.0
 
             let duration: Duration = .seconds(2)
@@ -202,9 +186,6 @@ extension ISO_32000.Font {
             let font = ISO_32000.Font.helvetica
             let text = String(repeating: "a", count: 100)
 
-            // Minimum acceptable: 20,000 calculations/sec for 100-char strings
-            // Baseline (2025-12-17): ~30,000-65,000/sec (varies with system load)
-            // Threshold is ~50% of low-end baseline to account for variance
             let minThroughput = 20_000.0
 
             let duration: Duration = .seconds(2)
