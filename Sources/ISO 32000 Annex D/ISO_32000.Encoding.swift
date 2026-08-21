@@ -381,7 +381,7 @@ extension ISO_32000 {
         /// The string must contain only ASCII characters.
         @inlinable
         public init(_ name: StaticString) {
-            self.bytes = name.withUTF8Buffer { $0.map(Byte.init) }
+            self.bytes = name.withUTF8Buffer { unsafe $0.map(Byte.init) }
         }
     }
 }
