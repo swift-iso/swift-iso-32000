@@ -1,4 +1,4 @@
-public import Geometry_Primitives
+public import Geometry
 public import ISO_32000_7_Syntax
 public import ISO_32000_8_Graphics
 public import ISO_32000_Shared

@@ -1,5 +1,5 @@
-import Binary_Serializable_Primitives
-import Format_Primitives_Standard_Library_Integration
+import Binary_Serializable
+import Format_Standard_Library_Integration
 import Testing
 
 @testable import ISO_32000

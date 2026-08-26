@@ -1,8 +1,8 @@
-import Binary_Primitives
-import Binary_Serializable_Primitives
-public import Byte_Primitives
-import Format_Primitives
-import Geometry_Primitives
+import Binary
+import Binary_Serializable
+public import Byte
+import Format
+import Geometry
 import ISO_32000_7_Syntax
 
 extension ISO_32000.ContentStream {

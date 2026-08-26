@@ -1,6 +1,6 @@
-public import Dimension_Primitives
-@_exported public import Geometry_Primitives
-import Numeric_Primitives
+public import Dimension
+@_exported public import Geometry
+import Numeric
 
 public enum ISO_32000 {}
 

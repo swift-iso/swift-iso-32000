@@ -1,4 +1,4 @@
-public import Byte_Primitives
+public import Byte
 import ISO_32000_8_Graphics
 import ISO_32000_Annex_D
 public import ISO_32000_Shared

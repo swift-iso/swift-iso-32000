@@ -1,4 +1,4 @@
-import Binary_Primitives
+import Binary
 import ISO_32000_7_Syntax
 import Testing
 

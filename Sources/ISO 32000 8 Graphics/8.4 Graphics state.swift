@@ -1,6 +1,6 @@
-public import Geometry_Primitives
+public import Geometry
 public import ISO_32000_Shared
-import Real_Primitives
+import Real
 
 extension ISO_32000.`8` {
 

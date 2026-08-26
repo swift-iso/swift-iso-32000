@@ -1,4 +1,4 @@
-import Byte_Primitives
+import Byte
 import Foundation
 import ISO_32000_Shared
 import Testing

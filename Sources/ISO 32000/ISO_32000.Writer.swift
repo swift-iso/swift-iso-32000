@@ -1,11 +1,11 @@
-public import Binary_Primitives
-public import Binary_Serializable_Primitives
-import Byte_Primitives
+public import Binary
+public import Binary_Serializable
+import Byte
 import ISO_32000_9_Text
-import Ownership_Primitives
+import Ownership
 import RFC_4648
 import Standard_Library_Extensions
-public import Witness_Primitives
+public import Witness
 
 extension ISO_32000 {
 

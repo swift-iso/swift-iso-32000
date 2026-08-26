@@ -1,8 +1,8 @@
-public import Byte_Primitives
+public import Byte
 public import ISO_32000_7_Syntax
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
-public import Ownership_Primitives
+public import Ownership
 
 extension ISO_32000.`9` {
 

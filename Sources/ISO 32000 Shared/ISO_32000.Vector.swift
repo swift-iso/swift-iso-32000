@@ -1,4 +1,4 @@
-public import Geometry_Primitives
+public import Geometry
 
 extension ISO_32000 {
 

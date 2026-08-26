@@ -1,7 +1,7 @@
-public import Binary_Primitives
-public import Binary_Serializable_Primitives
-import Byte_Primitives
-public import Geometry_Primitives
+public import Binary
+public import Binary_Serializable
+import Byte
+public import Geometry
 import ISO_9899
 import Standard_Library_Extensions
 

@@ -1,6 +1,6 @@
-public import Binary_Primitives
-public import Binary_Serializable_Primitives
-import Byte_Primitives
+public import Binary
+public import Binary_Serializable
+import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 import Standard_Library_Extensions

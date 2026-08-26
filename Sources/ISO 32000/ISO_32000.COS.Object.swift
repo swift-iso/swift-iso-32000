@@ -1,6 +1,6 @@
 import ISO_32000_8_Graphics
 
-@_spi(Internal) public import struct Geometry_Primitives.Tagged
+@_spi(Internal) public import struct Geometry.Tagged
 
 extension ISO_32000.COS.Object {
 

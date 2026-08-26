@@ -1,5 +1,5 @@
-public import Byte_Primitives
-internal import Byte_Primitives_Standard_Library_Integration
+public import Byte
+internal import Byte_Standard_Library_Integration
 public import ISO_32000
 public import RFC_1950
 import W3C_PNG

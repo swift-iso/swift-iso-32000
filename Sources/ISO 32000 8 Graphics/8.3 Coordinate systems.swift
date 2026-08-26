@@ -1,8 +1,8 @@
-import Dimension_Primitives
-public import Geometry_Primitives
+import Dimension
+public import Geometry
 public import ISO_32000_Shared
 
-@_spi(Internal) import struct Dimension_Primitives.Tagged
+@_spi(Internal) import struct Dimension.Tagged
 
 extension ISO_32000.`8` {
 

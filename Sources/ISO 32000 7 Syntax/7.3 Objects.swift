@@ -1,10 +1,10 @@
-public import ASCII_Primitives
-internal import Binary_Endianness_Primitives
-public import Binary_Primitives
-internal import Binary_Primitives_Standard_Library_Integration
-public import Binary_Serializable_Primitives
-public import Format_Primitives
-import Formatter_Primitives
+public import ASCII
+internal import Binary_Endianness
+public import Binary
+internal import Binary_Standard_Library_Integration
+public import Binary_Serializable
+public import Format
+import Formatter
 import IEEE_754
 import ISO_32000_Annex_D
 public import ISO_32000_Shared

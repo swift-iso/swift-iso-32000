@@ -1,4 +1,4 @@
-public import Dimension_Primitives
+public import Dimension
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 
