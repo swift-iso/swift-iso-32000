@@ -107,16 +107,16 @@ let package = Package(
         .target(
             name: "ISO 32000 3 Terms and definitions",
             dependencies: [
-                "ISO 32000 Shared",
+                .target(name: "ISO 32000 Shared"),
                 .product(name: "Byte", package: "swift-byte"),
             ]
         ),
         .target(
             name: "ISO 32000 7 Syntax",
             dependencies: [
-                "ISO 32000 Shared",
-                "ISO 32000 3 Terms and definitions",
-                "ISO 32000 Annex D",
+                .target(name: "ISO 32000 Shared"),
+                .target(name: "ISO 32000 3 Terms and definitions"),
+                .target(name: "ISO 32000 Annex D"),
                 .product(name: "ASCII", package: "swift-ascii"),
                 .product(name: "Format", package: "swift-format"),
                 .product(name: "Binary", package: "swift-binary"),
@@ -130,8 +130,8 @@ let package = Package(
         .target(
             name: "ISO 32000 8 Graphics",
             dependencies: [
-                "ISO 32000 Shared",
-                "ISO 32000 7 Syntax",
+                .target(name: "ISO 32000 Shared"),
+                .target(name: "ISO 32000 7 Syntax"),
                 .product(
                     name: "Binary Standard Library Integration",
                     package: "swift-binary"
@@ -143,10 +143,10 @@ let package = Package(
         .target(
             name: "ISO 32000 9 Text",
             dependencies: [
-                "ISO 32000 Shared",
-                "ISO 32000 7 Syntax",
-                "ISO 32000 8 Graphics",
-                "ISO 32000 Annex D",
+                .target(name: "ISO 32000 Shared"),
+                .target(name: "ISO 32000 7 Syntax"),
+                .target(name: "ISO 32000 8 Graphics"),
+                .target(name: "ISO 32000 Annex D"),
                 .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
                 .product(name: "Ownership", package: "swift-ownership"),
                 .product(name: "Byte", package: "swift-byte"),
@@ -154,25 +154,25 @@ let package = Package(
         ),
         .target(
             name: "ISO 32000 10 Rendering",
-            dependencies: ["ISO 32000 Shared", "ISO 32000 7 Syntax", "ISO 32000 8 Graphics"]
+            dependencies: [.target(name: "ISO 32000 Shared"), .target(name: "ISO 32000 7 Syntax"), .target(name: "ISO 32000 8 Graphics")]
         ),
         .target(
             name: "ISO 32000 11 Transparency",
-            dependencies: ["ISO 32000 Shared", "ISO 32000 7 Syntax", "ISO 32000 8 Graphics"]
+            dependencies: [.target(name: "ISO 32000 Shared"), .target(name: "ISO 32000 7 Syntax"), .target(name: "ISO 32000 8 Graphics")]
         ),
         .target(
             name: "ISO 32000 12 Interactive features",
-            dependencies: ["ISO 32000 Shared", "ISO 32000 7 Syntax", "ISO 32000 8 Graphics"]
+            dependencies: [.target(name: "ISO 32000 Shared"), .target(name: "ISO 32000 7 Syntax"), .target(name: "ISO 32000 8 Graphics")]
         ),
         .target(
             name: "ISO 32000 13 Multimedia features",
-            dependencies: ["ISO 32000 Shared", "ISO 32000 7 Syntax"]
+            dependencies: [.target(name: "ISO 32000 Shared"), .target(name: "ISO 32000 7 Syntax")]
         ),
         .target(
             name: "ISO 32000 14 Document interchange",
             dependencies: [
-                "ISO 32000 Shared",
-                "ISO 32000 7 Syntax",
+                .target(name: "ISO 32000 Shared"),
+                .target(name: "ISO 32000 7 Syntax"),
                 .product(
                     name: "Standard Library Extensions",
                     package: "swift-standard-library-extensions"
@@ -187,7 +187,7 @@ let package = Package(
         .target(
             name: "ISO 32000 Annex D",
             dependencies: [
-                "ISO 32000 Shared",
+                .target(name: "ISO 32000 Shared"),
                 .product(name: "Byte", package: "swift-byte"),
             ]
         ),
@@ -195,16 +195,16 @@ let package = Package(
         .target(
             name: "ISO 32000",
             dependencies: [
-                "ISO 32000 3 Terms and definitions",
-                "ISO 32000 7 Syntax",
-                "ISO 32000 8 Graphics",
-                "ISO 32000 9 Text",
-                "ISO 32000 10 Rendering",
-                "ISO 32000 11 Transparency",
-                "ISO 32000 12 Interactive features",
-                "ISO 32000 13 Multimedia features",
-                "ISO 32000 14 Document interchange",
-                "ISO 32000 Annex D",
+                .target(name: "ISO 32000 3 Terms and definitions"),
+                .target(name: "ISO 32000 7 Syntax"),
+                .target(name: "ISO 32000 8 Graphics"),
+                .target(name: "ISO 32000 9 Text"),
+                .target(name: "ISO 32000 10 Rendering"),
+                .target(name: "ISO 32000 11 Transparency"),
+                .target(name: "ISO 32000 12 Interactive features"),
+                .target(name: "ISO 32000 13 Multimedia features"),
+                .target(name: "ISO 32000 14 Document interchange"),
+                .target(name: "ISO 32000 Annex D"),
                 .product(
                     name: "Standard Library Extensions",
                     package: "swift-standard-library-extensions"
@@ -233,8 +233,8 @@ let package = Package(
         .target(
             name: "ISO 32000 Flate",
             dependencies: [
-                "ISO 32000",
-                "ISO 32000 Shared",
+                .target(name: "ISO 32000"),
+                .target(name: "ISO 32000 Shared"),
                 .product(name: "RFC 1950", package: "swift-rfc-1950"),
                 .product(name: "W3C PNG", package: "swift-w3c-png"),
             ]
@@ -242,26 +242,22 @@ let package = Package(
         .testTarget(
             name: "ISO 32000 Annex D Tests",
             dependencies: [
-                "ISO 32000",
+                .target(name: "ISO 32000"),
                 .product(name: "Byte", package: "swift-byte"),
             ]
         ),
         .testTarget(
             name: "ISO 32000 Tests",
             dependencies: [
-                "ISO 32000",
-                "ISO 32000 9 Text",
-                "ISO 32000 Flate",
+                .target(name: "ISO 32000"),
+                .target(name: "ISO 32000 9 Text"),
+                .target(name: "ISO 32000 Flate"),
                 .product(name: "Byte", package: "swift-byte"),
             ]
         ),
     ],
     swiftLanguageModes: [.v6]
 )
-
-extension String {
-    var tests: Self { self + " Tests" }
-}
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     let ecosystem: [SwiftSetting] = [
