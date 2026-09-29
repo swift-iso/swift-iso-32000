@@ -1,5 +1,4 @@
 public import Binary
-public import Binary_Serializable
 import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared

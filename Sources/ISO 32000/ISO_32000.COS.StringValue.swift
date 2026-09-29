@@ -1,9 +1,6 @@
 public import ASCII
-import Binary_Endianness
-import Binary_Standard_Library_Integration
-import Binary_Serializable
+import Binary
 import Byte
-import Byte_Standard_Library_Integration
 import ISO_32000_7_Syntax
 import ISO_32000_Annex_D
 

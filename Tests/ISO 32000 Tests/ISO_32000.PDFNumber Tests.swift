@@ -1,5 +1,5 @@
-import Binary_Serializable
-import Format_Standard_Library_Integration
+import Binary
+import Formatter
 import Testing
 
 @testable import ISO_32000

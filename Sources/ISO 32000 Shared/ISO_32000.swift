@@ -1,6 +1,6 @@
-public import Dimension
+public import Spatial
 @_exported public import Geometry
-import Numeric
+import Quantizer
 
 public enum ISO_32000 {}
 
@@ -9,7 +9,7 @@ extension ISO_32000 {
     public typealias UserSpace = Geometry<Double, ISO_32000_Shared.UserSpace>
 }
 
-public enum UserSpace: Numeric.Quantized {}
+public enum UserSpace: Quantizer::Quantized {}
 
 extension UserSpace {
     public typealias Scalar = Double

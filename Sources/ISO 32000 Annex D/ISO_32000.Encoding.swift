@@ -1,5 +1,5 @@
 public import Byte
-public import Byte_Standard_Library_Integration
+public import Byte
 public import ISO_32000_Shared
 
 extension ISO_32000 {

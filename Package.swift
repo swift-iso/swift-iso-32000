@@ -41,31 +41,24 @@ let package = Package(
     dependencies: [
 
         .package(
-            url: "https://github.com/swift-molecules/swift-geometry.git",
+            url: "https://github.com/swift-atoms/swift-geometry.git",
+            branch: "main", traits: ["Affine"]),
+        .package(
+            url: "https://github.com/swift-atoms/swift-formatter.git",
+            branch: "main", traits: ["Conversions"]),
+        .package(
+            url: "https://github.com/swift-atoms/swift-spatial.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-format.git",
+            url: "https://github.com/swift-atoms/swift-quantizer.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-dimension.git",
-            branch: "main"
-        ),
+            url: "https://github.com/swift-atoms/swift-binary.git",
+            branch: "main", traits: ["Serializer"]),
         .package(
-            url: "https://github.com/swift-molecules/swift-numeric.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-binary.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-binary-serializer.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-byte.git",
+            url: "https://github.com/swift-atoms/swift-byte.git",
             branch: "main"
         ),
         .package(
@@ -73,18 +66,18 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-witness.git",
+            url: "https://github.com/swift-atoms/swift-witness.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-ownership.git",
+            url: "https://github.com/swift-atoms/swift-ownership.git",
             branch: "main"
         ),
 
         .package(url: "https://github.com/swift-iso/swift-iso-9899.git", branch: "main"),
         .package(url: "https://github.com/swift-ieee/swift-ieee-754.git", branch: "main"),
         .package(
-            url: "https://github.com/swift-molecules/swift-ascii.git",
+            url: "https://github.com/swift-atoms/swift-ascii.git",
             branch: "main"
         ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-1950.git", branch: "main"),
@@ -92,7 +85,10 @@ let package = Package(
         .package(url: "https://github.com/swift-iec/swift-iec-61966.git", branch: "main"),
         .package(url: "https://github.com/swift-w3c/swift-w3c-png.git", branch: "main"),
         .package(url: "https://github.com/swift-iso/swift-iso-14496-22.git", branch: "main"),
-
+        .package(url: "https://github.com/swift-atoms/swift-angle.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-linear.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-scale.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-trigonometry.git", branch: "main"),
     ],
     targets: [
 
@@ -100,7 +96,8 @@ let package = Package(
             name: "ISO 32000 Shared",
             dependencies: [
                 .product(name: "Geometry", package: "swift-geometry"),
-                .product(name: "Numeric", package: "swift-numeric"),
+                .product(name: "Quantizer", package: "swift-quantizer"),
+                .product(name: "Linear", package: "swift-linear"),
             ]
         ),
 
@@ -118,10 +115,10 @@ let package = Package(
                 .target(name: "ISO 32000 3 Terms and definitions"),
                 .target(name: "ISO 32000 Annex D"),
                 .product(name: "ASCII", package: "swift-ascii"),
-                .product(name: "Format", package: "swift-format"),
+                .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "Binary", package: "swift-binary"),
                 .product(
-                    name: "Binary Standard Library Integration",
+                    name: "Binary",
                     package: "swift-binary"
                 ),
                 .product(name: "IEEE 754", package: "swift-ieee-754"),
@@ -133,11 +130,15 @@ let package = Package(
                 .target(name: "ISO 32000 Shared"),
                 .target(name: "ISO 32000 7 Syntax"),
                 .product(
-                    name: "Binary Standard Library Integration",
+                    name: "Binary",
                     package: "swift-binary"
                 ),
                 .product(name: "IEC 61966", package: "swift-iec-61966"),
-                .product(name: "Dimension", package: "swift-dimension"),
+                .product(name: "Spatial", package: "swift-spatial"),
+                .product(name: "Linear", package: "swift-linear"),
+                .product(name: "Geometry", package: "swift-geometry"),
+                .product(name: "Angle", package: "swift-angle"),
+                .product(name: "Trigonometry", package: "swift-trigonometry"),
             ]
         ),
         .target(
@@ -178,10 +179,6 @@ let package = Package(
                     package: "swift-standard-library-extensions"
                 ),
                 .product(name: "Binary", package: "swift-binary"),
-                .product(
-                    name: "Binary Serializable",
-                    package: "swift-binary-serializer"
-                ),
             ]
         ),
         .target(
@@ -210,24 +207,22 @@ let package = Package(
                     package: "swift-standard-library-extensions"
                 ),
                 .product(name: "Geometry", package: "swift-geometry"),
-                .product(name: "Format", package: "swift-format"),
+                .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "Binary", package: "swift-binary"),
                 .product(
-                    name: "Binary Standard Library Integration",
+                    name: "Binary",
                     package: "swift-binary"
                 ),
                 .product(
-                    name: "Binary Serializable",
-                    package: "swift-binary-serializer"
-                ),
-                .product(
-                    name: "Byte Standard Library Integration",
+                    name: "Byte",
                     package: "swift-byte"
                 ),
                 .product(name: "ISO 9899", package: "swift-iso-9899"),
                 .product(name: "ASCII", package: "swift-ascii"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "Witness", package: "swift-witness"),
+                .product(name: "Linear", package: "swift-linear"),
+                .product(name: "Scale", package: "swift-scale"),
             ]
         ),
         .target(
@@ -253,6 +248,8 @@ let package = Package(
                 .target(name: "ISO 32000 9 Text"),
                 .target(name: "ISO 32000 Flate"),
                 .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Binary", package: "swift-binary"),
+                .product(name: "Formatter", package: "swift-formatter"),
             ]
         ),
     ],

@@ -1,5 +1,4 @@
 public import Binary
-public import Binary_Serializable
 import Byte
 import ISO_32000_9_Text
 import Ownership

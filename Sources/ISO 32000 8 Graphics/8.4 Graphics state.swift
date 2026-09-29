@@ -1,6 +1,6 @@
 public import Geometry
 public import ISO_32000_Shared
-import Real
+import Quantizer
 
 extension ISO_32000.`8` {
 
@@ -184,7 +184,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
 
     public struct Independent<TextState: Sendable>: Sendable {
 
-        public var ctm: ISO_32000.UserSpace.Transform
+        public var ctm: ISO_32000.Transform<ISO_32000_Shared.UserSpace>
 
         public var strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace
 
@@ -223,7 +223,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
         public var blackPointCompensation: ISO_32000.`8`.`4`.Graphics.State.BlackPoint.Compensation
 
         public init(
-            ctm: ISO_32000.UserSpace.Transform = .identity,
+            ctm: ISO_32000.Transform<ISO_32000_Shared.UserSpace> = .identity,
             strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
             nonstrokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
             strokingColor: ISO_32000.`8`.`4`.Graphics.State.Color = .gray(0),
@@ -506,9 +506,12 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
 
     @inlinable
     public mutating func concatenate<TextState>(
-        _ transform: ISO_32000.UserSpace.Transform
+        _ transform: ISO_32000.Transform<ISO_32000_Shared.UserSpace>
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
-        current.ctm = current.ctm.concatenating(transform)
+        precondition(transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix")
+        // Column-vector convention: new user-space operation precedes the current map.
+        current.ctm = current.ctm * transform
     }
 
     @inlinable
@@ -516,7 +519,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
         dx: ISO_32000.UserSpace.Dx,
         dy: ISO_32000.UserSpace.Dy
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
-        concatenate(.translation(dx: dx, dy: dy))
+        concatenate(.init(rows: [[1, 0, dx.underlying], [0, 1, dy.underlying], [0, 0, 1]]))
     }
 
     @inlinable
@@ -524,14 +527,16 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
         x: ISO_32000.UserSpace.X,
         y: ISO_32000.UserSpace.Y
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
-        concatenate(.scale(x: x, y: y))
+        concatenate(.init(rows: [[x.underlying, 0, 0], [0, y.underlying, 0], [0, 0, 1]]))
     }
 
     @inlinable
     public mutating func rotate<TextState>(
         _ angle: Radian<Double>
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
-        concatenate(.rotation(angle))
+        let c = angle.cos.value
+        let s = angle.sin.value
+        concatenate(.init(rows: [[c, -s, 0], [s, c, 0], [0, 0, 1]]))
     }
 
     @inlinable

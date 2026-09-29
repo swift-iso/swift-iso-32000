@@ -1,4 +1,4 @@
-import Dimension
+import Spatial
 public import Geometry
 public import ISO_32000_Shared
 

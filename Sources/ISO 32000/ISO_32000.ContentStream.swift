@@ -1,5 +1,4 @@
 public import Binary
-public import Binary_Serializable
 import Byte
 public import Geometry
 import ISO_9899
@@ -322,15 +321,17 @@ extension ISO_32000.ContentStream.Builder {
         emit(.restoreState)
     }
 
-    public mutating func transform(_ t: ISO_32000.UserSpace.Transform) {
+    public mutating func transform(_ t: ISO_32000.Transform<ISO_32000_Shared.UserSpace>) {
+        precondition(t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix")
         emit(
             .transform(
-                a: t.a,
-                b: t.b,
-                c: t.c,
-                d: t.d,
-                e: t.tx,
-                f: t.ty
+                a: .init(t[0, 0]),
+                b: .init(t[1, 0]),
+                c: .init(t[0, 1]),
+                d: .init(t[1, 1]),
+                e: .init(_unchecked: t[0, 2]),
+                f: .init(_unchecked: t[1, 2])
             )
         )
     }
@@ -416,15 +417,17 @@ extension ISO_32000.ContentStream.Builder {
         emit(.moveTextPosition(tx: displacement.dx, ty: displacement.dy))
     }
 
-    public mutating func setTextMatrix(_ t: ISO_32000.UserSpace.Transform) {
+    public mutating func setTextMatrix(_ t: ISO_32000.Transform<ISO_32000_Shared.UserSpace>) {
+        precondition(t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix")
         emit(
             .setTextMatrix(
-                a: t.a,
-                b: t.b,
-                c: t.c,
-                d: t.d,
-                e: t.tx,
-                f: t.ty
+                a: .init(t[0, 0]),
+                b: .init(t[1, 0]),
+                c: .init(t[0, 1]),
+                d: .init(t[1, 1]),
+                e: .init(_unchecked: t[0, 2]),
+                f: .init(_unchecked: t[1, 2])
             )
         )
     }

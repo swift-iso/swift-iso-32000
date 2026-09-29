@@ -1,7 +1,7 @@
-internal import Binary_Endianness
-internal import Binary_Standard_Library_Integration
+internal import Binary
+internal import Binary
 public import Byte
-internal import Byte_Standard_Library_Integration
+internal import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 import Synchronization

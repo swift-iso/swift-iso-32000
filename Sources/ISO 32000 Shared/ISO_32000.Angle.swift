@@ -1,1 +1,1 @@
-@_exported public import Dimension
+@_exported public import Spatial
