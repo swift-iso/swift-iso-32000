@@ -314,12 +314,12 @@ extension ISO_32000.PDFDocEncoding {
             return .pdfDocEncoding
         }
 
-        if first == 0xFE && second == 0xFF {
+        if first == Byte(bitPattern: 0xFE) && second == Byte(bitPattern: 0xFF) {
             return .utf16BE
         }
 
-        if first == 0xEF && second == 0xBB {
-            if let third = iterator.next(), third == 0xBF {
+        if first == Byte(bitPattern: 0xEF) && second == Byte(bitPattern: 0xBB) {
+            if let third = iterator.next(), third == Byte(bitPattern: 0xBF) {
                 return .utf8
             }
         }

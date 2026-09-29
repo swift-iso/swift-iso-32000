@@ -36,7 +36,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
 
     @usableFromInline
     internal static let escapeCharLookup: [Byte] = {
-        var table = [Byte](repeating: 0, count: 256)
+        var table = [Byte](repeating: Byte(bitPattern: 0), count: 256)
         table[Int(UInt8.ascii.lf)] = .ascii.n
         table[Int(UInt8.ascii.cr)] = .ascii.r
         table[Int(UInt8.ascii.htab)] = .ascii.t
@@ -59,7 +59,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
         buffer.append(.ascii.leftParenthesis)
         for byte in bytes {
             let escapeChar = escapeCharLookup[Int(byte.underlying)]
-            if escapeChar != 0 {
+            if escapeChar != Byte(bitPattern: 0) {
                 buffer.append(.ascii.backslash)
                 buffer.append(escapeChar)
             } else {
@@ -692,16 +692,16 @@ extension ISO_32000.`7`.`3`.COS {
     ) where Buffer.Element == Byte {
         switch object {
         case .null:
-            buffer.append(contentsOf: "null".utf8)
+            buffer.append(contentsOf: "null".utf8.map(Byte.init(bitPattern:)))
 
         case .boolean(true):
-            buffer.append(contentsOf: "true".utf8)
+            buffer.append(contentsOf: "true".utf8.map(Byte.init(bitPattern:)))
 
         case .boolean(false):
-            buffer.append(contentsOf: "false".utf8)
+            buffer.append(contentsOf: "false".utf8.map(Byte.init(bitPattern:)))
 
         case .integer(let value):
-            buffer.append(contentsOf: Swift.String(value).utf8)
+            buffer.append(contentsOf: Swift.String(value).utf8.map(Byte.init(bitPattern:)))
 
         case .real(let value):
 
@@ -730,7 +730,7 @@ extension ISO_32000.`7`.`3`.COS {
             Stream.serialize(stream, into: &buffer)
 
         case .reference(let ref):
-            buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8)
+            buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8.map(Byte.init(bitPattern:)))
         }
     }
 }
@@ -774,12 +774,12 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     ) where Buffer.Element == Byte {
         buffer.append(.ascii.solidus)
 
-        for byte in [Byte](name.rawValue.utf8) {
+        for byte in name.rawValue.utf8.map(Byte.init(bitPattern:)) {
             let raw = byte.underlying
             if shouldEscapeNameByte(raw) {
                 buffer.append(.ascii.numberSign)
-                buffer.append(hexChar(raw >> 4))
-                buffer.append(hexChar(raw & 0x0F))
+                buffer.append(hexChar(raw >> 4).byte)
+                buffer.append(hexChar(raw & 0x0F).byte)
             } else {
                 buffer.append(byte)
             }
@@ -823,8 +823,8 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
                 }
             }
         } else {
-            buffer.append(0xFE)
-            buffer.append(0xFF)
+            buffer.append(Byte(bitPattern: 0xFE))
+            buffer.append(Byte(bitPattern: 0xFF))
             for codeUnit in str.value.utf16 {
 
                 for byte in codeUnit.bytes(endianness: .big) {
@@ -850,9 +850,9 @@ extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
         dict[.length] = .integer(Int64(stream.data.count))
         ISO_32000.`7`.`3`.COS.Dictionary.serialize(dict, into: &buffer)
 
-        buffer.append(contentsOf: "\nstream\n".utf8)
+        buffer.append(contentsOf: "\nstream\n".utf8.map(Byte.init(bitPattern:)))
         buffer.append(contentsOf: stream.data)
-        buffer.append(contentsOf: "\nendstream".utf8)
+        buffer.append(contentsOf: "\nendstream".utf8.map(Byte.init(bitPattern:)))
     }
 }
 
@@ -862,7 +862,7 @@ extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
         _ ref: Self,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8)
+        buffer.append(contentsOf: "\(ref.objectNumber) \(ref.generation) R".utf8.map(Byte.init(bitPattern:)))
     }
 }
 
@@ -952,7 +952,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
             }
 
             for i in 0..<count {
-                buffer.append(digits[i])
+                buffer.append(digits[i].byte)
             }
         }
     }

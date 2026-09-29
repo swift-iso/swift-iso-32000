@@ -13,7 +13,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
 
-        #expect(bytes == Array("(Hello)".utf8))
+        #expect(bytes == [Byte](utf8: "(Hello)"))
     }
 
     @Test
@@ -22,7 +22,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{2022}")
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
-        #expect(bytes == [0x28, 0x80, 0x29])
+        #expect(bytes == [0x28, 0x80, 0x29].map(Byte.init(bitPattern:)))
     }
 
     @Test
@@ -31,7 +31,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         let str = ISO_32000.`7`.`3`.COS.StringValue("\u{20AC}")
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
-        #expect(bytes == [0x28, 0xA0, 0x29])
+        #expect(bytes == [0x28, 0xA0, 0x29].map(Byte.init(bitPattern:)))
     }
 
     @Test
@@ -48,7 +48,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
                 0x6E, 0x74, 0x6E, 0x75,
                 0x6D, 0x6D, 0x65, 0x72,
                 0x29,
-            ]
+            ].map(Byte.init(bitPattern:))
         )
     }
 
@@ -59,7 +59,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
 
-        #expect(bytes == [0x28, 0xFE, 0xFF, 0x00, 0xA0, 0x29])
+        #expect(bytes == [0x28, 0xFE, 0xFF, 0x00, 0xA0, 0x29].map(Byte.init(bitPattern:)))
     }
 
     @Test
@@ -80,7 +80,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
                 0x00, 0x31,
                 0x00, 0x32,
                 0x29,
-            ]
+            ].map(Byte.init(bitPattern:))
         )
     }
 
@@ -96,7 +96,7 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
                 0xD8, 0x3D,
                 0xDE, 0x00,
                 0x29,
-            ]
+            ].map(Byte.init(bitPattern:))
         )
     }
 

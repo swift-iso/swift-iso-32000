@@ -89,6 +89,8 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-linear.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-scale.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-trigonometry.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-interval.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-tagged.git", branch: "main"),
     ],
     targets: [
@@ -141,7 +143,8 @@ let package = Package(
                 .product(name: "Geometry", package: "swift-geometry"),
                 .product(name: "Angle", package: "swift-angle"),
                 .product(name: "Trigonometry", package: "swift-trigonometry"),
-                .product(name: "Tagged", package: "swift-tagged"),
+                .product(name: "Tagged", package: "swift-tagged"),                .product(name: "Interval", package: "swift-interval"),
+                .product(name: "Numeric", package: "swift-numeric"),
             ]
         ),
         .target(

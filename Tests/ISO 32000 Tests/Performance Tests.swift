@@ -39,21 +39,21 @@ extension ISO_32000.Font {
         @Test
         func `WinAnsi width: 10 bytes`() {
             let font = ISO_32000.Font.helvetica
-            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C]
+            let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C].map(Byte.init(bitPattern:))
             let _ = font.winAnsi.width(of: bytes, atSize: 12)
         }
 
         @Test
         func `WinAnsi width: 100 bytes`() {
             let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: 0x61, count: 100)
+            let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: 100)
             let _ = font.winAnsi.width(of: bytes, atSize: 12)
         }
 
         @Test
         func `WinAnsi width: 1000 bytes`() {
             let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: 0x61, count: 1000)
+            let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: 1000)
             let _ = font.winAnsi.width(of: bytes, atSize: 12)
         }
 
@@ -83,7 +83,7 @@ extension ISO_32000.Font {
         @Test
         func `WinAnsi width throughput (5s)`() {
             let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: 0x61, count: 100)
+            let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: 100)
             let duration: Duration = .seconds(5)
             let start = ContinuousClock.now
 
@@ -110,7 +110,7 @@ extension ISO_32000.Font {
             var results: [(size: Int, time: Double)] = []
 
             for size in sizes {
-                let bytes = [Byte](repeating: 0x61, count: size)
+                let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: size)
                 let iterations = max(10, 1000 / size)
                 var totalTime: Double = 0
 
@@ -151,7 +151,7 @@ extension ISO_32000.Font {
         @Test
         func `Width calculation regression guard`() {
             let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: 0x61, count: 100)
+            let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: 100)
 
             let minThroughput = 10_000.0
 

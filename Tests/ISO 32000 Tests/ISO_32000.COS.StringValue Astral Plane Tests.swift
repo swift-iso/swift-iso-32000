@@ -39,7 +39,7 @@ extension ISO_32000.COS.StringValue.Tests.`Edge Case` {
     @Test
     func `pdfStringBytes reassembles a surrogate pair into its astral-plane scalar`() {
 
-        let bytes: [Byte] = [0xFE, 0xFF, 0xD8, 0x3D, 0xDE, 0x00]
+        let bytes: [Byte] = [0xFE, 0xFF, 0xD8, 0x3D, 0xDE, 0x00].map(Byte.init(bitPattern:))
         let str = ISO_32000.COS.StringValue(pdfStringBytes: bytes)
         #expect(str.value == "\u{1F600}")
     }
@@ -52,7 +52,7 @@ extension ISO_32000.COS.StringValue.Tests.`Edge Case` {
             0x00, 0x41,
             0xD8, 0x3D, 0xDE, 0x00,
             0x00, 0x42,
-        ]
+        ].map(Byte.init(bitPattern:))
         let str = ISO_32000.COS.StringValue(pdfStringBytes: bytes)
         #expect(str.value == "A\u{1F600}B")
     }

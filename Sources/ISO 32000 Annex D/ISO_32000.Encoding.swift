@@ -46,7 +46,7 @@ extension ISO_32000.Encoding {
     ) -> [Byte] where Scalars.Element == Unicode.Scalar {
         var result: [Byte] = []
         for scalar in scalars {
-            result.append(encode(scalar) ?? 0x3F)
+            result.append(encode(scalar) ?? Byte(bitPattern: 0x3F))
         }
         return result
     }
@@ -54,7 +54,7 @@ extension ISO_32000.Encoding {
 
 extension ISO_32000 {
 
-    public static let unicodeFallbackMap: [UInt32: [Byte]] = [
+    public static let unicodeFallbackMap: [UInt32: [Byte]] = ([
 
         0x2713: [0x2A],
         0x2714: [0x2A],
@@ -117,7 +117,7 @@ extension ISO_32000 {
         0x200C: [],
         0x200D: [],
         0xFEFF: [],
-    ]
+    ] as [UInt32: [UInt8]]).mapValues { $0.map(Byte.init(bitPattern:)) }
 }
 
 extension Array where Element == Byte {
@@ -156,7 +156,7 @@ extension Array where Element == Byte {
                 result.append(contentsOf: fallback)
             } else {
 
-                result.append(0x3F)
+                result.append(Byte(bitPattern: 0x3F))
             }
         }
         self = result
@@ -208,7 +208,7 @@ extension ISO_32000 {
 
         @inlinable
         public init(_ name: StaticString) {
-            self.bytes = name.withUTF8Buffer { unsafe $0.map(Byte.init) }
+            self.bytes = name.withUTF8Buffer { unsafe $0.map(Byte.init(bitPattern:)) }
         }
     }
 }

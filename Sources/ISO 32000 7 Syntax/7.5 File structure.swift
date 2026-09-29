@@ -36,6 +36,6 @@ extension ISO_32000.`7`.`5`.`2`.Version {
     }
 
     public var headerBytes: [Byte] {
-        header.utf8.map(Byte.init)
+        header.utf8.map(Byte.init(bitPattern:))
     }
 }

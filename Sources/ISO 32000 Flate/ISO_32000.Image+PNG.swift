@@ -76,7 +76,7 @@ extension ISO_32000.Image {
             var rgb: [Byte] = []
             rgb.reserveCapacity(image.width * image.height * 3)
             for index in image.rawPixels {
-                let idx = Int(index)
+                let idx = Int(UInt8(bitPattern: index))
                 if idx < palette.count {
                     let entry = palette[idx]
                     rgb.append(entry.r)
@@ -84,9 +84,9 @@ extension ISO_32000.Image {
                     rgb.append(entry.b)
                 } else {
 
-                    rgb.append(0)
-                    rgb.append(0)
-                    rgb.append(0)
+                    rgb.append(Byte(bitPattern: 0))
+                    rgb.append(Byte(bitPattern: 0))
+                    rgb.append(Byte(bitPattern: 0))
                 }
             }
             return (rgb, .deviceRGB)

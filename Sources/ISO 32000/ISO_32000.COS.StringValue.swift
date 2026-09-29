@@ -29,8 +29,8 @@ extension ISO_32000.COS.StringValue {
             }
         } else {
 
-            result.append(0xFE)
-            result.append(0xFF)
+            result.append(Byte(bitPattern: 0xFE))
+            result.append(Byte(bitPattern: 0xFF))
             for codeUnit in value.utf16 {
 
                 for byte in codeUnit.bytes(endianness: .big) {
@@ -63,8 +63,8 @@ extension ISO_32000.COS.StringValue {
             for scalar in value.unicodeScalars {
                 if let byte = ISO_32000.PDFDocEncoding.encode(scalar) {
 
-                    result.append(Self.hexChar(byte.underlying >> 4))
-                    result.append(Self.hexChar(byte.underlying & 0x0F))
+                    result.append(Self.hexChar(byte.underlying >> 4).byte)
+                    result.append(Self.hexChar(byte.underlying & 0x0F).byte)
                 }
             }
         } else {
@@ -76,8 +76,8 @@ extension ISO_32000.COS.StringValue {
 
             for codeUnit in value.utf16 {
                 for byte in codeUnit.bytes(endianness: .big) {
-                    result.append(Self.hexChar(byte.underlying >> 4))
-                    result.append(Self.hexChar(byte.underlying & 0x0F))
+                    result.append(Self.hexChar(byte.underlying >> 4).byte)
+                    result.append(Self.hexChar(byte.underlying & 0x0F).byte)
                 }
             }
         }

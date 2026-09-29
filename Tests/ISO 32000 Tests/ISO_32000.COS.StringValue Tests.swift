@@ -21,7 +21,7 @@ struct `ISO_32000.COS.StringValue Tests` {
     func `Serializes simple string as literal`() {
         let str = ISO_32000.COS.StringValue("Hello")
         let bytes = str.asLiteral()
-        #expect(bytes == Array("(Hello)".utf8))
+        #expect(bytes == [Byte](utf8: "(Hello)"))
     }
 
     @Test
@@ -69,14 +69,14 @@ struct `ISO_32000.COS.StringValue Tests` {
     func `Serializes simple string as hex`() {
         let str = ISO_32000.COS.StringValue("Hi")
         let bytes = str.asHexadecimal()
-        #expect(bytes == Array("<4869>".utf8))
+        #expect(bytes == [Byte](utf8: "<4869>"))
     }
 
     @Test
     func `Serializes empty string as hex`() {
         let str = ISO_32000.COS.StringValue("")
         let bytes = str.asHexadecimal()
-        #expect(bytes == Array("<>".utf8))
+        #expect(bytes == [Byte](utf8: "<>"))
     }
 
     @Test
@@ -94,8 +94,8 @@ struct `ISO_32000.COS.StringValue Tests` {
         let str = ISO_32000.COS.StringValue("\u{4F60}")
         let bytes = str.asLiteral()
         #expect(bytes[0] == Byte(UInt8(ascii: "(")))
-        #expect(bytes.contains(0xFE))
-        #expect(bytes.contains(0xFF))
+        #expect(bytes.contains(Byte(bitPattern: 0xFE)))
+        #expect(bytes.contains(Byte(bitPattern: 0xFF)))
     }
 
     @Test

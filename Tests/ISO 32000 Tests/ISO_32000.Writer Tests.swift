@@ -30,7 +30,7 @@ struct `ISO_32000.Writer Tests` {
 
         let headerEnd = pdf.firstIndex(of: Byte(UInt8(ascii: "\n")))!
         let markerStart = pdf.index(after: headerEnd)
-        #expect(pdf[pdf.index(after: markerStart)] > 127)
+        #expect(UInt8(bitPattern: pdf[pdf.index(after: markerStart)]) > 127)
     }
 
     @Test
@@ -273,7 +273,7 @@ struct `ISO_32000.Writer Tests` {
 
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = [Byte](fontData)
+            let fontBytes = fontData.map(Byte.init(bitPattern:))
 
             let customFont = try ISO_32000.Font(
                 data: fontBytes,
@@ -353,7 +353,7 @@ struct `ISO_32000.Writer Tests` {
 
             let fontPath = "/System/Library/Fonts/Geneva.ttf"
             let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = [Byte](fontData)
+            let fontBytes = fontData.map(Byte.init(bitPattern:))
 
             let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)
             let fullSize = fullEmbedded.data.count

@@ -1,4 +1,6 @@
 public import Geometry
+public import Interval
+public import Numeric
 public import ISO_32000_Shared
 import Quantizer
 

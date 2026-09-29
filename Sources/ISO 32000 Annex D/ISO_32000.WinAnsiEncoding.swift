@@ -250,7 +250,7 @@ extension ISO_32000.WinAnsiEncoding {
     ]
 
     @usableFromInline
-    static let encodeTable: [UInt32: Byte] = [
+    static let encodeTable: [UInt32: Byte] = ([
 
         0x20AC: 0x80,
         0x201A: 0x82,
@@ -376,7 +376,7 @@ extension ISO_32000.WinAnsiEncoding {
         0x00FD: 0xFD,
         0x00FE: 0xFE,
         0x00FF: 0xFF,
-    ]
+    ] as [UInt32: UInt8]).mapValues(Byte.init(bitPattern:))
 
     @inlinable
     public static func encode(_ scalar: Unicode.Scalar) -> Byte? {

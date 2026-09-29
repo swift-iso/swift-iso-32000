@@ -186,7 +186,7 @@ struct `ISO_32000.COS.serialize Tests` {
         var buffer: [Byte] = []
         let stream = ISO_32000.COS.Stream(
             dictionary: [:],
-            data: Array("Hello".utf8)
+            data: [Byte](utf8: "Hello")
         )
         ISO_32000.COS.serialize(.stream(stream), into: &buffer)
         let result = String(decoding: buffer, as: UTF8.self)

@@ -132,8 +132,8 @@ extension ISO_32000.`8`.`9`.Image {
     public init(jpeg jpegData: [Byte]) throws(Parse.Error) {
 
         guard jpegData.count >= 2,
-            jpegData[0] == 0xFF,
-            jpegData[1] == 0xD8
+            jpegData[0] == Byte(bitPattern: 0xFF),
+            jpegData[1] == Byte(bitPattern: 0xD8)
         else {
             throw .invalidHeader
         }
@@ -168,7 +168,7 @@ extension ISO_32000.`8`.`9`.Image {
         var offset = 2
 
         while offset < data.count - 1 {
-            guard data[offset] == 0xFF else {
+            guard data[offset] == Byte(bitPattern: 0xFF) else {
                 offset += 1
                 continue
             }
@@ -176,9 +176,9 @@ extension ISO_32000.`8`.`9`.Image {
             let marker = data[offset + 1]
             offset += 2
 
-            guard marker != 0xFF && marker != 0x00 else { continue }
+            guard marker != Byte(bitPattern: 0xFF) && marker != Byte(bitPattern: 0x00) else { continue }
 
-            if marker == 0xC0 || marker == 0xC2 {
+            if marker == Byte(bitPattern: 0xC0) || marker == Byte(bitPattern: 0xC2) {
                 guard offset + 7 < data.count else {
                     throw .truncatedData
                 }
@@ -187,12 +187,12 @@ extension ISO_32000.`8`.`9`.Image {
 
                 let width = Int(UInt16(bytes: data[offset + 5..<offset + 7], endianness: .big)!)
 
-                let components = Int(data[offset + 7])
+                let components = Int(UInt8(bitPattern: data[offset + 7]))
 
                 return (width, height, components)
             }
 
-            if marker >= 0xD0 && marker <= 0xD9 || marker == 0x01 {
+            if (0xD0...0xD9).contains(UInt8(bitPattern: marker)) || marker == Byte(bitPattern: 0x01) {
                 continue
             }
 

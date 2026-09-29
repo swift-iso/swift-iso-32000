@@ -217,7 +217,7 @@ struct `ISO_32000.Font Tests` {
     @Test
     func `Bytes width calculation`() {
         let font = ISO_32000.Font.helvetica
-        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F]
+        let bytes: [Byte] = [0x48, 0x65, 0x6C, 0x6C, 0x6F].map(Byte.init(bitPattern:))
         let width = font.winAnsi.width(of: bytes, atSize: 12)
         #expect(width.underlying > 0)
     }

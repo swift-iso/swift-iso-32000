@@ -28,7 +28,7 @@ extension ISO_32000.Writer {
 
         writeHeader(document.version, into: &buffer)
 
-        buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8)
+        buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8.map(Byte.init(bitPattern:)))
 
         var allFonts: [ISO_32000.COS.Name: ISO_32000.Font] = [:]
         for page in document.pages {
@@ -342,7 +342,7 @@ extension ISO_32000.Writer {
         _ version: ISO_32000.Version,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: "\(version.header)\n".utf8)
+        buffer.append(contentsOf: "\(version.header)\n".utf8.map(Byte.init(bitPattern:)))
     }
 
     private func writeIndirectObject<Buffer: RangeReplaceableCollection>(
@@ -350,19 +350,19 @@ extension ISO_32000.Writer {
         object: ISO_32000.COS.Object,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: "\(objectNumber) 0 obj\n".utf8)
+        buffer.append(contentsOf: "\(objectNumber) 0 obj\n".utf8.map(Byte.init(bitPattern:)))
         ISO_32000.COS.serialize(object, into: &buffer)
-        buffer.append(contentsOf: "\nendobj\n".utf8)
+        buffer.append(contentsOf: "\nendobj\n".utf8.map(Byte.init(bitPattern:)))
     }
 
     private func writeXref<Buffer: RangeReplaceableCollection>(
         state: State,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: "xref\n".utf8)
-        buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8)
+        buffer.append(contentsOf: "xref\n".utf8.map(Byte.init(bitPattern:)))
+        buffer.append(contentsOf: "0 \(state.objectCount + 1)\n".utf8.map(Byte.init(bitPattern:)))
 
-        buffer.append(contentsOf: "0000000000 65535 f \n".utf8)
+        buffer.append(contentsOf: "0000000000 65535 f \n".utf8.map(Byte.init(bitPattern:)))
 
         for i in 1...state.objectCount {
             let offset = state.objectOffsets[i] ?? 0
@@ -371,7 +371,7 @@ extension ISO_32000.Writer {
                 offsetStr = "0" + offsetStr
             }
             let entry = "\(offsetStr) 00000 n \n"
-            buffer.append(contentsOf: entry.utf8)
+            buffer.append(contentsOf: entry.utf8.map(Byte.init(bitPattern:)))
         }
     }
 
@@ -622,7 +622,7 @@ extension ISO_32000.Writer {
         xrefOffset: Int,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: "trailer\n".utf8)
+        buffer.append(contentsOf: "trailer\n".utf8.map(Byte.init(bitPattern:)))
 
         var trailerDict = ISO_32000.COS.Dictionary()
         trailerDict[.size] = .integer(Int64(size))
@@ -634,9 +634,9 @@ extension ISO_32000.Writer {
 
         ISO_32000.COS.Dictionary.serialize(trailerDict, into: &buffer)
 
-        buffer.append(contentsOf: "\nstartxref\n".utf8)
-        buffer.append(contentsOf: "\(xrefOffset)\n".utf8)
-        buffer.append(contentsOf: "%%EOF\n".utf8)
+        buffer.append(contentsOf: "\nstartxref\n".utf8.map(Byte.init(bitPattern:)))
+        buffer.append(contentsOf: "\(xrefOffset)\n".utf8.map(Byte.init(bitPattern:)))
+        buffer.append(contentsOf: "%%EOF\n".utf8.map(Byte.init(bitPattern:)))
     }
 
     private mutating func writeEmbeddedTrueTypeFont<Buffer: RangeReplaceableCollection>(
@@ -771,7 +771,7 @@ extension ISO_32000.Writer {
             var unicodeHex: [ASCII.Code] = []
             RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
             cmap +=
-                "<\(String(decoding: [UInt8](charCodeHex), as: UTF8.self))> <\(String(decoding: [UInt8](unicodeHex), as: UTF8.self))>\n"
+                "<\(String(decoding: charCodeHex.map(\.underlying), as: UTF8.self))> <\(String(decoding: unicodeHex.map(\.underlying), as: UTF8.self))>\n"
         }
         cmap += "endbfchar\n"
 
@@ -780,7 +780,7 @@ extension ISO_32000.Writer {
         cmap += "end\n"
         cmap += "end\n"
 
-        return cmap.utf8.map(Byte.init)
+        return cmap.utf8.map(Byte.init(bitPattern:))
     }
 
     private static let winAnsiToUnicode: [Int: Int] = {
