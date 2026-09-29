@@ -2,7 +2,7 @@ import Spatial
 public import Geometry
 public import ISO_32000_Shared
 
-@_spi(Internal) import struct Dimension.Tagged
+import Tagged
 
 extension ISO_32000.`8` {
 
