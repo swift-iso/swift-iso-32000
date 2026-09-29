@@ -123,6 +123,7 @@ let package = Package(
                     package: "swift-binary"
                 ),
                 .product(name: "IEEE 754", package: "swift-ieee-754"),
+                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),
         .target(
