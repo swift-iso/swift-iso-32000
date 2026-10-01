@@ -1,4 +1,4 @@
-public import Spatial
+public import Space
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 

@@ -138,7 +138,7 @@ let package = Package(
                     package: "swift-binary"
                 ),
                 .product(name: "IEC 61966", package: "swift-iec-61966"),
-                .product(name: "Spatial", package: "swift-spatial"),
+                .product(name: "Space", package: "swift-spatial"),
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Geometry", package: "swift-geometry"),
                 .product(name: "Angle", package: "swift-angle"),

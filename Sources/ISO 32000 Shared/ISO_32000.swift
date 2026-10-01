@@ -1,4 +1,4 @@
-public import Spatial
+public import Space
 @_exported public import Geometry
 import Quantizer
 
