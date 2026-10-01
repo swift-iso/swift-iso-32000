@@ -256,6 +256,10 @@ let package = Package(
                 .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Binary", package: "swift-binary"),
                 .product(name: "Formatter", package: "swift-formatter"),
+                .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
+            ],
+            resources: [
+                .copy("Fixtures")
             ]
         ),
     ],

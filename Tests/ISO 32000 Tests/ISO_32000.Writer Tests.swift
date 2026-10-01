@@ -1,4 +1,5 @@
 import Foundation
+import ISO_14496_22
 import Testing
 
 @testable import ISO_32000
@@ -264,18 +265,24 @@ struct `ISO_32000.Writer Tests` {
     }
 
     #if os(macOS)
-        @Test
-        func `Outputs embedded TrueType font PDF for inspection`() throws {
+        static func latoRegular() throws -> [Byte] {
+            let url = try #require(
+                Bundle.module.url(forResource: "Lato-Regular", withExtension: "ttf", subdirectory: "Fixtures"),
+                "Packaged font fixture Fixtures/Lato-Regular.ttf is missing from the test bundle"
+            )
+            let bytes = try Data(contentsOf: url).map(Byte.init(bitPattern:))
+            #expect(bytes.count == 96184, "Fixture is not the recorded Lato-Regular.ttf (see Fixtures/PROVENANCE.md)")
+            return bytes
+        }
 
-            let fontPath = "/System/Library/Fonts/Geneva.ttf"
-            let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = fontData.map(Byte.init(bitPattern:))
+        @Test
+        func `embeds the full TrueType program of the packaged Lato fixture`() throws {
+            let fontBytes = try Self.latoRegular()
 
             let customFont = try ISO_32000.Font(
                 data: fontBytes,
                 resourceName: try ISO_32000.COS.Name("CF1")
             )
-
             let helvetica = ISO_32000.Font.helvetica
 
             let document = ISO_32000.Document(
@@ -288,37 +295,17 @@ struct `ISO_32000.Writer Tests` {
                         mediaBox: .letter,
                         content: ISO_32000.ContentStream { builder in
                             builder.beginText()
-
                             builder.setFont(customFont, size: 24)
                             builder.moveText(dx: .init(72), dy: .init(700))
-                            builder.showText("Embedded TrueType Font: Geneva")
-
+                            builder.showText("Embedded TrueType Font: Lato")
                             builder.setFont(customFont, size: 14)
                             builder.moveText(dx: .init(0), dy: .init(-30))
-                            builder.showText("This text uses Geneva.ttf embedded in the PDF.")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
                             builder.showText("The quick brown fox jumps over the lazy dog.")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("abcdefghijklmnopqrstuvwxyz")
-
                             builder.moveText(dx: .init(0), dy: .init(-25))
                             builder.showText("0123456789 !@#$%^&*()[]{}|;':\",./<>?")
-
                             builder.setFont(helvetica, size: 14)
                             builder.moveText(dx: .init(0), dy: .init(-50))
-                            builder.showText("--- Comparison: Helvetica (standard font) ---")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
                             builder.showText("The quick brown fox jumps over the lazy dog.")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
                             builder.endText()
                         },
                         resources: ISO_32000.Resources(fonts: [
@@ -331,45 +318,52 @@ struct `ISO_32000.Writer Tests` {
 
             var writer = ISO_32000.Writer()
             let pdf = writer.write(document)
-
-            #expect(!pdf.isEmpty)
-            #expect(pdf.count > 50000)
-            print("PDF size: \(pdf.count) bytes")
-
             let str = String(decoding: pdf, as: UTF8.self)
+
+            #expect(pdf.count > fontBytes.count, "PDF \(pdf.count) bytes must carry the whole \(fontBytes.count)-byte program")
             #expect(str.contains("/Subtype /TrueType"))
             #expect(str.contains("/FontFile2"))
             #expect(str.contains("/FontDescriptor"))
+            #expect(str.contains("/Lato-Regular"))
+            #expect(str.contains("/Length1 \(fontBytes.count)"))
         }
 
         @Test
-        func `Outputs subsetted TrueType font PDF for inspection`() throws {
-
-            let fontPath = "/System/Library/Fonts/Geneva.ttf"
-            let fontData = try Data(contentsOf: URL(fileURLWithPath: fontPath))
-            let fontBytes = fontData.map(Byte.init(bitPattern:))
-
+        func `subsetting the packaged Lato fixture keeps exactly the used glyphs`() throws {
+            let fontBytes = try Self.latoRegular()
             let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)
             let fullSize = fullEmbedded.data.count
 
-            let allText = """
-                Subsetted Font: Geneva
-                Hello World! This is a subset font test.
-                The font above has been subsetted.
-                It only contains glyphs for the characters used.
-                """
-            let usedChars = Set(allText)
-            let text = "Hello World! This is a subset font test."
+            let lines = [
+                "Subsetted Font: Lato",
+                "Hello World! This is a subset font test.",
+                "The font above has been subsetted.",
+                "It only contains glyphs for the characters used.",
+            ]
+            let usedChars = Set(lines.joined())
 
             let subsetEmbedded = try fullEmbedded.subsetted(for: usedChars)
             let subsetSize = subsetEmbedded.data.count
+            let full = fullEmbedded.fontFile
+            let subset = subsetEmbedded.fontFile
 
-            print("Full font size: \(fullSize) bytes")
-            print("Subset font size: \(subsetSize) bytes")
-            print("Reduction: \(100 - (subsetSize * 100 / fullSize))%")
-            print("Characters used: \(usedChars.count)")
+            let usedGlyphs = Set(usedChars.compactMap { full.glyphIndex(for: $0.unicodeScalars.first!.value) })
+            #expect(usedGlyphs.count == usedChars.count)
+            #expect(full.numGlyphs == 277)
+            #expect(Int(subset.numGlyphs) == usedGlyphs.count + 1, "subset keeps .notdef plus one glyph per used character")
 
-            #expect(subsetSize < fullSize / 5)
+            for character in usedChars {
+                let codePoint = character.unicodeScalars.first!.value
+                #expect(subset.glyphIndex(for: codePoint) != nil, "subset lost \(character)")
+                #expect(subset.advanceWidth(for: codePoint) == full.advanceWidth(for: codePoint), "advance of \(character) changed")
+            }
+            for unused in "qzQZ0" {
+                let codePoint = unused.unicodeScalars.first!.value
+                #expect(full.glyphIndex(for: codePoint) != nil)
+                #expect(subset.glyphIndex(for: codePoint) == nil, "subset kept unused \(unused)")
+            }
+
+            #expect(subsetSize < fullSize / 5, "subset \(subsetSize) of \(fullSize) bytes")
 
             let customFont = try ISO_32000.Font(
                 embedded: subsetEmbedded,
@@ -386,21 +380,12 @@ struct `ISO_32000.Writer Tests` {
                         mediaBox: .letter,
                         content: ISO_32000.ContentStream { builder in
                             builder.beginText()
-
-                            builder.setFont(customFont, size: 24)
-                            builder.moveText(dx: .init(72), dy: .init(700))
-                            builder.showText("Subsetted Font: Geneva")
-
                             builder.setFont(customFont, size: 14)
-                            builder.moveText(dx: .init(0), dy: .init(-30))
-                            builder.showText(text)
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("The font above has been subsetted.")
-
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("It only contains glyphs for the characters used.")
-
+                            builder.moveText(dx: .init(72), dy: .init(700))
+                            for line in lines {
+                                builder.showText(line)
+                                builder.moveText(dx: .init(0), dy: .init(-25))
+                            }
                             builder.endText()
                         },
                         resources: ISO_32000.Resources(fonts: [
@@ -412,15 +397,11 @@ struct `ISO_32000.Writer Tests` {
 
             var writer = ISO_32000.Writer()
             let pdf = writer.write(document)
-
-            #expect(!pdf.isEmpty)
-            print("PDF size: \(pdf.count) bytes (vs ~740KB with full font)")
-
-            #expect(pdf.count < 100000)
-
             let str = String(decoding: pdf, as: UTF8.self)
-            #expect(str.contains("/Subtype /TrueType"))
+
+            #expect(pdf.count < fullSize, "PDF \(pdf.count) bytes must be smaller than the full \(fullSize)-byte program")
             #expect(str.contains("/FontFile2"))
+            #expect(str.contains("/Length1 \(subsetSize)"))
         }
     #endif
 }
