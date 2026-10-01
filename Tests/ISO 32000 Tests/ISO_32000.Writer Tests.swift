@@ -221,9 +221,7 @@ struct `ISO_32000.Writer Tests` {
         var writer = ISO_32000.Writer()
         let pdf = writer.write(document)
 
-        let path = try PDFOutput.write(pdf, name: "iso32000-simple")
         #expect(!pdf.isEmpty)
-        print("PDF written to: \(path)")
     }
 
     @Test
@@ -262,9 +260,7 @@ struct `ISO_32000.Writer Tests` {
         var writer = ISO_32000.Writer()
         let pdf = writer.write(document)
 
-        let path = try PDFOutput.write(pdf, name: "iso32000-standard14-fonts")
         #expect(!pdf.isEmpty)
-        print("PDF written to: \(path)")
     }
 
     #if os(macOS)
@@ -336,10 +332,8 @@ struct `ISO_32000.Writer Tests` {
             var writer = ISO_32000.Writer()
             let pdf = writer.write(document)
 
-            let path = try PDFOutput.write(pdf, name: "iso32000-embedded-truetype")
             #expect(!pdf.isEmpty)
             #expect(pdf.count > 50000)
-            print("PDF written to: \(path)")
             print("PDF size: \(pdf.count) bytes")
 
             let str = String(decoding: pdf, as: UTF8.self)
@@ -419,9 +413,7 @@ struct `ISO_32000.Writer Tests` {
             var writer = ISO_32000.Writer()
             let pdf = writer.write(document)
 
-            let path = try PDFOutput.write(pdf, name: "iso32000-subsetted-truetype")
             #expect(!pdf.isEmpty)
-            print("PDF written to: \(path)")
             print("PDF size: \(pdf.count) bytes (vs ~740KB with full font)")
 
             #expect(pdf.count < 100000)
