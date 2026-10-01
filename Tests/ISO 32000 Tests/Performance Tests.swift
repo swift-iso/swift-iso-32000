@@ -58,52 +58,6 @@ extension ISO_32000.Font {
         }
 
         @Test
-        func `String width throughput (5s)`() {
-            let font = ISO_32000.Font.helvetica
-            let text = String(repeating: "Lorem ipsum dolor sit amet. ", count: 4)
-            let duration: Duration = .seconds(5)
-            let start = ContinuousClock.now
-
-            var count = 0
-            while ContinuousClock.now - start < duration {
-                for _ in 0..<100 {
-                    let _ = font.width(of: text, atSize: 12)
-                }
-                count += 100
-            }
-
-            let elapsed = ContinuousClock.now - start
-            let seconds =
-                Double(elapsed.components.seconds) + Double(elapsed.components.attoseconds) / 1e18
-            let throughput = Double(count) / seconds
-
-            print("📊 String width throughput: \(Int(throughput)) calculations/sec")
-        }
-
-        @Test
-        func `WinAnsi width throughput (5s)`() {
-            let font = ISO_32000.Font.helvetica
-            let bytes = [Byte](repeating: Byte(bitPattern: 0x61), count: 100)
-            let duration: Duration = .seconds(5)
-            let start = ContinuousClock.now
-
-            var count = 0
-            while ContinuousClock.now - start < duration {
-                for _ in 0..<100 {
-                    let _ = font.winAnsi.width(of: bytes, atSize: 12)
-                }
-                count += 100
-            }
-
-            let elapsed = ContinuousClock.now - start
-            let seconds =
-                Double(elapsed.components.seconds) + Double(elapsed.components.attoseconds) / 1e18
-            let throughput = Double(count) / seconds
-
-            print("📊 WinAnsi width throughput: \(Int(throughput)) calculations/sec")
-        }
-
-        @Test
         func `Width calculation scaling analysis`() {
             let font = ISO_32000.Font.helvetica
             let sizes = [10, 100, 500, 1000, 2000]
