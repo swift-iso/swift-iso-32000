@@ -166,7 +166,7 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<E: ISO_32000.Encoding, Bytes: Collection>(
+    public init?<E: ISO_32000.Encoding, Bytes: Swift.Collection>(
         _ bytes: Bytes,
         encoding: E.Type
     ) where Bytes.Element == Byte {
@@ -180,7 +180,7 @@ extension String {
     }
 
     @inlinable
-    public init<E: ISO_32000.Encoding, Bytes: Collection>(
+    public init<E: ISO_32000.Encoding, Bytes: Swift.Collection>(
         _ bytes: Bytes,
         encoding: E.Type,
         withReplacement: Bool

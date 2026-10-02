@@ -302,7 +302,7 @@ extension ISO_32000.PDFDocEncoding {
 
 extension ISO_32000.PDFDocEncoding {
 
-    public static func detectEncoding<C: Collection>(_ bytes: C) -> TextStringEncoding
+    public static func detectEncoding<C: Swift.Collection>(_ bytes: C) -> TextStringEncoding
     where C.Element == Byte {
         var iterator = bytes.makeIterator()
 

@@ -120,7 +120,7 @@ extension ISO_32000.COS.StringValue {
 
 extension ISO_32000.COS.StringValue {
 
-    public init<C: Collection>(pdfStringBytes bytes: C) where C.Element == Byte {
+    public init<C: Swift.Collection>(pdfStringBytes bytes: C) where C.Element == Byte {
         switch ISO_32000.PDFDocEncoding.detectEncoding(bytes) {
         case .pdfDocEncoding:
             self.init(String(pdfDoc: [Byte](bytes), withReplacement: true))

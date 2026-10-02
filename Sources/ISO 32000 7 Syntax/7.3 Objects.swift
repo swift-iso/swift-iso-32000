@@ -50,7 +50,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
 
     @inlinable
     public static func serializeLiteralString<
-        Bytes: Collection,
+        Bytes: Swift.Collection,
         Buffer: RangeReplaceableCollection
     >(
         _ bytes: Bytes,
@@ -70,7 +70,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     }
 
     @inlinable
-    public static func literalString<Bytes: Collection>(
+    public static func literalString<Bytes: Swift.Collection>(
         from bytes: Bytes
     ) -> [Byte] where Bytes.Element == Byte {
         var result: [Byte] = []

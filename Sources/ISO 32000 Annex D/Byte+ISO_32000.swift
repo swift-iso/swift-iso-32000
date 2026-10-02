@@ -27,7 +27,7 @@ extension Byte.WinAnsi {
 
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             winAnsi bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -44,7 +44,7 @@ extension Byte.WinAnsi {
 extension Byte.WinAnsi.Serializable where Context == Void {
 
     @inlinable
-    public init<Bytes: Collection>(winAnsi bytes: Bytes) throws(Error)
+    public init<Bytes: Swift.Collection>(winAnsi bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         try self.init(winAnsi: bytes, in: ())
     }
@@ -75,12 +75,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(winAnsi bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(winAnsi bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.WinAnsiEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(winAnsi bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(winAnsi bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.WinAnsiEncoding.self, withReplacement: withReplacement)
     }
@@ -110,7 +110,7 @@ extension Byte.PDFDoc {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             pdfDoc bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -126,7 +126,7 @@ extension Byte.PDFDoc {
 
 extension Byte.PDFDoc.Serializable where Context == Void {
     @inlinable
-    public init<Bytes: Collection>(pdfDoc bytes: Bytes) throws(Error) where Bytes.Element == Byte {
+    public init<Bytes: Swift.Collection>(pdfDoc bytes: Bytes) throws(Error) where Bytes.Element == Byte {
         try self.init(pdfDoc: bytes, in: ())
     }
 }
@@ -147,12 +147,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(pdfDoc bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(pdfDoc bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.PDFDocEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(pdfDoc bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(pdfDoc bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.PDFDocEncoding.self, withReplacement: withReplacement)
     }
@@ -182,7 +182,7 @@ extension Byte.Standard {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             standard bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -198,7 +198,7 @@ extension Byte.Standard {
 
 extension Byte.Standard.Serializable where Context == Void {
     @inlinable
-    public init<Bytes: Collection>(
+    public init<Bytes: Swift.Collection>(
         standard bytes: Bytes
     ) throws(Error) where Bytes.Element == Byte {
         try self.init(standard: bytes, in: ())
@@ -221,12 +221,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(standard bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(standard bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.StandardEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(standard bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(standard bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(
             bytes,
@@ -260,7 +260,7 @@ extension Byte.MacRoman {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             macRoman bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -276,7 +276,7 @@ extension Byte.MacRoman {
 
 extension Byte.MacRoman.Serializable where Context == Void {
     @inlinable
-    public init<Bytes: Collection>(macRoman bytes: Bytes) throws(Error)
+    public init<Bytes: Swift.Collection>(macRoman bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         try self.init(macRoman: bytes, in: ())
     }
@@ -298,12 +298,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(macRoman bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(macRoman bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.MacRomanEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(macRoman bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(macRoman bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(
             bytes,
@@ -337,7 +337,7 @@ extension Byte.Symbol {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             symbol bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -353,7 +353,7 @@ extension Byte.Symbol {
 
 extension Byte.Symbol.Serializable where Context == Void {
     @inlinable
-    public init<Bytes: Collection>(symbol bytes: Bytes) throws(Error) where Bytes.Element == Byte {
+    public init<Bytes: Swift.Collection>(symbol bytes: Bytes) throws(Error) where Bytes.Element == Byte {
         try self.init(symbol: bytes, in: ())
     }
 }
@@ -374,12 +374,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(symbol bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(symbol bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.SymbolEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(symbol bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(symbol bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.SymbolEncoding.self, withReplacement: withReplacement)
     }
@@ -409,7 +409,7 @@ extension Byte.ZapfDingbats {
         associatedtype Error: Swift.Error
         associatedtype Context: Sendable = Void
 
-        init<Bytes: Collection>(
+        init<Bytes: Swift.Collection>(
             zapfDingbats bytes: Bytes,
             in context: Context
         ) throws(Error) where Bytes.Element == Byte
@@ -425,7 +425,7 @@ extension Byte.ZapfDingbats {
 
 extension Byte.ZapfDingbats.Serializable where Context == Void {
     @inlinable
-    public init<Bytes: Collection>(zapfDingbats bytes: Bytes) throws(Error)
+    public init<Bytes: Swift.Collection>(zapfDingbats bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         try self.init(zapfDingbats: bytes, in: ())
     }
@@ -447,12 +447,12 @@ extension Array where Element == Byte {
 extension String {
 
     @inlinable
-    public init?<Bytes: Collection>(zapfDingbats bytes: Bytes) where Bytes.Element == Byte {
+    public init?<Bytes: Swift.Collection>(zapfDingbats bytes: Bytes) where Bytes.Element == Byte {
         self.init(bytes, encoding: ISO_32000.ZapfDingbatsEncoding.self)
     }
 
     @inlinable
-    public init<Bytes: Collection>(zapfDingbats bytes: Bytes, withReplacement: Bool)
+    public init<Bytes: Swift.Collection>(zapfDingbats bytes: Bytes, withReplacement: Bool)
     where Bytes.Element == Byte {
         self.init(
             bytes,

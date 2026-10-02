@@ -3,7 +3,7 @@ public import ISO_32000_Shared
 extension ISO_32000.`3` {
 
     public struct `Binary data`<Source>
-    where Source: Collection, Source.Element == ISO_32000.`3`.Byte {
+    where Source: Swift.Collection, Source.Element == ISO_32000.`3`.Byte {
         public let source: Source
     }
 }

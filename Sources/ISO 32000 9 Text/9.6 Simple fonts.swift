@@ -324,7 +324,7 @@ extension ISO_32000.`9`.`6`.Font {
 
 extension ISO_32000.`9`.`6`.Font.WinAnsi {
 
-    public func width<Bytes: Collection>(
+    public func width<Bytes: Swift.Collection>(
         of bytes: Bytes,
         atSize fontSize: ISO_32000.UserSpace.Size<1>
     ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {

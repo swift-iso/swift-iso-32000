@@ -4,7 +4,7 @@ public import ISO_32000_Shared
 extension ISO_32000 {
 
     @frozen
-    public struct WinAnsi<Source: Collection> where Source.Element == Byte {
+    public struct WinAnsi<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -22,7 +22,7 @@ extension ISO_32000.WinAnsi {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var winAnsi: ISO_32000.WinAnsi<Self> { .init(self) }
@@ -31,7 +31,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct PDFDoc<Source: Collection> where Source.Element == Byte {
+    public struct PDFDoc<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -49,7 +49,7 @@ extension ISO_32000.PDFDoc {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var pdfDoc: ISO_32000.PDFDoc<Self> { .init(self) }
@@ -58,7 +58,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct Standard<Source: Collection> where Source.Element == Byte {
+    public struct Standard<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -76,7 +76,7 @@ extension ISO_32000.Standard {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var standard: ISO_32000.Standard<Self> { .init(self) }
@@ -85,7 +85,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct MacRoman<Source: Collection> where Source.Element == Byte {
+    public struct MacRoman<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -103,7 +103,7 @@ extension ISO_32000.MacRoman {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var macRoman: ISO_32000.MacRoman<Self> { .init(self) }
@@ -112,7 +112,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct MacExpert<Source: Collection> where Source.Element == Byte {
+    public struct MacExpert<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -130,7 +130,7 @@ extension ISO_32000.MacExpert {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var macExpert: ISO_32000.MacExpert<Self> { .init(self) }
@@ -139,7 +139,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct Symbol<Source: Collection> where Source.Element == Byte {
+    public struct Symbol<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -157,7 +157,7 @@ extension ISO_32000.Symbol {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var symbol: ISO_32000.Symbol<Self> { .init(self) }
@@ -166,7 +166,7 @@ extension Collection where Element == Byte {
 extension ISO_32000 {
 
     @frozen
-    public struct ZapfDingbats<Source: Collection> where Source.Element == Byte {
+    public struct ZapfDingbats<Source: Swift.Collection> where Source.Element == Byte {
         public let source: Source
 
         @inlinable
@@ -184,7 +184,7 @@ extension ISO_32000.ZapfDingbats {
     }
 }
 
-extension Collection where Element == Byte {
+extension Swift.Collection where Element == Byte {
 
     @inlinable
     public var zapfDingbats: ISO_32000.ZapfDingbats<Self> { .init(self) }

@@ -122,7 +122,7 @@ extension ISO_32000.`9`.`8`.Metrics {
         winAnsiByteWidths[Int(byte.underlying)]
     }
 
-    public func width<Bytes: Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
+    public func width<Bytes: Swift.Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
     where Bytes.Element == Byte {
         var total = 0
         for byte in bytes {
@@ -131,7 +131,7 @@ extension ISO_32000.`9`.`8`.Metrics {
         return ISO_32000.FontDesign.Width(total)
     }
 
-    public func width<Bytes: Collection>(
+    public func width<Bytes: Swift.Collection>(
         of bytes: Bytes,
         atSize fontSize: ISO_32000.UserSpace.Size<1>
     ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
@@ -179,12 +179,12 @@ extension ISO_32000.`9`.`8`.Metrics.WinAnsi {
         metrics.width(of: byte)
     }
 
-    public func width<Bytes: Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
+    public func width<Bytes: Swift.Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
     where Bytes.Element == Byte {
         metrics.width(of: bytes)
     }
 
-    public func width<Bytes: Collection>(
+    public func width<Bytes: Swift.Collection>(
         of bytes: Bytes,
         atSize fontSize: ISO_32000.UserSpace.Size<1>
     ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
