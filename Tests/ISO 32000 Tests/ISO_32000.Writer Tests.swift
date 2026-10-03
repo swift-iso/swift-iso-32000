@@ -264,7 +264,6 @@ struct `ISO_32000.Writer Tests` {
         #expect(!pdf.isEmpty)
     }
 
-    #if os(macOS)
         static func latoRegular() throws -> [Byte] {
             let url = try #require(
                 Bundle.module.url(forResource: "Lato-Regular", withExtension: "ttf", subdirectory: "Fixtures"),
@@ -403,5 +402,4 @@ struct `ISO_32000.Writer Tests` {
             #expect(str.contains("/FontFile2"))
             #expect(str.contains("/Length1 \(subsetSize)"))
         }
-    #endif
 }
