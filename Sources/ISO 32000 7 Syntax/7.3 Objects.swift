@@ -143,7 +143,7 @@ extension ISO_32000.`7`.`3`.`5` {
                 if byte == 0x00 {
                     throw .containsNullByte
                 }
-                if byte.ascii.isWhitespace {
+                if ASCII.Code(byte).isWhitespace {
                     throw .containsWhitespace
                 }
             }
@@ -787,7 +787,7 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     }
 
     private static func shouldEscapeNameByte(_ byte: UInt8) -> Bool {
-        if !byte.ascii.isVisible { return true }
+        if !ASCII.Code(byte).isVisible { return true }
         if byte == .ascii.numberSign { return true }
         if byte == .ascii.leftParenthesis || byte == .ascii.rightParenthesis { return true }
         if byte == .ascii.lessThan || byte == .ascii.greaterThan { return true }
