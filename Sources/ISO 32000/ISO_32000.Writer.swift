@@ -760,20 +760,22 @@ extension ISO_32000.Writer {
         cmap += "<00> <FF>\n"
         cmap += "endcodespacerange\n"
 
-        let mappings = Self.winAnsiToUnicode
-        let mappingCount = mappings.count
+        let mappings = Self.winAnsiToUnicode.sorted(by: { $0.key < $1.key })
 
-        cmap += "\(mappingCount) beginbfchar\n"
-        for (charCode, unicodeValue) in mappings.sorted(by: { $0.key < $1.key }) {
+        for groupStart in stride(from: 0, to: mappings.count, by: Self.maxEntriesPerBFCharGroup) {
+            let group = mappings[groupStart..<min(groupStart + Self.maxEntriesPerBFCharGroup, mappings.count)]
+            cmap += "\(group.count) beginbfchar\n"
+            for (charCode, unicodeValue) in group {
 
-            var charCodeHex: [ASCII.Code] = []
-            RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
-            var unicodeHex: [ASCII.Code] = []
-            RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
-            cmap +=
-                "<\(String(decoding: charCodeHex.map(\.underlying), as: UTF8.self))> <\(String(decoding: unicodeHex.map(\.underlying), as: UTF8.self))>\n"
+                var charCodeHex: [ASCII.Code] = []
+                RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
+                var unicodeHex: [ASCII.Code] = []
+                RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
+                cmap +=
+                    "<\(String(decoding: charCodeHex.map(\.underlying), as: UTF8.self))> <\(String(decoding: unicodeHex.map(\.underlying), as: UTF8.self))>\n"
+            }
+            cmap += "endbfchar\n"
         }
-        cmap += "endbfchar\n"
 
         cmap += "endcmap\n"
         cmap += "CMapName currentdict /CMap defineresource pop\n"
@@ -782,6 +784,8 @@ extension ISO_32000.Writer {
 
         return cmap.utf8.map(Byte.init(bitPattern:))
     }
+
+    private static let maxEntriesPerBFCharGroup = 100
 
     private static let winAnsiToUnicode: [Int: Int] = {
         var mapping: [Int: Int] = [:]

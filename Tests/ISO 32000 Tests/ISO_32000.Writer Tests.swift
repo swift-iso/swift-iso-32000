@@ -402,4 +402,51 @@ struct `ISO_32000.Writer Tests` {
             #expect(str.contains("/FontFile2"))
             #expect(str.contains("/Length1 \(subsetSize)"))
         }
+
+        @Test
+        func `ISO 32000-2 §9.10.3 ToUnicode CMap holds at most 100 entries per beginbfchar group`() throws {
+            let fontBytes = try Self.latoRegular()
+            let customFont = try ISO_32000.Font(
+                data: fontBytes,
+                resourceName: try ISO_32000.COS.Name("CF1")
+            )
+            let document = ISO_32000.Document(
+                pages: [
+                    ISO_32000.Page(
+                        mediaBox: .letter,
+                        content: ISO_32000.ContentStream { builder in
+                            builder.beginText()
+                            builder.setFont(customFont, size: 12)
+                            builder.showText("ToUnicode")
+                            builder.endText()
+                        },
+                        resources: ISO_32000.Resources(fonts: [customFont.resourceName: customFont])
+                    )
+                ]
+            )
+
+            var writer = ISO_32000.Writer()
+            let str = String(decoding: writer.write(document), as: UTF8.self)
+            let lines = str.split(separator: "\n").map(String.init)
+
+            var groupSizes: [Int] = []
+            var declared: [Int] = []
+            var current: Int?
+            for line in lines {
+                if line.hasSuffix(" beginbfchar") {
+                    declared.append(try #require(Int(line.dropLast(" beginbfchar".count))))
+                    current = 0
+                } else if line == "endbfchar" {
+                    groupSizes.append(try #require(current))
+                    current = nil
+                } else if current != nil {
+                    current! += 1
+                }
+            }
+
+            #expect(!groupSizes.isEmpty)
+            #expect(groupSizes == declared)
+            #expect(groupSizes.allSatisfy { $0 >= 1 && $0 <= 100 })
+            #expect(groupSizes.reduce(0, +) > 100)
+        }
 }

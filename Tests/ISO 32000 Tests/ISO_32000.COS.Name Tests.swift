@@ -1,3 +1,4 @@
+import Byte
 import Testing
 
 @testable import ISO_32000
@@ -135,5 +136,25 @@ struct `ISO_32000.COS.Name Tests` {
                 == "Name cannot contain whitespace"
         )
         #expect(ISO_32000.COS.Name.Error.tooLong(200).description.contains("200 bytes"))
+    }
+
+    @Test
+    func `ISO 32000-2 §7.3.5 setFont writes the font name with #xx escapes`() throws {
+        let name = try ISO_32000.COS.Name("F#1(A)")
+        var buffer: [Byte] = []
+        ISO_32000.ContentStream.Operator.setFont(name: name, size: 12).serialize(into: &buffer)
+        #expect(String(decoding: buffer, as: UTF8.self) == "/F#231#28A#29 12 Tf")
+    }
+
+    @Test
+    func `ISO 32000-2 §7.3.5 content-stream operators escape names outside the regular characters`() throws {
+        let name = try ISO_32000.COS.Name("Caf\u{E9}/1")
+        var buffer: [Byte] = []
+        ISO_32000.ContentStream.Operator.paintXObject(name: name).serialize(into: &buffer)
+        ISO_32000.ContentStream.Operator.beginMarkedContent(tag: name).serialize(into: &buffer)
+        #expect(
+            String(decoding: buffer, as: UTF8.self)
+                == "/Caf#C3#A9#2F1 Do/Caf#C3#A9#2F1 BMC"
+        )
     }
 }

@@ -268,8 +268,7 @@ extension ISO_32000.ContentStream.Operator {
             buffer.append(contentsOf: [.ascii.E, .ascii.T])
 
         case .setFont(let name, let size):
-            buffer.append(.ascii.forwardSlash)
-            buffer.append(contentsOf: name.rawValue.utf8.map(Byte.init(bitPattern:)))
+            ISO_32000.COS.Name.serialize(name, into: &buffer)
             buffer.append(.ascii.space)
             size.length.underlying.pdf.serialize(into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.T, .ascii.f])
@@ -355,13 +354,11 @@ extension ISO_32000.ContentStream.Operator {
             buffer.append(contentsOf: [.ascii.space, .ascii.d])
 
         case .beginMarkedContent(let tag):
-            buffer.append(.ascii.forwardSlash)
-            buffer.append(contentsOf: tag.rawValue.utf8.map(Byte.init(bitPattern:)))
+            ISO_32000.COS.Name.serialize(tag, into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.B, .ascii.M, .ascii.C])
 
         case .beginMarkedContentWithProperties(let tag, let properties):
-            buffer.append(.ascii.forwardSlash)
-            buffer.append(contentsOf: tag.rawValue.utf8.map(Byte.init(bitPattern:)))
+            ISO_32000.COS.Name.serialize(tag, into: &buffer)
             buffer.append(.ascii.space)
             ISO_32000.COS.Dictionary.serialize(properties, into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.B, .ascii.D, .ascii.C])
@@ -370,8 +367,7 @@ extension ISO_32000.ContentStream.Operator {
             buffer.append(contentsOf: [.ascii.E, .ascii.M, .ascii.C])
 
         case .paintXObject(let name):
-            buffer.append(.ascii.forwardSlash)
-            buffer.append(contentsOf: name.rawValue.utf8.map(Byte.init(bitPattern:)))
+            ISO_32000.COS.Name.serialize(name, into: &buffer)
             buffer.append(contentsOf: [.ascii.space, .ascii.D, .ascii.o])
         }
     }
