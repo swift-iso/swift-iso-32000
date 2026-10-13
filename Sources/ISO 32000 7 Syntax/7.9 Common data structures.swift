@@ -40,9 +40,9 @@ extension ISO_32000.`7`.`9`.`4` {
 
 extension ISO_32000.`7`.`9`.`4`.Date: CustomStringConvertible {
 
-    public var description: Swift.String {
-        func pad(_ value: Int, width: Int) -> Swift.String {
-            var s = Swift.String(value)
+    public var description: Swift::String {
+        func pad(_ value: Int, width: Int) -> Swift::String {
+            var s = Swift::String(value)
             while s.count < width {
                 s = "0" + s
             }

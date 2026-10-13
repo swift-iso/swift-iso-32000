@@ -366,7 +366,7 @@ extension ISO_32000.Writer {
 
         for i in 1...state.objectCount {
             let offset = state.objectOffsets[i] ?? 0
-            var offsetStr = Swift.String(offset)
+            var offsetStr = Swift::String(offset)
             while offsetStr.count < 10 {
                 offsetStr = "0" + offsetStr
             }

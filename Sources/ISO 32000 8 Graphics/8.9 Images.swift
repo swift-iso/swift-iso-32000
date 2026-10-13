@@ -1,7 +1,6 @@
 internal import Binary
 internal import Binary
 public import Byte
-internal import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 import Synchronization
@@ -113,7 +112,7 @@ extension ISO_32000.`8`.`9`.Image {
 
 extension ISO_32000.`8`.`9`.Image.Parse {
 
-    public enum Error: Swift.Error, Sendable, Hashable {
+    public enum Error: Swift::Error, Sendable, Hashable {
 
         case invalidHeader
 

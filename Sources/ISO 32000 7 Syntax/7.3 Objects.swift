@@ -1,6 +1,5 @@
 public import ASCII
 public import Binary
-internal import Binary
 public import Formatter
 import IEEE_754
 import ISO_32000_Annex_D
@@ -50,7 +49,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
 
     @inlinable
     public static func serializeLiteralString<
-        Bytes: Swift.Collection,
+        Bytes: Swift::Collection,
         Buffer: RangeReplaceableCollection
     >(
         _ bytes: Bytes,
@@ -70,7 +69,7 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     }
 
     @inlinable
-    public static func literalString<Bytes: Swift.Collection>(
+    public static func literalString<Bytes: Swift::Collection>(
         from bytes: Bytes
     ) -> [Byte] where Bytes.Element == Byte {
         var result: [Byte] = []
@@ -270,7 +269,7 @@ extension ISO_32000.`7`.`3`.`5`.Name {
 }
 
 extension ISO_32000.`7`.`3`.`5`.Name {
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift::Error, Sendable, Equatable {
         case empty
         case tooLong(_ byteCount: Int)
         case containsNullByte
@@ -555,13 +554,13 @@ extension ISO_32000.`7`.`3`.COS.Dictionary {
         set { storage[key] = newValue }
     }
 
-    public var keys: Swift.Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys
+    public var keys: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys
     {
         storage.keys
     }
 
     public var values:
-        Swift.Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values
+        Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values
     {
         storage.values
     }
@@ -701,7 +700,7 @@ extension ISO_32000.`7`.`3`.COS {
             buffer.append(contentsOf: "false".utf8.map(Byte.init(bitPattern:)))
 
         case .integer(let value):
-            buffer.append(contentsOf: Swift.String(value).utf8.map(Byte.init(bitPattern:)))
+            buffer.append(contentsOf: Swift::String(value).utf8.map(Byte.init(bitPattern:)))
 
         case .real(let value):
 
@@ -882,7 +881,7 @@ extension ISO_32000.`7`.`3`.`3` {
 
 extension ISO_32000.`7`.`3`.`3`.PDFNumber {
     public static func serialize<Buffer>(
-        _ number: ISO_32000_Shared.ISO_32000.`7`.`3`.`3`.PDFNumber,
+        _ number: ISO_32000_Shared::ISO_32000.`7`.`3`.`3`.PDFNumber,
         into buffer: inout Buffer
     ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         serializeReal(number.value, into: &buffer)

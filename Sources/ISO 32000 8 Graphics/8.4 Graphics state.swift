@@ -186,7 +186,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
 
     public struct Independent<TextState: Sendable>: Sendable {
 
-        public var ctm: ISO_32000.Transform<ISO_32000_Shared.UserSpace>
+        public var ctm: ISO_32000.Transform<ISO_32000_Shared::UserSpace>
 
         public var strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace
 
@@ -225,7 +225,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
         public var blackPointCompensation: ISO_32000.`8`.`4`.Graphics.State.BlackPoint.Compensation
 
         public init(
-            ctm: ISO_32000.Transform<ISO_32000_Shared.UserSpace> = .identity,
+            ctm: ISO_32000.Transform<ISO_32000_Shared::UserSpace> = .identity,
             strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
             nonstrokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
             strokingColor: ISO_32000.`8`.`4`.Graphics.State.Color = .gray(0),
@@ -285,7 +285,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
         public var undercolorRemoval: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault
 
         @available(*, deprecated, message: "Deprecated in PDF 2.0")
-        public var transfer: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault
+        public var transfer: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault = .default
 
         public var halftone: ISO_32000.`8`.`4`.Graphics.State.HalftoneOrDefault
 
@@ -301,7 +301,6 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
             self.overprintMode = 0
             self.blackGeneration = .default
             self.undercolorRemoval = .default
-            self.transfer = .default
             self.halftone = .default
             self.halftoneOrigin = nil
             self.flatness = 1.0
@@ -450,7 +449,7 @@ extension ISO_32000.`8`.`4`.Graphics.State {
             return true
         }
 
-        public mutating func withSavedState<T, E: Swift.Error>(
+        public mutating func withSavedState<T, E: Swift::Error>(
             _ body: (inout Self) throws(E) -> T
         ) throws(E) -> T {
             save()
@@ -508,11 +507,10 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
 
     @inlinable
     public mutating func concatenate<TextState>(
-        _ transform: ISO_32000.Transform<ISO_32000_Shared.UserSpace>
+        _ transform: ISO_32000.Transform<ISO_32000_Shared::UserSpace>
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         precondition(transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
             "PDF requires an affine homogeneous matrix")
-        // Column-vector convention: new user-space operation precedes the current map.
         current.ctm = current.ctm * transform
     }
 

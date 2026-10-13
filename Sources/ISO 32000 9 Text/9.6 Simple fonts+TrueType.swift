@@ -37,7 +37,7 @@ extension ISO_32000.`9`.`6`.Embedded {
         ISO_32000.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
     }
 
-    public enum SubsettingError: Swift.Error, Sendable {
+    public enum SubsettingError: Swift::Error, Sendable {
 
         case subset(ISO_14496_22.FontSubsetter.SubsetError)
 
@@ -135,7 +135,7 @@ extension ISO_32000.`9`.`6`.Font {
         )
     }
 
-    public enum DataError: Swift.Error, Sendable {
+    public enum DataError: Swift::Error, Sendable {
 
         case parsing(ISO_14496_22.FontFile.ParsingError)
 
