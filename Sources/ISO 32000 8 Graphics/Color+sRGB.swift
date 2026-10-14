@@ -3,7 +3,7 @@ public import ISO_32000_Shared
 
 extension ISO_32000.`8`.`6`.Color {
 
-    public init(_ srgb: IEC_61966.`2`.`1`.sRGB) {
+    public init(_ srgb: IEC_61966.`2`.`1`.SRGB) {
         self = .rgb(r: srgb.r, g: srgb.g, b: srgb.b)
     }
 
@@ -12,7 +12,7 @@ extension ISO_32000.`8`.`6`.Color {
         saturation: IEC_61966.`2`.`1`.Saturation,
         lightness: IEC_61966.`2`.`1`.Lightness
     ) {
-        let srgb = IEC_61966.`2`.`1`.sRGB(
+        let srgb = IEC_61966.`2`.`1`.SRGB(
             hue: hue,
             saturation: saturation,
             lightness: lightness
@@ -25,7 +25,7 @@ extension ISO_32000.`8`.`6`.Color {
         whiteness: IEC_61966.`2`.`1`.Whiteness,
         blackness: IEC_61966.`2`.`1`.Blackness
     ) {
-        let srgb = IEC_61966.`2`.`1`.sRGB(
+        let srgb = IEC_61966.`2`.`1`.SRGB(
             hue: hue,
             whiteness: whiteness,
             blackness: blackness
@@ -34,7 +34,7 @@ extension ISO_32000.`8`.`6`.Color {
     }
 }
 
-extension IEC_61966.`2`.`1`.sRGB {
+extension IEC_61966.`2`.`1`.SRGB {
 
     public init(_ color: ISO_32000.`8`.`6`.Color) {
         switch color {
@@ -56,7 +56,7 @@ extension IEC_61966.`2`.`1`.sRGB {
 
 extension ISO_32000.`8`.`6`.Color {
 
-    public typealias sRGB = IEC_61966.`2`.`1`.sRGB
+    public typealias sRGB = IEC_61966.`2`.`1`.SRGB
 
     public typealias Hue = IEC_61966.`2`.`1`.Hue
 
