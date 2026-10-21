@@ -131,7 +131,7 @@ extension ISO_32000.COS.StringValue {
             var codeUnits: [UInt16] = []
             var iterator = dataBytes.makeIterator()
             while let hi = iterator.next(), let lo = iterator.next() {
-                codeUnits.append(UInt16(bytes: [hi, lo], endianness: .big)!)
+                codeUnits.append(UInt16(hi.underlying) << 8 | UInt16(lo.underlying))
             }
             self.init(String(decoding: codeUnits, as: UTF16.self))
 

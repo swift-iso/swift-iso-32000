@@ -264,189 +264,189 @@ struct `ISO_32000.Writer Tests` {
         #expect(!pdf.isEmpty)
     }
 
-        static func latoRegular() throws -> [Byte] {
-            let url = try #require(
-                Bundle.module.url(forResource: "Lato-Regular", withExtension: "ttf", subdirectory: "Fixtures"),
-                "Packaged font fixture Fixtures/Lato-Regular.ttf is missing from the test bundle"
-            )
-            let bytes = try Data(contentsOf: url).map(Byte.init(bitPattern:))
-            #expect(bytes.count == 96184, "Fixture is not the recorded Lato-Regular.ttf (see Fixtures/PROVENANCE.md)")
-            return bytes
-        }
+    static func latoRegular() throws -> [Byte] {
+        let url = try #require(
+            Bundle.module.url(forResource: "Lato-Regular", withExtension: "ttf", subdirectory: "Fixtures"),
+            "Packaged font fixture Fixtures/Lato-Regular.ttf is missing from the test bundle"
+        )
+        let bytes = try Data(contentsOf: url).map(Byte.init(bitPattern:))
+        #expect(bytes.count == 96184, "Fixture is not the recorded Lato-Regular.ttf (see Fixtures/PROVENANCE.md)")
+        return bytes
+    }
 
-        @Test
-        func `embeds the full TrueType program of the packaged Lato fixture`() throws {
-            let fontBytes = try Self.latoRegular()
+    @Test
+    func `embeds the full TrueType program of the packaged Lato fixture`() throws {
+        let fontBytes = try Self.latoRegular()
 
-            let customFont = try ISO_32000.Font(
-                data: fontBytes,
-                resourceName: try ISO_32000.COS.Name("CF1")
-            )
-            let helvetica = ISO_32000.Font.helvetica
+        let customFont = try ISO_32000.Font(
+            data: fontBytes,
+            resourceName: try ISO_32000.COS.Name("CF1")
+        )
+        let helvetica = ISO_32000.Font.helvetica
 
-            let document = ISO_32000.Document(
-                info: ISO_32000.Document.Info(
-                    title: "Embedded TrueType Font Test",
-                    creator: "swift-iso-32000 tests"
-                ),
-                pages: [
-                    ISO_32000.Page(
-                        mediaBox: .letter,
-                        content: ISO_32000.ContentStream { builder in
-                            builder.beginText()
-                            builder.setFont(customFont, size: 24)
-                            builder.moveText(dx: .init(72), dy: .init(700))
-                            builder.showText("Embedded TrueType Font: Lato")
-                            builder.setFont(customFont, size: 14)
-                            builder.moveText(dx: .init(0), dy: .init(-30))
-                            builder.showText("The quick brown fox jumps over the lazy dog.")
-                            builder.moveText(dx: .init(0), dy: .init(-25))
-                            builder.showText("0123456789 !@#$%^&*()[]{}|;':\",./<>?")
-                            builder.setFont(helvetica, size: 14)
-                            builder.moveText(dx: .init(0), dy: .init(-50))
-                            builder.showText("The quick brown fox jumps over the lazy dog.")
-                            builder.endText()
-                        },
-                        resources: ISO_32000.Resources(fonts: [
-                            customFont.resourceName: customFont,
-                            helvetica.resourceName: helvetica,
-                        ])
-                    )
-                ]
-            )
-
-            var writer = ISO_32000.Writer()
-            let pdf = writer.write(document)
-            let str = String(decoding: pdf, as: UTF8.self)
-
-            #expect(pdf.count > fontBytes.count, "PDF \(pdf.count) bytes must carry the whole \(fontBytes.count)-byte program")
-            #expect(str.contains("/Subtype /TrueType"))
-            #expect(str.contains("/FontFile2"))
-            #expect(str.contains("/FontDescriptor"))
-            #expect(str.contains("/Lato-Regular"))
-            #expect(str.contains("/Length1 \(fontBytes.count)"))
-        }
-
-        @Test
-        func `subsetting the packaged Lato fixture keeps exactly the used glyphs`() throws {
-            let fontBytes = try Self.latoRegular()
-            let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)
-            let fullSize = fullEmbedded.data.count
-
-            let lines = [
-                "Subsetted Font: Lato",
-                "Hello World! This is a subset font test.",
-                "The font above has been subsetted.",
-                "It only contains glyphs for the characters used.",
+        let document = ISO_32000.Document(
+            info: ISO_32000.Document.Info(
+                title: "Embedded TrueType Font Test",
+                creator: "swift-iso-32000 tests"
+            ),
+            pages: [
+                ISO_32000.Page(
+                    mediaBox: .letter,
+                    content: ISO_32000.ContentStream { builder in
+                        builder.beginText()
+                        builder.setFont(customFont, size: 24)
+                        builder.moveText(dx: .init(72), dy: .init(700))
+                        builder.showText("Embedded TrueType Font: Lato")
+                        builder.setFont(customFont, size: 14)
+                        builder.moveText(dx: .init(0), dy: .init(-30))
+                        builder.showText("The quick brown fox jumps over the lazy dog.")
+                        builder.moveText(dx: .init(0), dy: .init(-25))
+                        builder.showText("0123456789 !@#$%^&*()[]{}|;':\",./<>?")
+                        builder.setFont(helvetica, size: 14)
+                        builder.moveText(dx: .init(0), dy: .init(-50))
+                        builder.showText("The quick brown fox jumps over the lazy dog.")
+                        builder.endText()
+                    },
+                    resources: ISO_32000.Resources(fonts: [
+                        customFont.resourceName: customFont,
+                        helvetica.resourceName: helvetica,
+                    ])
+                )
             ]
-            let usedChars = Set(lines.joined())
+        )
 
-            let subsetEmbedded = try fullEmbedded.subsetted(for: usedChars)
-            let subsetSize = subsetEmbedded.data.count
-            let full = fullEmbedded.fontFile
-            let subset = subsetEmbedded.fontFile
+        var writer = ISO_32000.Writer()
+        let pdf = writer.write(document)
+        let str = String(decoding: pdf, as: UTF8.self)
 
-            let usedGlyphs = Set(usedChars.compactMap { full.glyphIndex(for: $0.unicodeScalars.first!.value) })
-            #expect(usedGlyphs.count == usedChars.count)
-            #expect(full.numGlyphs == 277)
-            #expect(Int(subset.numGlyphs) == usedGlyphs.count + 1, "subset keeps .notdef plus one glyph per used character")
+        #expect(pdf.count > fontBytes.count, "PDF \(pdf.count) bytes must carry the whole \(fontBytes.count)-byte program")
+        #expect(str.contains("/Subtype /TrueType"))
+        #expect(str.contains("/FontFile2"))
+        #expect(str.contains("/FontDescriptor"))
+        #expect(str.contains("/Lato-Regular"))
+        #expect(str.contains("/Length1 \(fontBytes.count)"))
+    }
 
-            for character in usedChars {
-                let codePoint = character.unicodeScalars.first!.value
-                #expect(subset.glyphIndex(for: codePoint) != nil, "subset lost \(character)")
-                #expect(subset.advanceWidth(for: codePoint) == full.advanceWidth(for: codePoint), "advance of \(character) changed")
-            }
-            for unused in "qzQZ0" {
-                let codePoint = unused.unicodeScalars.first!.value
-                #expect(full.glyphIndex(for: codePoint) != nil)
-                #expect(subset.glyphIndex(for: codePoint) == nil, "subset kept unused \(unused)")
-            }
+    @Test
+    func `subsetting the packaged Lato fixture keeps exactly the used glyphs`() throws {
+        let fontBytes = try Self.latoRegular()
+        let fullEmbedded = try ISO_32000.`9`.`6`.Embedded(data: fontBytes)
+        let fullSize = fullEmbedded.data.count
 
-            #expect(subsetSize < fullSize / 5, "subset \(subsetSize) of \(fullSize) bytes")
+        let lines = [
+            "Subsetted Font: Lato",
+            "Hello World! This is a subset font test.",
+            "The font above has been subsetted.",
+            "It only contains glyphs for the characters used.",
+        ]
+        let usedChars = Set(lines.joined())
 
-            let customFont = try ISO_32000.Font(
-                embedded: subsetEmbedded,
-                resourceName: try ISO_32000.COS.Name("CF1")
-            )
+        let subsetEmbedded = try fullEmbedded.subsetted(for: usedChars)
+        let subsetSize = subsetEmbedded.data.count
+        let full = fullEmbedded.fontFile
+        let subset = subsetEmbedded.fontFile
 
-            let document = ISO_32000.Document(
-                info: ISO_32000.Document.Info(
-                    title: "Subsetted TrueType Font Test",
-                    creator: "swift-iso-32000 tests"
-                ),
-                pages: [
-                    ISO_32000.Page(
-                        mediaBox: .letter,
-                        content: ISO_32000.ContentStream { builder in
-                            builder.beginText()
-                            builder.setFont(customFont, size: 14)
-                            builder.moveText(dx: .init(72), dy: .init(700))
-                            for line in lines {
-                                builder.showText(line)
-                                builder.moveText(dx: .init(0), dy: .init(-25))
-                            }
-                            builder.endText()
-                        },
-                        resources: ISO_32000.Resources(fonts: [
-                            customFont.resourceName: customFont
-                        ])
-                    )
-                ]
-            )
+        let usedGlyphs = Set(usedChars.compactMap { full.glyphIndex(for: $0.unicodeScalars.first!.value) })
+        #expect(usedGlyphs.count == usedChars.count)
+        #expect(full.numGlyphs == 277)
+        #expect(Int(subset.numGlyphs) == usedGlyphs.count + 1, "subset keeps .notdef plus one glyph per used character")
 
-            var writer = ISO_32000.Writer()
-            let pdf = writer.write(document)
-            let str = String(decoding: pdf, as: UTF8.self)
-
-            #expect(pdf.count < fullSize, "PDF \(pdf.count) bytes must be smaller than the full \(fullSize)-byte program")
-            #expect(str.contains("/FontFile2"))
-            #expect(str.contains("/Length1 \(subsetSize)"))
+        for character in usedChars {
+            let codePoint = character.unicodeScalars.first!.value
+            #expect(subset.glyphIndex(for: codePoint) != nil, "subset lost \(character)")
+            #expect(subset.advanceWidth(for: codePoint) == full.advanceWidth(for: codePoint), "advance of \(character) changed")
+        }
+        for unused in "qzQZ0" {
+            let codePoint = unused.unicodeScalars.first!.value
+            #expect(full.glyphIndex(for: codePoint) != nil)
+            #expect(subset.glyphIndex(for: codePoint) == nil, "subset kept unused \(unused)")
         }
 
-        @Test
-        func `ISO 32000-2 §9.10.3 ToUnicode CMap holds at most 100 entries per beginbfchar group`() throws {
-            let fontBytes = try Self.latoRegular()
-            let customFont = try ISO_32000.Font(
-                data: fontBytes,
-                resourceName: try ISO_32000.COS.Name("CF1")
-            )
-            let document = ISO_32000.Document(
-                pages: [
-                    ISO_32000.Page(
-                        mediaBox: .letter,
-                        content: ISO_32000.ContentStream { builder in
-                            builder.beginText()
-                            builder.setFont(customFont, size: 12)
-                            builder.showText("ToUnicode")
-                            builder.endText()
-                        },
-                        resources: ISO_32000.Resources(fonts: [customFont.resourceName: customFont])
-                    )
-                ]
-            )
+        #expect(subsetSize < fullSize / 5, "subset \(subsetSize) of \(fullSize) bytes")
 
-            var writer = ISO_32000.Writer()
-            let str = String(decoding: writer.write(document), as: UTF8.self)
-            let lines = str.split(separator: "\n").map(String.init)
+        let customFont = try ISO_32000.Font(
+            embedded: subsetEmbedded,
+            resourceName: try ISO_32000.COS.Name("CF1")
+        )
 
-            var groupSizes: [Int] = []
-            var declared: [Int] = []
-            var current: Int?
-            for line in lines {
-                if line.hasSuffix(" beginbfchar") {
-                    declared.append(try #require(Int(line.dropLast(" beginbfchar".count))))
-                    current = 0
-                } else if line == "endbfchar" {
-                    groupSizes.append(try #require(current))
-                    current = nil
-                } else if current != nil {
-                    current! += 1
-                }
+        let document = ISO_32000.Document(
+            info: ISO_32000.Document.Info(
+                title: "Subsetted TrueType Font Test",
+                creator: "swift-iso-32000 tests"
+            ),
+            pages: [
+                ISO_32000.Page(
+                    mediaBox: .letter,
+                    content: ISO_32000.ContentStream { builder in
+                        builder.beginText()
+                        builder.setFont(customFont, size: 14)
+                        builder.moveText(dx: .init(72), dy: .init(700))
+                        for line in lines {
+                            builder.showText(line)
+                            builder.moveText(dx: .init(0), dy: .init(-25))
+                        }
+                        builder.endText()
+                    },
+                    resources: ISO_32000.Resources(fonts: [
+                        customFont.resourceName: customFont
+                    ])
+                )
+            ]
+        )
+
+        var writer = ISO_32000.Writer()
+        let pdf = writer.write(document)
+        let str = String(decoding: pdf, as: UTF8.self)
+
+        #expect(pdf.count < fullSize, "PDF \(pdf.count) bytes must be smaller than the full \(fullSize)-byte program")
+        #expect(str.contains("/FontFile2"))
+        #expect(str.contains("/Length1 \(subsetSize)"))
+    }
+
+    @Test
+    func `ISO 32000-2 §9.10.3 ToUnicode CMap holds at most 100 entries per beginbfchar group`() throws {
+        let fontBytes = try Self.latoRegular()
+        let customFont = try ISO_32000.Font(
+            data: fontBytes,
+            resourceName: try ISO_32000.COS.Name("CF1")
+        )
+        let document = ISO_32000.Document(
+            pages: [
+                ISO_32000.Page(
+                    mediaBox: .letter,
+                    content: ISO_32000.ContentStream { builder in
+                        builder.beginText()
+                        builder.setFont(customFont, size: 12)
+                        builder.showText("ToUnicode")
+                        builder.endText()
+                    },
+                    resources: ISO_32000.Resources(fonts: [customFont.resourceName: customFont])
+                )
+            ]
+        )
+
+        var writer = ISO_32000.Writer()
+        let str = String(decoding: writer.write(document), as: UTF8.self)
+        let lines = str.split(separator: "\n").map(String.init)
+
+        var groupSizes: [Int] = []
+        var declared: [Int] = []
+        var current: Int?
+        for line in lines {
+            if line.hasSuffix(" beginbfchar") {
+                declared.append(try #require(Int(line.dropLast(" beginbfchar".count))))
+                current = 0
+            } else if line == "endbfchar" {
+                groupSizes.append(try #require(current))
+                current = nil
+            } else if current != nil {
+                current! += 1
             }
-
-            #expect(!groupSizes.isEmpty)
-            #expect(groupSizes == declared)
-            #expect(groupSizes.allSatisfy { $0 >= 1 && $0 <= 100 })
-            #expect(groupSizes.reduce(0, +) > 100)
         }
+
+        #expect(!groupSizes.isEmpty)
+        #expect(groupSizes == declared)
+        #expect(groupSizes.allSatisfy { $0 >= 1 && $0 <= 100 })
+        #expect(groupSizes.reduce(0, +) > 100)
+    }
 }

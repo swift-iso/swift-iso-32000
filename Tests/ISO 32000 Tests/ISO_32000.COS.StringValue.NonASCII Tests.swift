@@ -42,13 +42,14 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
 
         #expect(
-            bytes == [
-                0x28,
-                0x43, 0x6C, 0x69, 0xEB,
-                0x6E, 0x74, 0x6E, 0x75,
-                0x6D, 0x6D, 0x65, 0x72,
-                0x29,
-            ].map(Byte.init(bitPattern:))
+            bytes
+                == [
+                    0x28,
+                    0x43, 0x6C, 0x69, 0xEB,
+                    0x6E, 0x74, 0x6E, 0x75,
+                    0x6D, 0x6D, 0x65, 0x72,
+                    0x29,
+                ].map(Byte.init(bitPattern:))
         )
     }
 
@@ -69,18 +70,19 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(
-            bytes == [
-                0x28, 0xFE, 0xFF,
-                0x20, 0xAC,
-                0x00, 0xA0,
-                0x00, 0x31,
-                0x00, 0x35,
-                0x00, 0x30,
-                0x00, 0x2C,
-                0x00, 0x31,
-                0x00, 0x32,
-                0x29,
-            ].map(Byte.init(bitPattern:))
+            bytes
+                == [
+                    0x28, 0xFE, 0xFF,
+                    0x20, 0xAC,
+                    0x00, 0xA0,
+                    0x00, 0x31,
+                    0x00, 0x35,
+                    0x00, 0x30,
+                    0x00, 0x2C,
+                    0x00, 0x31,
+                    0x00, 0x32,
+                    0x29,
+                ].map(Byte.init(bitPattern:))
         )
     }
 
@@ -91,12 +93,13 @@ struct `ISO_32000.COS.StringValue NonASCII Tests` {
         var bytes: [Byte] = []
         ISO_32000.`7`.`3`.COS.StringValue.serialize(str, into: &bytes)
         #expect(
-            bytes == [
-                0x28, 0xFE, 0xFF,
-                0xD8, 0x3D,
-                0xDE, 0x00,
-                0x29,
-            ].map(Byte.init(bitPattern:))
+            bytes
+                == [
+                    0x28, 0xFE, 0xFF,
+                    0xD8, 0x3D,
+                    0xDE, 0x00,
+                    0x29,
+                ].map(Byte.init(bitPattern:))
         )
     }
 

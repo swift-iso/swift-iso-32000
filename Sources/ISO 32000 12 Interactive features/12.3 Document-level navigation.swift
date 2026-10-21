@@ -170,11 +170,10 @@ extension ISO_32000.Outline.Item {
 
     public var visibleDescendantCount: Int {
         guard !children.isEmpty else { return 1 }
-        if isOpen {
-            return 1 + children.reduce(0) { $0 + $1.visibleDescendantCount }
-        } else {
+        guard isOpen else {
             return 1
         }
+        return 1 + children.reduce(0) { $0 + $1.visibleDescendantCount }
     }
 }
 

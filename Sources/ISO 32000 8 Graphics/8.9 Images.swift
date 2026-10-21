@@ -1,5 +1,4 @@
 internal import Binary
-internal import Binary
 public import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
@@ -182,9 +181,15 @@ extension ISO_32000.`8`.`9`.Image {
                     throw .truncatedData
                 }
 
-                let height = Int(UInt16(bytes: data[offset + 3..<offset + 5], endianness: .big)!)
+                guard
+                    let height16 = UInt16(bytes: data[offset + 3..<offset + 5], endianness: .big),
+                    let width16 = UInt16(bytes: data[offset + 5..<offset + 7], endianness: .big)
+                else {
+                    preconditionFailure("The bounds check above guarantees two-byte dimensions")
+                }
+                let height = Int(height16)
 
-                let width = Int(UInt16(bytes: data[offset + 5..<offset + 7], endianness: .big)!)
+                let width = Int(width16)
 
                 let components = Int(UInt8(bitPattern: data[offset + 7]))
 
@@ -198,7 +203,10 @@ extension ISO_32000.`8`.`9`.Image {
             guard offset + 1 < data.count else {
                 throw .truncatedData
             }
-            let length = Int(UInt16(bytes: data[offset..<offset + 2], endianness: .big)!)
+            guard let length16 = UInt16(bytes: data[offset..<offset + 2], endianness: .big) else {
+                preconditionFailure("The bounds check above guarantees a two-byte length")
+            }
+            let length = Int(length16)
             offset += length
         }
 
@@ -210,6 +218,10 @@ extension ISO_32000.`8`.`9`.Image {
 
     public var resourceName: ISO_32000.`7`.`3`.COS.Name {
 
-        try! .init("Im\(id)")
+        do {
+            return try .init("Im\(id)")
+        } catch {
+            preconditionFailure("An image resource name is a valid PDF name: \(error)")
+        }
     }
 }

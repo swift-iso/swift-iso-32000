@@ -322,8 +322,10 @@ extension ISO_32000.ContentStream.Builder {
     }
 
     public mutating func transform(_ t: ISO_32000.Transform<ISO_32000_Shared.UserSpace>) {
-        precondition(t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
-            "PDF requires an affine homogeneous matrix")
+        precondition(
+            t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix"
+        )
         emit(
             .transform(
                 a: .init(t[0, 0]),
@@ -418,8 +420,10 @@ extension ISO_32000.ContentStream.Builder {
     }
 
     public mutating func setTextMatrix(_ t: ISO_32000.Transform<ISO_32000_Shared.UserSpace>) {
-        precondition(t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
-            "PDF requires an affine homogeneous matrix")
+        precondition(
+            t[2, 0] == 0 && t[2, 1] == 0 && t[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix"
+        )
         emit(
             .setTextMatrix(
                 a: .init(t[0, 0]),

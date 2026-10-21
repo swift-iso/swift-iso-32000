@@ -1,7 +1,7 @@
 public import Geometry
+public import ISO_32000_Shared
 public import Interval
 public import Numeric
-public import ISO_32000_Shared
 import Quantizer
 
 extension ISO_32000.`8` {
@@ -509,8 +509,10 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
     public mutating func concatenate<TextState>(
         _ transform: ISO_32000.Transform<ISO_32000_Shared::UserSpace>
     ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
-        precondition(transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
-            "PDF requires an affine homogeneous matrix")
+        precondition(
+            transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
+            "PDF requires an affine homogeneous matrix"
+        )
         current.ctm = current.ctm * transform
     }
 

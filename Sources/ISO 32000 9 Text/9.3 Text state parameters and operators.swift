@@ -1,6 +1,6 @@
-public import Space
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
+public import Space
 
 extension ISO_32000.`9` {
 

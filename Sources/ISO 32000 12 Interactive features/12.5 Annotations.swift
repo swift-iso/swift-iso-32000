@@ -237,7 +237,11 @@ extension ISO_32000.`12`.`5`.Annotation.Subtype {
 
     public var name: ISO_32000.`7`.`3`.COS.Name {
 
-        try! ISO_32000.`7`.`3`.COS.Name(rawValue)
+        do {
+            return try ISO_32000.`7`.`3`.COS.Name(rawValue)
+        } catch {
+            preconditionFailure("An annotation subtype raw value is a valid PDF name: \(error)")
+        }
     }
 }
 

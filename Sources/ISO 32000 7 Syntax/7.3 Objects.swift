@@ -382,6 +382,7 @@ extension ISO_32000.`7`.`3`.`5`.Name {
 
     public static let fontDescriptor = Self(__unchecked: (), rawValue: "FontDescriptor")
 
+    // swift-format-ignore: DontRepeatTypeInStaticProperties
     public static let fontName = Self(__unchecked: (), rawValue: "FontName")
     public static let fontFlags = Self(__unchecked: (), rawValue: "Flags")
     public static let fontBBox = Self(__unchecked: (), rawValue: "FontBBox")
@@ -554,14 +555,11 @@ extension ISO_32000.`7`.`3`.COS.Dictionary {
         set { storage[key] = newValue }
     }
 
-    public var keys: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys
-    {
+    public var keys: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys {
         storage.keys
     }
 
-    public var values:
-        Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values
-    {
+    public var values: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values {
         storage.values
     }
 
@@ -573,9 +571,7 @@ extension ISO_32000.`7`.`3`.COS.Dictionary {
         storage.isEmpty
     }
 
-    public var sortedEntries:
-        [(key: ISO_32000.`7`.`3`.COS.Name, value: ISO_32000.`7`.`3`.COS.Object)]
-    {
+    public var sortedEntries: [(key: ISO_32000.`7`.`3`.COS.Name, value: ISO_32000.`7`.`3`.COS.Object)] {
         storage.sorted { $0.key.rawValue < $1.key.rawValue }
     }
 }
