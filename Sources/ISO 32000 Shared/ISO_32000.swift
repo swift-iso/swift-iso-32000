@@ -1,6 +1,6 @@
 @_exported public import Geometry
 import Quantizer
-public import Space
+internal import Space
 
 public enum ISO_32000 {}
 
