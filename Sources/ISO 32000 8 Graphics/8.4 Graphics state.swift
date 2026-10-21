@@ -513,7 +513,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
             transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
             "PDF requires an affine homogeneous matrix"
         )
-        current.ctm = current.ctm * transform
+        current.ctm *= transform
     }
 
     @inlinable
