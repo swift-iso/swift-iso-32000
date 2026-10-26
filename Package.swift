@@ -51,7 +51,7 @@ let package = Package(
             traits: ["Conversions"]
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-spatial.git",
+            url: "https://github.com/swift-atoms/swift-space.git",
             branch: "main"
         ),
         .package(
@@ -144,7 +144,7 @@ let package = Package(
                     package: "swift-binary"
                 ),
                 .product(name: "IEC 61966", package: "swift-iec-61966"),
-                .product(name: "Space", package: "swift-spatial"),
+                .product(name: "Space", package: "swift-space"),
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Geometry", package: "swift-geometry"),
                 .product(name: "Angle", package: "swift-angle"),
