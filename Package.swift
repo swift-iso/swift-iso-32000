@@ -126,10 +126,6 @@ let package = Package(
                 .product(name: "ASCII", package: "swift-ascii"),
                 .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "Binary", package: "swift-binary"),
-                .product(
-                    name: "Binary",
-                    package: "swift-binary"
-                ),
                 .product(name: "IEEE 754", package: "swift-ieee-754"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
@@ -221,10 +217,6 @@ let package = Package(
                 .product(name: "Geometry", package: "swift-geometry"),
                 .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "Binary", package: "swift-binary"),
-                .product(
-                    name: "Binary",
-                    package: "swift-binary"
-                ),
                 .product(
                     name: "Byte",
                     package: "swift-byte"
