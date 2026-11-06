@@ -3,7 +3,7 @@ import Testing
 
 @testable import ISO_32000
 
-extension ISO_32000.Font {
+extension `ISO_32000.Font Tests` {
 
     @Suite
     struct `Width Correctness` {

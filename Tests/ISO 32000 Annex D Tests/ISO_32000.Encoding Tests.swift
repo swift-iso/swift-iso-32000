@@ -94,7 +94,9 @@ struct `ISO_32000.Encoding Tests` {
     }
 }
 
-extension ISO_32000.WinAnsiEncoding {
+enum `ISO_32000.WinAnsiEncoding Tests` {}
+
+extension `ISO_32000.WinAnsiEncoding Tests` {
     @Suite
     struct Test {
 
@@ -191,7 +193,9 @@ extension ISO_32000.WinAnsiEncoding {
     }
 }
 
-extension ISO_32000.PDFDocEncoding {
+enum `ISO_32000.PDFDocEncoding Tests` {}
+
+extension `ISO_32000.PDFDocEncoding Tests` {
     @Suite
     struct Test {
 
@@ -262,7 +266,9 @@ extension ISO_32000.PDFDocEncoding {
     }
 }
 
-extension ISO_32000.StandardEncoding {
+enum `ISO_32000.StandardEncoding Tests` {}
+
+extension `ISO_32000.StandardEncoding Tests` {
     @Suite
     struct Test {
 
@@ -314,7 +320,9 @@ extension ISO_32000.StandardEncoding {
     }
 }
 
-extension ISO_32000.MacRomanEncoding {
+enum `ISO_32000.MacRomanEncoding Tests` {}
+
+extension `ISO_32000.MacRomanEncoding Tests` {
     @Suite
     struct Test {
 
@@ -358,7 +366,9 @@ extension ISO_32000.MacRomanEncoding {
     }
 }
 
-extension ISO_32000.MacExpertEncoding {
+enum `ISO_32000.MacExpertEncoding Tests` {}
+
+extension `ISO_32000.MacExpertEncoding Tests` {
     @Suite
     struct Test {
 
@@ -405,7 +415,9 @@ extension ISO_32000.MacExpertEncoding {
     }
 }
 
-extension ISO_32000.SymbolEncoding {
+enum `ISO_32000.SymbolEncoding Tests` {}
+
+extension `ISO_32000.SymbolEncoding Tests` {
     @Suite
     struct Test {
 
@@ -470,7 +482,9 @@ extension ISO_32000.SymbolEncoding {
     }
 }
 
-extension ISO_32000.ZapfDingbatsEncoding {
+enum `ISO_32000.ZapfDingbatsEncoding Tests` {}
+
+extension `ISO_32000.ZapfDingbatsEncoding Tests` {
     @Suite
     struct Test {
 

@@ -4,7 +4,9 @@ import Testing
 
 @testable import ISO_32000
 
-extension ISO_32000.`7`.`3`.`3`.PDFNumber {
+enum `ISO_32000.7.3.3.PDFNumber Tests` {}
+
+extension `ISO_32000.7.3.3.PDFNumber Tests` {
     @Suite struct Tests {
         @Suite struct Unit {}
         @Suite struct `Edge Case` {}
@@ -12,7 +14,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
     }
 }
 
-extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Unit {
+extension `ISO_32000.7.3.3.PDFNumber Tests`.Tests.Unit {
     @Test
     func `serializes a plain integer without a decimal point`() {
         #expect(String(42.0.pdf) == "42")
@@ -29,7 +31,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Unit {
     }
 }
 
-extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.`Edge Case` {
+extension `ISO_32000.7.3.3.PDFNumber Tests`.Tests.`Edge Case` {
 
     @Test
     func `fractional rounding carries into the integer part (0-point-999995)`() {
@@ -77,7 +79,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.`Edge Case` {
     }
 }
 
-extension ISO_32000.`7`.`3`.`3`.PDFNumber.Tests.Integration {
+extension `ISO_32000.7.3.3.PDFNumber Tests`.Tests.Integration {
 
     @Test(
         arguments: [

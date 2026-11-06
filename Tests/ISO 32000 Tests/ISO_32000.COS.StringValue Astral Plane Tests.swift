@@ -3,7 +3,7 @@ import Testing
 
 @testable import ISO_32000
 
-extension ISO_32000.COS.StringValue {
+extension `ISO_32000.COS.StringValue Tests` {
     @Suite struct Tests {
         @Suite struct Unit {}
         @Suite struct `Edge Case` {}
@@ -11,7 +11,7 @@ extension ISO_32000.COS.StringValue {
     }
 }
 
-extension ISO_32000.COS.StringValue.Tests.Unit {
+extension `ISO_32000.COS.StringValue Tests`.Tests.Unit {
     @Test
     func `asHexadecimal on a PDFDocEncoding-only payload`() {
         let str = ISO_32000.COS.StringValue("Hi")
@@ -20,7 +20,7 @@ extension ISO_32000.COS.StringValue.Tests.Unit {
     }
 }
 
-extension ISO_32000.COS.StringValue.Tests.`Edge Case` {
+extension `ISO_32000.COS.StringValue Tests`.Tests.`Edge Case` {
 
     @Test
     func `asHexadecimal does not trap on an astral-plane scalar`() {
@@ -58,7 +58,7 @@ extension ISO_32000.COS.StringValue.Tests.`Edge Case` {
     }
 }
 
-extension ISO_32000.COS.StringValue.Tests.Integration {
+extension `ISO_32000.COS.StringValue Tests`.Tests.Integration {
 
     @Test(
         arguments: [
