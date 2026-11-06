@@ -1,4 +1,5 @@
 public import ISO_32000_Shared
+public import RFC_3986
 
 extension ISO_32000.`12` {
 
@@ -75,12 +76,16 @@ extension ISO_32000.Action {
 
     public struct GoToR: Sendable {
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String
 
         public var destination: ISO_32000.Destination
 
         public var newWindow: Bool?
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public init(file: String, destination: ISO_32000.Destination, newWindow: Bool? = nil) {
             self.file = file
             self.destination = destination
@@ -91,13 +96,13 @@ extension ISO_32000.Action {
 
 extension ISO_32000.Action {
 
-    public struct URI: Sendable, Equatable, Hashable, Codable {
+    public struct URI: Sendable, Equatable, Hashable {
 
-        public var uri: String
+        public var uri: RFC_3986.URI
 
         public var isMap: Bool
 
-        public init(uri: String, isMap: Bool = false) {
+        public init(uri: RFC_3986.URI, isMap: Bool = false) {
             self.uri = uri
             self.isMap = isMap
         }
@@ -173,6 +178,8 @@ extension ISO_32000.Action {
 
     public struct GoToE: Sendable, Hashable {
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String?
 
         public var destination: ISO_32000.Destination
@@ -183,6 +190,8 @@ extension ISO_32000.Action {
 
         public init(
             destination: ISO_32000.Destination,
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
             file: String? = nil,
             target: Target? = nil,
             newWindow: Bool? = nil
@@ -267,6 +276,8 @@ extension ISO_32000.Action {
 
     public struct Launch: Sendable, Hashable {
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String?
 
         public var win: WindowsLaunch?
@@ -274,6 +285,8 @@ extension ISO_32000.Action {
         public var newWindow: Bool?
 
         public init(
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
             file: String? = nil,
             win: WindowsLaunch? = nil,
             newWindow: Bool? = nil
@@ -289,6 +302,8 @@ extension ISO_32000.Action.Launch {
 
     public struct WindowsLaunch: Sendable, Hashable {
 
+        // swift-linter:disable:next raw concept
+        // REASON: A Launch action's /F, a byte string in DOS syntax for a Windows viewer, whatever platform reads the PDF; looked at Path and File.Path, which hold this platform's paths.
         public var file: String
 
         // swift-linter:disable:next raw concept
@@ -300,6 +315,8 @@ extension ISO_32000.Action.Launch {
         public var parameters: String?
 
         public init(
+            // swift-linter:disable:next raw concept
+            // REASON: A Launch action's /F, a byte string in DOS syntax for a Windows viewer, whatever platform reads the PDF; looked at Path and File.Path, which hold this platform's paths.
             file: String,
             // swift-linter:disable:next raw concept
             // REASON: A Launch action's /D, a byte string in DOS syntax for a Windows viewer, whatever platform reads the PDF; looked at Path and File.Directory, which hold this platform's paths.
@@ -329,6 +346,8 @@ extension ISO_32000.Action {
 
     public struct Thread: Sendable, Hashable {
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String?
 
         public var thread: ThreadSpec
@@ -337,6 +356,8 @@ extension ISO_32000.Action {
 
         public init(
             thread: ThreadSpec,
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
             file: String? = nil,
             bead: BeadSpec? = nil
         ) {

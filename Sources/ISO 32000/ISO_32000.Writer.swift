@@ -2,6 +2,7 @@ public import Binary
 import Byte
 import ISO_32000_9_Text
 import Ownership
+import RFC_3986
 import RFC_4648
 import Standard_Library_Extensions
 public import Witness
@@ -172,7 +173,7 @@ extension ISO_32000.Writer {
 
                         var actionDict = ISO_32000.COS.Dictionary()
                         actionDict[.s] = .name(.uri)
-                        actionDict[.uri] = .string(ISO_32000.COS.StringValue(uri))
+                        actionDict[.uri] = .string(ISO_32000.COS.StringValue(uri.value))
                         annotDict[.a] = .dictionary(actionDict)
 
                     case .destination(let dest):

@@ -232,6 +232,7 @@ let package = Package(
                 ),
                 .product(name: "ISO 9899", package: "swift-iso-9899"),
                 .product(name: "ASCII", package: "swift-ascii"),
+                .product(name: "RFC 3986", package: "swift-rfc-3986"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "Witness", package: "swift-witness"),
                 .product(name: "Linear", package: "swift-linear"),
