@@ -1,4 +1,5 @@
 public import ISO_32000_Shared
+public import RFC_3986
 
 extension ISO_32000.`12` {
 
@@ -549,13 +550,13 @@ extension ISO_32000.Form.Field.Signature.SeedValue {
 
         public var oid: [String]?
 
-        public var url: String?
+        public var url: RFC_3986.URI?
 
         public init(
             subject: [String]? = nil,
             issuer: [String]? = nil,
             oid: [String]? = nil,
-            url: String? = nil
+            url: RFC_3986.URI? = nil
         ) {
             self.subject = subject
             self.issuer = issuer
@@ -627,13 +628,13 @@ extension ISO_32000.Form {
 
     public struct SubmitForm: Sendable, Hashable {
 
-        public var url: String
+        public var url: RFC_3986.URI
 
         public var fields: [String]?
 
         public var flags: SubmitOptions
 
-        public init(url: String, fields: [String]? = nil, flags: SubmitOptions = []) {
+        public init(url: RFC_3986.URI, fields: [String]? = nil, flags: SubmitOptions = []) {
             self.url = url
             self.fields = fields
             self.flags = flags

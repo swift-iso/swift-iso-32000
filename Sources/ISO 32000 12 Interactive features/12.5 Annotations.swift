@@ -2,6 +2,7 @@ public import Geometry
 public import ISO_32000_7_Syntax
 public import ISO_32000_8_Graphics
 public import ISO_32000_Shared
+public import RFC_5646
 
 extension ISO_32000.`12` {
 
@@ -34,7 +35,7 @@ extension ISO_32000.`12`.`5` {
 
         public var blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode?
 
-        public var language: String?
+        public var language: RFC_5646.LanguageTag?
 
         public var appearance: ISO_32000.`12`.`5`.Appearance?
 
@@ -55,7 +56,7 @@ extension ISO_32000.`12`.`5` {
             fillOpacity: Double? = nil,
             strokeOpacity: Double? = nil,
             blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode? = nil,
-            language: String? = nil,
+            language: RFC_5646.LanguageTag? = nil,
             appearance: ISO_32000.`12`.`5`.Appearance? = nil,
             appearanceState: String? = nil
         ) {

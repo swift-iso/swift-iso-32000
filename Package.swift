@@ -40,6 +40,8 @@ let package = Package(
     ],
     dependencies: [
 
+        .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-5646.git", branch: "main"),
         .package(
             url: "https://github.com/swift-atoms/swift-geometry.git",
             branch: "main",
@@ -172,7 +174,13 @@ let package = Package(
         ),
         .target(
             name: "ISO 32000 12 Interactive features",
-            dependencies: [.target(name: "ISO 32000 Shared"), .target(name: "ISO 32000 7 Syntax"), .target(name: "ISO 32000 8 Graphics")]
+            dependencies: [
+                .target(name: "ISO 32000 Shared"),
+                .target(name: "ISO 32000 7 Syntax"),
+                .target(name: "ISO 32000 8 Graphics"),
+                .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(name: "RFC 5646", package: "swift-rfc-5646"),
+            ]
         ),
         .target(
             name: "ISO 32000 13 Multimedia features",

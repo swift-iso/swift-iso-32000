@@ -241,10 +241,14 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 
         public var permissions: Permission
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
         public var version: String
 
         public init(
             permissions: Permission = .formFillingAndSigning,
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
             version: String = "1.2"
         ) {
             self.permissions = permissions
@@ -273,6 +277,8 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 
         public var message: String?
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
         public var version: String
 
         public var annots: AnnotRights
@@ -288,6 +294,8 @@ extension ISO_32000.DigitalSignature.SignatureReference {
         public init(
             document: DocumentRights = [],
             message: String? = nil,
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
             version: String = "2.2",
             annots: AnnotRights = [],
             form: FormRights = [],
@@ -423,11 +431,15 @@ extension ISO_32000.DigitalSignature.SignatureReference {
 
         public var fields: [String]?
 
+        // swift-linter:disable:next raw concept
+        // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
         public var version: String
 
         public init(
             action: Action,
             fields: [String]? = nil,
+            // swift-linter:disable:next raw concept
+            // REASON: A PDF signature dictionary's /V version name such as 1.2 or 2.2, which is two components of PDF's own numbering; looked at Version.Semantic (needs three) and Version.Tools (a Swift tools version), neither is what ISO 32000 defines.
             version: String = "1.2"
         ) {
             self.action = action

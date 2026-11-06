@@ -291,6 +291,8 @@ extension ISO_32000.Action.Launch {
 
         public var file: String
 
+        // swift-linter:disable:next raw concept
+        // REASON: A Launch action's /D, a byte string in DOS syntax for a Windows viewer, whatever platform reads the PDF; looked at Path and File.Directory, which hold this platform's paths.
         public var directory: String?
 
         public var operation: Operation?
@@ -299,6 +301,8 @@ extension ISO_32000.Action.Launch {
 
         public init(
             file: String,
+            // swift-linter:disable:next raw concept
+            // REASON: A Launch action's /D, a byte string in DOS syntax for a Windows viewer, whatever platform reads the PDF; looked at Path and File.Directory, which hold this platform's paths.
             directory: String? = nil,
             operation: Operation? = nil,
             parameters: String? = nil
