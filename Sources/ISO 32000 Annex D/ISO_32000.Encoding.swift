@@ -28,7 +28,7 @@ extension ISO_32000.Encoding {
 extension ISO_32000.Encoding {
 
     @inlinable
-    public static func encode<Scalars: Sequence>(
+    public static func encode<Scalars: Swift.Sequence>(
         _ scalars: Scalars
     ) -> [Byte]? where Scalars.Element == Unicode.Scalar {
         var result: [Byte] = []
@@ -40,7 +40,7 @@ extension ISO_32000.Encoding {
     }
 
     @inlinable
-    public static func encodeWithFallback<Scalars: Sequence>(
+    public static func encodeWithFallback<Scalars: Swift.Sequence>(
         _ scalars: Scalars
     ) -> [Byte] where Scalars.Element == Unicode.Scalar {
         var result: [Byte] = []

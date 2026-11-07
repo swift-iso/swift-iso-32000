@@ -234,7 +234,7 @@ extension `ISO_32000.PDFDocEncoding Tests` {
         func `Complete 256-byte mapping`() {
 
             var definedCount = 0
-            for byte in 0..<256 {
+            (0..<256).forEach { byte in
                 if ISO_32000.PDFDocEncoding.decode(Byte(UInt8(byte))) != nil {
                     definedCount += 1
                 }

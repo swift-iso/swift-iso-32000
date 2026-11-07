@@ -365,7 +365,7 @@ extension ISO_32000.Writer {
 
         buffer.append(contentsOf: "0000000000 65535 f \n".utf8.map(Byte.init(bitPattern:)))
 
-        for i in 1...state.objectCount {
+        (1...state.objectCount).forEach { i in
             let offset = state.objectOffsets[i] ?? 0
             var offsetStr = Swift::String(offset)
             while offsetStr.count < 10 {
@@ -732,7 +732,7 @@ extension ISO_32000.Writer {
 
         var widthsArray: [ISO_32000.COS.Object] = []
         let unitsPerEm = embedded.metrics.unitsPerEm
-        for charCode in firstChar...lastChar {
+        (firstChar...lastChar).forEach { charCode in
 
             let width = embedded.metrics.width(forCodePoint: UInt32(charCode))
 

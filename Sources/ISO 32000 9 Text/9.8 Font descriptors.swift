@@ -99,7 +99,7 @@ extension ISO_32000.`9`.`8` {
             self.unitsPerEm = unitsPerEm
 
             var byteWidths = [ISO_32000.FontDesign.Width](repeating: typedDefaultWidth, count: 256)
-            for byte in UInt8.min...UInt8.max {
+            (UInt8.min...UInt8.max).forEach { byte in
 
                 if let scalar = ISO_32000.WinAnsiEncoding.decode(Byte(byte)) {
                     byteWidths[Int(byte)] = typedWidths[scalar.value] ?? typedDefaultWidth
