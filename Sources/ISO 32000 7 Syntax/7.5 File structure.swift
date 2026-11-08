@@ -7,9 +7,24 @@ extension ISO_32000.`7` {
 }
 
 extension ISO_32000.`7`.`5` {
+
+    public enum `2` {}
 }
 
 extension ISO_32000.`7`.`5`.`2` {
+
+    public enum Version: String, Sendable, Hashable, Codable, CaseIterable {
+
+        case v1_4 = "1.4"
+
+        case v1_5 = "1.5"
+
+        case v1_6 = "1.6"
+
+        case v1_7 = "1.7"
+
+        case v2_0 = "2.0"
+    }
 }
 
 extension ISO_32000.`7`.`5`.`2`.Version {

@@ -946,7 +946,7 @@ extension ISO_32000.`7`.`3`.`3`.PDFNumber {
                 count -= 1
             }
 
-            (0..<count).forEach { i in
+            for i in 0..<count {
                 buffer.append(digits[i].byte)
             }
         }
