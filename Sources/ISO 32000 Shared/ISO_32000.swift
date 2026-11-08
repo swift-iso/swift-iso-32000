@@ -9,6 +9,7 @@ extension ISO_32000 {
     public typealias UserSpace = Geometry<Double, ISO_32000_Shared.UserSpace>
 }
 
+public enum UserSpace: Quantizer::Quantized {}
 
 extension UserSpace {
     public typealias Scalar = Double
