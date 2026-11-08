@@ -146,7 +146,7 @@ struct `ISO_32000.Writer Tests` {
         let content = ISO_32000.ContentStream { builder in
             builder.beginText()
             builder.setFont(ISO_32000.Font.helvetica, size: 12)
-            for i in 0..<20 {
+            (0..<20).forEach { i in
                 builder.moveText(
                     dx: .init(72),
                     dy: .init(Double(700 - i * 20))

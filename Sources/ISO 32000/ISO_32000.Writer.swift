@@ -791,10 +791,10 @@ extension ISO_32000.Writer {
     private static let winAnsiToUnicode: [Int: Int] = {
         var mapping: [Int: Int] = [:]
 
-        for code in 32...127 {
+        (32...127).forEach { code in
             mapping[code] = code
         }
-        for code in 160...255 {
+        (160...255).forEach { code in
             mapping[code] = code
         }
 
