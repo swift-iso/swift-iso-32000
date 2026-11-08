@@ -9,7 +9,6 @@ extension ISO_32000 {
     public typealias UserSpace = Geometry<Double, ISO_32000_Shared.UserSpace>
 }
 
-
 extension UserSpace {
     public typealias Scalar = Double
     public static var quantum: Double { 0.01 }

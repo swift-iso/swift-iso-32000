@@ -1,7 +1,6 @@
 public import ISO_32000_12_Interactive_features
 import ISO_32000_8_Graphics
 
-
 extension ISO_32000 {
     public struct Resources: Sendable {
 
