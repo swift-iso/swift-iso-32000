@@ -7,13 +7,9 @@ extension ISO_32000.`9` {
 }
 
 extension ISO_32000.`9`.`4` {
-
-    public enum `4` {}
 }
 
 extension ISO_32000.`9`.`4`.`4` {
-
-    public enum TextSpace {}
 }
 
 extension ISO_32000 {
@@ -22,37 +18,6 @@ extension ISO_32000 {
 }
 
 extension ISO_32000.`9`.`4` {
-
-    public struct Matrix: Sendable, Hashable {
-
-        public var a: Double
-
-        public var b: Double
-
-        public var c: Double
-
-        public var d: Double
-
-        public var e: Double
-
-        public var f: Double
-
-        public init(
-            a: Double = 1,
-            b: Double = 0,
-            c: Double = 0,
-            d: Double = 1,
-            e: Double = 0,
-            f: Double = 0
-        ) {
-            self.a = a
-            self.b = b
-            self.c = c
-            self.d = d
-            self.e = e
-            self.f = f
-        }
-    }
 }
 
 extension ISO_32000.`9`.`4`.Matrix {
@@ -105,8 +70,6 @@ extension ISO_32000.`9`.`4`.Matrix {
 }
 
 extension ISO_32000.`9`.`4` {
-
-    public enum Displacement {}
 }
 
 extension ISO_32000.`9`.`4`.Displacement {
@@ -139,13 +102,6 @@ extension ISO_32000.`9`.`4`.Displacement {
 }
 
 extension ISO_32000.`9`.`4` {
-
-    public enum TJElement: Sendable {
-
-        case string([Byte])
-
-        case adjustment(Double)
-    }
 }
 
 extension ISO_32000.Text {

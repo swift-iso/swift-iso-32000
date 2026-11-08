@@ -37,12 +37,6 @@ extension ISO_32000.`9`.`6`.Embedded {
         ISO_32000.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
     }
 
-    public enum SubsettingError: Swift::Error, Sendable {
-
-        case subset(ISO_14496_22.FontSubsetter.SubsetError)
-
-        case parsing(ISO_14496_22.FontFile.ParsingError)
-    }
 
     public func subsetted(for characters: Set<Character>) throws(SubsettingError) -> Self {
         let subsetter = ISO_14496_22.FontSubsetter(fontFile: fontFile)
@@ -135,12 +129,6 @@ extension ISO_32000.`9`.`6`.Font {
         )
     }
 
-    public enum DataError: Swift::Error, Sendable {
-
-        case parsing(ISO_14496_22.FontFile.ParsingError)
-
-        case name(ISO_32000.`7`.`3`.COS.Name.Error)
-    }
 
     public init(
         data: [Byte],

@@ -10,92 +10,15 @@ extension ISO_32000.`14` {
 }
 
 extension ISO_32000.`14`.`8` {
-
-    public enum `4` {}
 }
 
 extension ISO_32000.`14`.`8`.`4` {
-
-    public enum `8` {}
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8` {
-
-    public enum `3` {}
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8`.`3` {
-
-    public struct Table: Sendable, Hashable {
-
-        public var summary: String?
-
-        public init(summary: String? = nil) {
-            self.summary = summary
-        }
-    }
-
-    public struct TR: Sendable, Hashable {
-        public init() {}
-    }
-
-    public struct TH: Sendable, Hashable {
-
-        public var row: TH.Row
-
-        public var col: TH.Col
-
-        public var headers: [String]
-
-        public var scope: TH.Scope?
-
-        public var short: String?
-
-        public init(
-            row: TH.Row = Row(),
-            col: TH.Col = Col(),
-            headers: [String] = [],
-            scope: TH.Scope? = nil,
-            short: String? = nil
-        ) {
-            self.row = row
-            self.col = col
-            self.headers = headers
-            self.scope = scope
-            self.short = short
-        }
-    }
-
-    public struct TD: Sendable, Hashable {
-
-        public var row: Row
-
-        public var col: Col
-
-        public var headers: [String]
-
-        public init(
-            row: Row = Row(),
-            col: Col = Col(),
-            headers: [String] = []
-        ) {
-            self.row = row
-            self.col = col
-            self.headers = headers
-        }
-    }
-
-    public struct THead: Sendable, Hashable {
-        public init() {}
-    }
-
-    public struct TBody: Sendable, Hashable {
-        public init() {}
-    }
-
-    public struct TFoot: Sendable, Hashable {
-        public init() {}
-    }
 }
 
 extension ISO_32000 {
@@ -124,63 +47,15 @@ extension ISO_32000.Table.Header {
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TH {
-
-    public enum Scope: String, Sendable, Codable, Hashable, CaseIterable {
-        case row = "Row"
-        case column = "Column"
-        case both = "Both"
-    }
-
-    public struct Row: Sendable, Hashable {
-
-        public var span: Int
-
-        public init(span: Int = 1) {
-            self.span = span
-        }
-    }
-
-    public struct Col: Sendable, Hashable {
-
-        public var span: Int
-
-        public init(span: Int = 1) {
-            self.span = span
-        }
-    }
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8`.`3`.TD {
-
-    public struct Row: Sendable, Hashable {
-
-        public var span: Int
-
-        public init(span: Int = 1) {
-            self.span = span
-        }
-    }
-
-    public struct Col: Sendable, Hashable {
-
-        public var span: Int
-
-        public init(span: Int = 1) {
-            self.span = span
-        }
-    }
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8` {
-
-    public enum `4` {}
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8`.`4` {
-
-    public struct Caption: Sendable, Hashable {
-        public init() {}
-    }
 }
 
 extension ISO_32000.`14`.`8`.`4`.`8`.`3`.Table: Binary.Serializable {

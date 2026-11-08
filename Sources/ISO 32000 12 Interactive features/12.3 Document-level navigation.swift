@@ -9,38 +9,6 @@ extension ISO_32000.`12` {
 }
 
 extension ISO_32000 {
-
-    public enum Destination: Sendable, Equatable, Hashable {
-
-        case xyz(
-            page: Int,
-            left: ISO_32000.UserSpace.X?,
-            top: ISO_32000.UserSpace.Y?,
-            zoom: Double?
-        )
-
-        case fit(page: Int)
-
-        case fitH(page: Int, top: ISO_32000.UserSpace.Y?)
-
-        case fitV(page: Int, left: ISO_32000.UserSpace.X?)
-
-        case fitR(
-            page: Int,
-            left: ISO_32000.UserSpace.X,
-            bottom: ISO_32000.UserSpace.Y,
-            right: ISO_32000.UserSpace.X,
-            top: ISO_32000.UserSpace.Y
-        )
-
-        case fitB(page: Int)
-
-        case fitBH(page: Int, top: ISO_32000.UserSpace.Y?)
-
-        case fitBV(page: Int, left: ISO_32000.UserSpace.X?)
-
-        case named(String)
-    }
 }
 
 extension ISO_32000.Destination {
@@ -61,20 +29,9 @@ extension ISO_32000.Destination {
 }
 
 extension ISO_32000 {
-
-    public enum Outline {}
 }
 
 extension ISO_32000.Outline {
-
-    public struct Root: Sendable {
-
-        public var items: [Item]
-
-        public init(items: [Item] = []) {
-            self.items = items
-        }
-    }
 }
 
 extension ISO_32000.Outline.Root {
@@ -87,83 +44,9 @@ extension ISO_32000.Outline.Root {
 }
 
 extension ISO_32000.Outline {
-
-    public enum Target: Sendable {
-
-        case destination(ISO_32000.Destination)
-
-        case action(ISO_32000.Action.Kind)
-    }
 }
 
 extension ISO_32000.Outline {
-
-    public struct Item: Sendable {
-
-        public var title: String
-
-        public var target: Target?
-
-        public var children: [Item]
-
-        public var isOpen: Bool
-
-        public var color: ISO_32000.DeviceRGB?
-
-        public var flags: ItemOptions
-
-        public init(
-            title: String,
-            target: Target? = nil,
-            children: [Item] = [],
-            isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemOptions = []
-        ) {
-            self.title = title
-            self.target = target
-            self.children = children
-            self.isOpen = isOpen
-            self.color = color
-            self.flags = flags
-        }
-
-        public init(
-            title: String,
-            destination: ISO_32000.Destination,
-            children: [Item] = [],
-            isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemOptions = []
-        ) {
-            self.init(
-                title: title,
-                target: .destination(destination),
-                children: children,
-                isOpen: isOpen,
-                color: color,
-                flags: flags
-            )
-        }
-
-        public init(
-            title: String,
-            action: ISO_32000.Action.Kind,
-            children: [Item] = [],
-            isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemOptions = []
-        ) {
-            self.init(
-                title: title,
-                target: .action(action),
-                children: children,
-                isOpen: isOpen,
-                color: color,
-                flags: flags
-            )
-        }
-    }
 }
 
 extension ISO_32000.Outline.Item {
@@ -178,14 +61,6 @@ extension ISO_32000.Outline.Item {
 }
 
 extension ISO_32000.Outline {
-
-    public struct ItemOptions: OptionSet, Sendable, Hashable {
-        public let rawValue: Int
-
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
-    }
 }
 
 extension ISO_32000.Outline.ItemOptions {
@@ -196,89 +71,9 @@ extension ISO_32000.Outline.ItemOptions {
 }
 
 extension ISO_32000.`12`.`3` {
-
-    public struct Collection: Sendable {
-
-        public var view: CollectionView
-
-        public var initialDocument: String?
-
-        public var sort: CollectionSort?
-
-        public init(
-            view: CollectionView = .details,
-            initialDocument: String? = nil,
-            sort: CollectionSort? = nil
-        ) {
-            self.view = view
-            self.initialDocument = initialDocument
-            self.sort = sort
-        }
-    }
-
-    public enum CollectionView: String, Sendable, Hashable, Codable, CaseIterable {
-
-        case details = "D"
-
-        case tile = "T"
-
-        case hidden = "H"
-
-        case custom = "C"
-    }
-
-    public struct CollectionSort: Sendable {
-
-        public var fields: [String]
-
-        public var ascending: [Bool]
-
-        public init(fields: [String], ascending: [Bool] = [true]) {
-            self.fields = fields
-            self.ascending = ascending
-        }
-    }
-
-    public enum CollectionFieldSubtype: String, Sendable, Hashable, Codable, CaseIterable {
-
-        case text = "S"
-
-        case date = "D"
-
-        case number = "N"
-
-        case fileName = "F"
-
-        case description = "Desc"
-
-        case modificationDate = "ModDate"
-
-        case creationDate = "CreationDate"
-
-        case size = "Size"
-
-        case compressedSize = "CompressedSize"
-    }
 }
 
 extension ISO_32000.`12`.`3` {
-
-    public enum NavigatorLayout: String, Sendable, Hashable, Codable, CaseIterable {
-
-        case details = "D"
-
-        case tile = "T"
-
-        case hidden = "H"
-
-        case filmStrip = "FilmStrip"
-
-        case freeForm = "FreeForm"
-
-        case linear = "Linear"
-
-        case tree = "Tree"
-    }
 }
 
 extension ISO_32000.Outline {

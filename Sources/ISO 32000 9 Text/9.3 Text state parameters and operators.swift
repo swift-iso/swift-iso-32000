@@ -8,49 +8,6 @@ extension ISO_32000.`9` {
 }
 
 extension ISO_32000.Text {
-
-    public struct State: Sendable, Equatable, Hashable {
-
-        public var characterSpacing: ISO_32000.TextSpace.Dx
-
-        public var wordSpacing: ISO_32000.TextSpace.Dx
-
-        public var horizontalScaling: Scale<1, Double>
-
-        public var leading: ISO_32000.TextSpace.Dy
-
-        public var font: Font.Reference?
-
-        public var fontSize: ISO_32000.UserSpace.Size<1>?
-
-        public var renderingMode: Rendering.Mode
-
-        public var rise: ISO_32000.TextSpace.Dy
-
-        public var knockout: Bool
-
-        public init(
-            characterSpacing: ISO_32000.TextSpace.Dx = .init(0),
-            wordSpacing: ISO_32000.TextSpace.Dx = .init(0),
-            horizontalScaling: Scale<1, Double> = 100,
-            leading: ISO_32000.TextSpace.Dy = .init(0),
-            font: Font.Reference? = nil,
-            fontSize: ISO_32000.UserSpace.Size<1>? = nil,
-            renderingMode: Rendering.Mode = .fill,
-            rise: ISO_32000.TextSpace.Dy = .init(0),
-            knockout: Bool = true
-        ) {
-            self.characterSpacing = characterSpacing
-            self.wordSpacing = wordSpacing
-            self.horizontalScaling = horizontalScaling
-            self.leading = leading
-            self.font = font
-            self.fontSize = fontSize
-            self.renderingMode = renderingMode
-            self.rise = rise
-            self.knockout = knockout
-        }
-    }
 }
 
 #if !hasFeature(Embedded)
@@ -58,20 +15,9 @@ extension ISO_32000.Text {
 #endif
 
 extension ISO_32000.Text {
-
-    public enum Font {}
 }
 
 extension ISO_32000.Text.Font {
-
-    public struct Reference: Sendable, Equatable, Hashable {
-
-        public var name: String
-
-        public init(name: String) {
-            self.name = name
-        }
-    }
 }
 
 #if !hasFeature(Embedded)
@@ -79,30 +25,9 @@ extension ISO_32000.Text.Font {
 #endif
 
 extension ISO_32000.Text {
-
-    public enum Rendering {}
 }
 
 extension ISO_32000.Text.Rendering {
-
-    public enum Mode: Int, Sendable, Equatable, Hashable, Codable, CaseIterable {
-
-        case fill = 0
-
-        case stroke = 1
-
-        case fillStroke = 2
-
-        case invisible = 3
-
-        case fillClip = 4
-
-        case strokeClip = 5
-
-        case fillStrokeClip = 6
-
-        case clip = 7
-    }
 }
 
 extension ISO_32000.Text.Rendering.Mode {

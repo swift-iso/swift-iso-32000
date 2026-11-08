@@ -61,35 +61,9 @@ extension ISO_32000.`9`.`8` {
 }
 
 extension ISO_32000.`9`.`8`.Descriptor {
-
-    public struct BoundingBox: Sendable, Equatable {
-
-        public let llx: Int
-
-        public let lly: Int
-
-        public let urx: Int
-
-        public let ury: Int
-
-        public init(llx: Int, lly: Int, urx: Int, ury: Int) {
-            self.llx = llx
-            self.lly = lly
-            self.urx = urx
-            self.ury = ury
-        }
-    }
 }
 
 extension ISO_32000.`9`.`8`.Descriptor {
-
-    public struct Flags: OptionSet, Sendable, Equatable {
-        public let rawValue: UInt32
-
-        public init(rawValue: UInt32) {
-            self.rawValue = rawValue
-        }
-    }
 }
 
 extension ISO_32000.`9`.`8`.Descriptor.Flags {

@@ -20,25 +20,6 @@ extension Byte {
 }
 
 extension Byte.WinAnsi {
-
-    public protocol Serializable: Sendable {
-
-        associatedtype Error: Swift::Error
-
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            winAnsi bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            winAnsi serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.WinAnsi.Serializable where Context == Void {
@@ -88,15 +69,6 @@ extension String {
 
 extension Byte {
 
-    @frozen
-    public struct PDFDoc: Sendable {
-        public let byte: Byte
-
-        @inlinable
-        public init(_ byte: Byte) {
-            self.byte = byte
-        }
-    }
 
     @inlinable
     public var pdfDoc: PDFDoc {
@@ -105,23 +77,6 @@ extension Byte {
 }
 
 extension Byte.PDFDoc {
-
-    public protocol Serializable: Sendable {
-        associatedtype Error: Swift::Error
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            pdfDoc bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            pdfDoc serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.PDFDoc.Serializable where Context == Void {
@@ -160,15 +115,6 @@ extension String {
 
 extension Byte {
 
-    @frozen
-    public struct Standard: Sendable {
-        public let byte: Byte
-
-        @inlinable
-        public init(_ byte: Byte) {
-            self.byte = byte
-        }
-    }
 
     @inlinable
     public var standard: Standard {
@@ -177,23 +123,6 @@ extension Byte {
 }
 
 extension Byte.Standard {
-
-    public protocol Serializable: Sendable {
-        associatedtype Error: Swift::Error
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            standard bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            standard serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.Standard.Serializable where Context == Void {
@@ -238,15 +167,6 @@ extension String {
 
 extension Byte {
 
-    @frozen
-    public struct MacRoman: Sendable {
-        public let byte: Byte
-
-        @inlinable
-        public init(_ byte: Byte) {
-            self.byte = byte
-        }
-    }
 
     @inlinable
     public var macRoman: MacRoman {
@@ -255,23 +175,6 @@ extension Byte {
 }
 
 extension Byte.MacRoman {
-
-    public protocol Serializable: Sendable {
-        associatedtype Error: Swift::Error
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            macRoman bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            macRoman serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.MacRoman.Serializable where Context == Void {
@@ -315,15 +218,6 @@ extension String {
 
 extension Byte {
 
-    @frozen
-    public struct Symbol: Sendable {
-        public let byte: Byte
-
-        @inlinable
-        public init(_ byte: Byte) {
-            self.byte = byte
-        }
-    }
 
     @inlinable
     public var symbol: Symbol {
@@ -332,23 +226,6 @@ extension Byte {
 }
 
 extension Byte.Symbol {
-
-    public protocol Serializable: Sendable {
-        associatedtype Error: Swift::Error
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            symbol bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            symbol serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.Symbol.Serializable where Context == Void {
@@ -387,15 +264,6 @@ extension String {
 
 extension Byte {
 
-    @frozen
-    public struct ZapfDingbats: Sendable {
-        public let byte: Byte
-
-        @inlinable
-        public init(_ byte: Byte) {
-            self.byte = byte
-        }
-    }
 
     @inlinable
     public var zapfDingbats: ZapfDingbats {
@@ -404,23 +272,6 @@ extension Byte {
 }
 
 extension Byte.ZapfDingbats {
-
-    public protocol Serializable: Sendable {
-        associatedtype Error: Swift::Error
-        associatedtype Context: Sendable = Void
-
-        init<Bytes: Swift::Collection>(
-            zapfDingbats bytes: Bytes,
-            in context: Context
-        ) throws(Error) where Bytes.Element == Byte
-
-        static func serialize<Buffer: RangeReplaceableCollection>(
-            zapfDingbats serializable: Self,
-            into buffer: inout Buffer
-        ) where Buffer.Element == Byte
-    }
-
-    public protocol RawRepresentable: Serializable, Swift::RawRepresentable {}
 }
 
 extension Byte.ZapfDingbats.Serializable where Context == Void {
