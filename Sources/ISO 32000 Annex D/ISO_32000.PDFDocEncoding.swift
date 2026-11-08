@@ -327,12 +327,4 @@ extension ISO_32000.PDFDocEncoding {
         return .pdfDocEncoding
     }
 
-    public enum TextStringEncoding: Sendable {
-
-        case pdfDocEncoding
-
-        case utf16BE
-
-        case utf8
-    }
 }

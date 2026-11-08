@@ -6,29 +6,12 @@ extension ISO_32000.`8` {
 }
 
 extension ISO_32000.`8`.`6` {
-
-    public enum `4` {}
 }
 
 extension ISO_32000.`8`.`6`.`4` {
-
-    public enum `2` {}
-
-    public enum `3` {}
-
-    public enum `4` {}
 }
 
 extension ISO_32000.`8`.`6` {
-
-    public enum Color: Sendable, Hashable {
-
-        case gray(Double)
-
-        case rgb(r: Double, g: Double, b: Double)
-
-        case cmyk(c: Double, m: Double, y: Double, k: Double)
-    }
 }
 
 extension ISO_32000.`8`.`6`.Color {

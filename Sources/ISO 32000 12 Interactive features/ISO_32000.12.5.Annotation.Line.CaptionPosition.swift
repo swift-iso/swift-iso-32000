@@ -1,0 +1,16 @@
+public import Geometry
+public import ISO_32000_7_Syntax
+public import ISO_32000_8_Graphics
+public import ISO_32000_Shared
+public import RFC_3986
+public import RFC_5646
+
+
+extension ISO_32000.`12`.`5`.Annotation.Line {
+    public enum CaptionPosition: String, Sendable, Hashable, Codable, CaseIterable {
+
+        case inline = "Inline"
+
+        case top = "Top"
+    }
+}

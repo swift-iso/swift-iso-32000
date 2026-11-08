@@ -7,8 +7,6 @@ extension ISO_32000 {
 }
 
 extension ISO_32000.Graphics {
-
-    public enum State {}
 }
 
 extension ISO_32000.Graphics.State {

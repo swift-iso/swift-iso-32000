@@ -6,6 +6,4 @@ extension ISO_32000.`7` {
 }
 
 extension ISO_32000.`7`.`7` {
-
-    public enum `3` {}
 }

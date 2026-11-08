@@ -9,13 +9,9 @@ extension ISO_32000.`8` {
 }
 
 extension ISO_32000.`8`.`3` {
-
-    public enum `2` {}
 }
 
 extension ISO_32000.`8`.`3`.`2` {
-
-    public enum `3` {}
 }
 
 extension ISO_32000.`8`.`3`.`2`.`3` {
