@@ -1,4 +1,4 @@
-public import Geometry
+import Geometry
 public import ISO_32000_Shared
 import Space
 import Tagged
