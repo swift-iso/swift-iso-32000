@@ -29,6 +29,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct PDFDoc<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.PDFDoc {
@@ -46,6 +56,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct Standard<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.Standard {
@@ -63,6 +83,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct MacRoman<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.MacRoman {
@@ -80,6 +110,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct MacExpert<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.MacExpert {
@@ -97,6 +137,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct Symbol<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.Symbol {
@@ -114,6 +164,16 @@ extension Swift::Collection where Element == Byte {
 }
 
 extension ISO_32000 {
+
+    @frozen
+    public struct ZapfDingbats<Source: Swift::Collection> where Source.Element == Byte {
+        public let source: Source
+
+        @inlinable
+        public init(_ source: Source) {
+            self.source = source
+        }
+    }
 }
 
 extension ISO_32000.ZapfDingbats {
