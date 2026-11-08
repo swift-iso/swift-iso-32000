@@ -10,9 +10,9 @@ extension ISO_32000.Image {
         compressionLevel: RFC_1951.Level = .balanced
     ) throws(Parse.Error) {
 
-        let image: W3C_PNG.Image
-        do throws(W3C_PNG.ParseError) {
-            image = try W3C_PNG.parse(pngData)
+        let image: W3C_PNG::Image
+        do throws(W3C_PNG::ParseError) {
+            image = try W3C_PNG::parse(pngData)
         } catch {
             throw .invalidHeader
         }
@@ -33,7 +33,7 @@ extension ISO_32000.Image {
     }
 
     private static func convertToRawPixels(
-        _ image: W3C_PNG.Image
+        _ image: W3C_PNG::Image
     ) -> (pixels: [Byte], colorSpace: Color.Space) {
         switch image.colorType {
         case .grayscale:
