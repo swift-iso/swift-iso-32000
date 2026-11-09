@@ -264,6 +264,7 @@ let package = Package(
                 .target(name: "ISO 32000 Flate"),
                 .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Binary", package: "swift-binary"),
+                .product(name: "RFC 1950", package: "swift-rfc-1950"),
                 .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),

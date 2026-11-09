@@ -25,6 +25,10 @@ extension ISO_32000.`8`.`9` {
 
         public let data: [Byte]
 
+        /// The image's opacity as a soft mask (ISO 32000-2 §11.6.5.3): one 8-bit DeviceGray sample
+        /// per pixel, FlateDecode-compressed, or nil for an opaque image.
+        public let softMask: [Byte]?
+
         public let id: UInt64
 
         public init(
@@ -33,7 +37,8 @@ extension ISO_32000.`8`.`9` {
             colorSpace: Color.Space,
             bitsPerComponent: Int,
             filter: Filter,
-            data: [Byte]
+            data: [Byte],
+            softMask: [Byte]? = nil
         ) {
             self.pixelWidth = pixelWidth
             self.pixelHeight = pixelHeight
@@ -41,6 +46,7 @@ extension ISO_32000.`8`.`9` {
             self.bitsPerComponent = bitsPerComponent
             self.filter = filter
             self.data = data
+            self.softMask = softMask
             self.id = Self.nextID()
         }
     }
@@ -143,6 +149,7 @@ extension ISO_32000.`8`.`9`.Image {
         self.bitsPerComponent = 8
         self.filter = .dctDecode
         self.data = jpegData
+        self.softMask = nil
         self.id = Self.nextID()
 
         switch components {

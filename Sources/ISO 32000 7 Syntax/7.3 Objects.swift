@@ -457,6 +457,7 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let bleedBox = Self(__unchecked: (), rawValue: "BleedBox")
     public static let trimBox = Self(__unchecked: (), rawValue: "TrimBox")
     public static let artBox = Self(__unchecked: (), rawValue: "ArtBox")
+    public static let sMask = Self(__unchecked: (), rawValue: "SMask")
     public static let viewerPreferences = Self(__unchecked: (), rawValue: "ViewerPreferences")
     public static let hideToolbar = Self(__unchecked: (), rawValue: "HideToolbar")
     public static let hideMenubar = Self(__unchecked: (), rawValue: "HideMenubar")

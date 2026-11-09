@@ -108,6 +108,24 @@ extension ISO_32000.Writer {
                 imageDict[.filter] = .name(.flateDecode)
             }
 
+            if let softMask = image.softMask {
+                let maskNum = state.nextObjectNumber()
+                imageDict[.sMask] = .reference(ISO_32000.COS.IndirectReference(objectNumber: maskNum))
+
+                var maskDict = ISO_32000.COS.Dictionary()
+                maskDict[.type] = .name(.xObject)
+                maskDict[.subtype] = .name(.image)
+                maskDict[.width] = .integer(Int64(image.pixelWidth))
+                maskDict[.height] = .integer(Int64(image.pixelHeight))
+                maskDict[.colorSpace] = .name(.deviceGray)
+                maskDict[.bitsPerComponent] = .integer(8)
+                maskDict[.filter] = .name(.flateDecode)
+
+                let maskStream = ISO_32000.COS.Stream(dictionary: maskDict, data: softMask)
+                state.objectOffsets[maskNum] = buffer.count - state.origin
+                writeIndirectObject(maskNum, object: .stream(maskStream), into: &buffer)
+            }
+
             let stream = ISO_32000.COS.Stream(dictionary: imageDict, data: image.data)
             state.objectOffsets[objNum] = buffer.count - state.origin
             writeIndirectObject(objNum, object: .stream(stream), into: &buffer)

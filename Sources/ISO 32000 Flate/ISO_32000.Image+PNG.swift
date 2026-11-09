@@ -17,7 +17,7 @@ extension ISO_32000.Image {
             throw .invalidHeader
         }
 
-        let (rawPixels, colorSpace) = Self.convertToRawPixels(image)
+        let (rawPixels, colorSpace, alpha) = Self.convertToRawPixels(image)
 
         var compressedData: [Byte] = []
         RFC_1950.compress(rawPixels, into: &compressedData, level: compressionLevel)
@@ -28,49 +28,54 @@ extension ISO_32000.Image {
             colorSpace: colorSpace,
             bitsPerComponent: 8,
             filter: .flateDecode,
-            data: compressedData
+            data: compressedData,
+            softMask: alpha.map { RFC_1950.compress($0, level: compressionLevel) }
         )
     }
 
     private static func convertToRawPixels(
         _ image: W3C_PNG::W3C_PNG.Image
-    ) -> (pixels: [Byte], colorSpace: Color.Space) {
+    ) -> (pixels: [Byte], colorSpace: Color.Space, alpha: [Byte]?) {
         switch image.colorType {
         case .grayscale:
 
-            return (image.rawPixels, .deviceGray)
+            return (image.rawPixels, .deviceGray, nil)
 
         case .rgb:
 
-            return (image.rawPixels, .deviceRGB)
+            return (image.rawPixels, .deviceRGB, nil)
 
         case .rgba:
 
             var rgb: [Byte] = []
+            var alpha: [Byte] = []
             rgb.reserveCapacity(image.width * image.height * 3)
+            alpha.reserveCapacity(image.width * image.height)
             for i in stride(from: 0, to: image.rawPixels.count, by: 4) {
                 rgb.append(image.rawPixels[i])
                 rgb.append(image.rawPixels[i + 1])
                 rgb.append(image.rawPixels[i + 2])
-
+                alpha.append(image.rawPixels[i + 3])
             }
-            return (rgb, .deviceRGB)
+            return (rgb, .deviceRGB, alpha)
 
         case .grayscaleAlpha:
 
             var gray: [Byte] = []
+            var alpha: [Byte] = []
             gray.reserveCapacity(image.width * image.height)
+            alpha.reserveCapacity(image.width * image.height)
             for i in stride(from: 0, to: image.rawPixels.count, by: 2) {
                 gray.append(image.rawPixels[i])
-
+                alpha.append(image.rawPixels[i + 1])
             }
-            return (gray, .deviceGray)
+            return (gray, .deviceGray, alpha)
 
         case .indexed:
 
             guard let palette = image.palette else {
 
-                return (image.rawPixels, .deviceGray)
+                return (image.rawPixels, .deviceGray, nil)
             }
             var rgb: [Byte] = []
             rgb.reserveCapacity(image.width * image.height * 3)
@@ -88,7 +93,7 @@ extension ISO_32000.Image {
                     rgb.append(Byte(bitPattern: 0))
                 }
             }
-            return (rgb, .deviceRGB)
+            return (rgb, .deviceRGB, nil)
         }
     }
 }
