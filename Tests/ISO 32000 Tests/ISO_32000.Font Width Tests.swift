@@ -44,6 +44,20 @@ extension `ISO_32000.Font Tests` {
         }
 
         @Test
+        func `an arrow and a check mark measure the fallback bytes showText draws`() {
+            #expect(ISO_32000.Font.helvetica.width(of: "\u{2192}", atSize: 1000).underlying == 917)
+            #expect(ISO_32000.Font.helvetica.width(of: "\u{2713}", atSize: 1000).underlying == 389)
+            #expect(ISO_32000.Font.helvetica.metrics.bullet.width.underlying == 350)
+
+            let drawn = [Byte](winAnsi: "a\u{2192}\u{2713}", withFallback: true)
+            #expect(drawn == [0x61, 0x2D, 0x3E, 0x2A].map(Byte.init(bitPattern:)))
+            #expect(
+                ISO_32000.Font.helvetica.winAnsi.width(of: drawn, atSize: 1000).underlying
+                    == ISO_32000.Font.helvetica.width(of: "a\u{2192}\u{2713}", atSize: 1000).underlying
+            )
+        }
+
+        @Test
         func `width at 12 pt is the AFM sum scaled and quantized to 0.01 user-space units`() {
             #expect(ISO_32000.Font.helvetica.width(of: "Hello World", atSize: 12).underlying == 62.0)
             #expect(ISO_32000.Font.helvetica.width(of: "a", atSize: 12).underlying == 6.67)

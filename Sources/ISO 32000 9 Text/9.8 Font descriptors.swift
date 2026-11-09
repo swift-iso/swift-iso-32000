@@ -138,25 +138,16 @@ extension ISO_32000.`9`.`8`.Metrics {
         width(of: bytes).scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
+    /// The width of the bytes `showText(_:)` draws for `scalar`: its WinAnsi byte, or the
+    /// ``ISO_32000/unicodeFallbackMap`` substitute when WinAnsi has none.
     public func glyphWidth(for scalar: UnicodeScalar) -> ISO_32000.FontDesign.Width {
-
-        if let byte = ISO_32000.WinAnsiEncoding.encode(scalar) {
-            return width(of: byte)
-        }
-        return defaultWidth
+        width(of: String(scalar))
     }
 
+    /// The width of the bytes `showText(_:)` draws for `text`: WinAnsi, with the
+    /// ``ISO_32000/unicodeFallbackMap`` substitute for a character WinAnsi has no byte for.
     public func width(of text: String) -> ISO_32000.FontDesign.Width {
-        var total = 0
-        for scalar in text.unicodeScalars {
-
-            if let byte = ISO_32000.WinAnsiEncoding.encode(scalar) {
-                total += winAnsiByteWidths[Int(byte.underlying)].underlying
-            } else {
-                total += defaultWidth.underlying
-            }
-        }
-        return ISO_32000.FontDesign.Width(total)
+        width(of: [Byte](winAnsi: text, withFallback: true))
     }
 
     public func width(
