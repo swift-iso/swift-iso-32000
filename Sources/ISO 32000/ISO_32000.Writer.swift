@@ -1,9 +1,11 @@
 import Byte
+import Geometry
 import IEC_61966
 import ISO_32000_9_Text
 import Ownership
 import RFC_3986
 import RFC_4648
+import RFC_5646
 import Standard_Library_Extensions
 public import Witness
 
@@ -178,12 +180,59 @@ extension ISO_32000.Writer {
                 annotDict[.subtype] = .name(annotation.subtype.name)
                 annotDict[.rect] = ISO_32000.COS.Object(annotation.rect)
 
+                if let contents = annotation.contents {
+                    annotDict[.contents] = .string(ISO_32000.COS.StringValue(contents))
+                }
+                if let name = annotation.name {
+                    annotDict[.nm] = .string(ISO_32000.COS.StringValue(name))
+                }
+                if let modificationDate = annotation.modificationDate {
+                    annotDict[.m] = .string(ISO_32000.COS.StringValue(modificationDate))
+                }
+                if !annotation.flags.isEmpty {
+                    annotDict[.f] = .integer(Int64(annotation.flags.rawValue))
+                }
+
                 if let border = annotation.border {
-                    annotDict[.border] = .array([
+                    var entries: [ISO_32000.COS.Object] = [
                         .real(border.horizontalRadius),
                         .real(border.verticalRadius),
                         .real(border.width),
-                    ])
+                    ]
+                    if let dashArray = border.dashArray {
+                        entries.append(.array(dashArray.map { .real($0) }))
+                    }
+                    annotDict[.border] = .array(entries)
+                }
+
+                if let color = annotation.color {
+                    annotDict[.c] = Self.object(color)
+                }
+                if let structParent = annotation.structParent {
+                    annotDict[.structParent] = .integer(Int64(structParent))
+                }
+                if let strokeOpacity = annotation.strokeOpacity {
+                    annotDict[.strokingAlpha] = .real(strokeOpacity)
+                }
+                if let fillOpacity = annotation.fillOpacity {
+                    annotDict[.nonStrokingAlpha] = .real(fillOpacity)
+                }
+                if let blendMode = annotation.blendMode {
+                    annotDict[.bm] = .name(Self.name(blendMode.rawValue))
+                }
+                if let language = annotation.language {
+                    annotDict[.lang] = .string(ISO_32000.COS.StringValue(language.value))
+                }
+                if let appearance = annotation.appearance {
+                    annotDict[.ap] = try writeAppearance(
+                        appearance,
+                        rect: annotation.rect,
+                        state: &state,
+                        into: &buffer
+                    )
+                }
+                if let appearanceState = annotation.appearanceState {
+                    annotDict[.appearanceState] = try .name(Self.name(given: appearanceState))
                 }
 
                 switch annotation.content {
@@ -201,9 +250,22 @@ extension ISO_32000.Writer {
                         annotDict[.dest] = try serializeDestination(dest, pageRefs: pageRefs)
                     }
 
+                    if link.highlightMode != .invert {
+                        annotDict[.h] = .name(Self.name(link.highlightMode.rawValue))
+                    }
+                    if let quadPoints = link.quadPoints {
+                        annotDict[.quadPoints] = .array(
+                            quadPoints.flatMap { quadrilateral in
+                                quadrilateral.vertexArray.flatMap { point -> [ISO_32000.COS.Object] in
+                                    [.real(point[0]), .real(point[1])]
+                                }
+                            }
+                        )
+                    }
+
                 default:
 
-                    break
+                    throw .unsupportedAnnotation(annotation.subtype)
                 }
 
                 state.objectOffsets[objNum] = buffer.count - state.origin
@@ -676,6 +738,99 @@ extension ISO_32000.Writer {
         return pageRefs[index]
     }
 
+    private static func name(given rawValue: String) throws(Error) -> ISO_32000.COS.Name {
+        do throws(ISO_32000.COS.Name.Error) {
+            return try ISO_32000.COS.Name(rawValue)
+        } catch {
+            throw .invalidName(rawValue)
+        }
+    }
+
+    private static func object(_ color: ISO_32000.Annotation.Color) -> ISO_32000.COS.Object {
+        switch color {
+        case .transparent:
+            return .array([])
+
+        case .gray(let gray):
+            return .array([.real(gray)])
+
+        case .rgb(let red, let green, let blue):
+            return .array([.real(red), .real(green), .real(blue)])
+
+        case .cmyk(let cyan, let magenta, let yellow, let black):
+            return .array([.real(cyan), .real(magenta), .real(yellow), .real(black)])
+        }
+    }
+
+    private func writeAppearance<Buffer: RangeReplaceableCollection>(
+        _ appearance: ISO_32000.`12`.`5`.Appearance,
+        rect: ISO_32000.UserSpace.Rectangle,
+        state: inout State,
+        into buffer: inout Buffer
+    ) throws(Error) -> ISO_32000.COS.Object where Buffer.Element == Byte {
+        var dictionary = ISO_32000.COS.Dictionary()
+        dictionary[.n] = try writeAppearance(appearance.normal, rect: rect, state: &state, into: &buffer)
+        if let rollover = appearance.rollover {
+            dictionary[.r] = try writeAppearance(rollover, rect: rect, state: &state, into: &buffer)
+        }
+        if let down = appearance.down {
+            dictionary[.d] = try writeAppearance(down, rect: rect, state: &state, into: &buffer)
+        }
+        return .dictionary(dictionary)
+    }
+
+    private func writeAppearance<Buffer: RangeReplaceableCollection>(
+        _ entry: ISO_32000.`12`.`5`.Appearance.Entry,
+        rect: ISO_32000.UserSpace.Rectangle,
+        state: inout State,
+        into buffer: inout Buffer
+    ) throws(Error) -> ISO_32000.COS.Object where Buffer.Element == Byte {
+        switch entry {
+        case .stream(let content):
+            return writeAppearanceStream(content, rect: rect, state: &state, into: &buffer)
+
+        case .subdictionary(let streams):
+            var dictionary = ISO_32000.COS.Dictionary()
+            for (key, content) in streams.sorted(by: { $0.key < $1.key }) {
+                let name = try Self.name(given: key)
+                dictionary[name] = writeAppearanceStream(
+                    content,
+                    rect: rect,
+                    state: &state,
+                    into: &buffer
+                )
+            }
+            return .dictionary(dictionary)
+        }
+    }
+
+    private func writeAppearanceStream<Buffer: RangeReplaceableCollection>(
+        _ content: String,
+        rect: ISO_32000.UserSpace.Rectangle,
+        state: inout State,
+        into buffer: inout Buffer
+    ) -> ISO_32000.COS.Object where Buffer.Element == Byte {
+        let objectNumber = state.nextObjectNumber()
+
+        var dictionary = ISO_32000.COS.Dictionary()
+        dictionary[.type] = .name(.xObject)
+        dictionary[.subtype] = .name(.form)
+        dictionary[.bBox] = .array([
+            .real(0),
+            .real(0),
+            .real(rect.urx.underlying - rect.llx.underlying),
+            .real(rect.ury.underlying - rect.lly.underlying),
+        ])
+
+        let stream = ISO_32000.COS.Stream(
+            dictionary: dictionary,
+            data: Array(content.utf8).map(Byte.init(bitPattern:))
+        )
+        state.objectOffsets[objectNumber] = buffer.count - state.origin
+        writeIndirectObject(objectNumber, object: .stream(stream), into: &buffer)
+        return .reference(ISO_32000.COS.IndirectReference(objectNumber: objectNumber))
+    }
+
     private static func name(_ rawValue: String) -> ISO_32000.COS.Name {
         do {
             return try ISO_32000.COS.Name(rawValue)
@@ -979,6 +1134,12 @@ extension ISO_32000.Writer {
     public enum Error: Swift::Error, Sendable, Hashable {
 
         case pageOutOfRange(index: Int, pageCount: Int)
+
+        /// The writer serializes link annotations only; any other content would lose its entries.
+        case unsupportedAnnotation(ISO_32000.Annotation.Subtype)
+
+        /// A caller-supplied name, such as an appearance state, that is not a valid PDF name.
+        case invalidName(String)
     }
 }
 

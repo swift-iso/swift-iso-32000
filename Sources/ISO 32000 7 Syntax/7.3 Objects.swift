@@ -484,6 +484,21 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let isMap = Self(__unchecked: (), rawValue: "IsMap")
     public static let c = Self(__unchecked: (), rawValue: "C")
     public static let f = Self(__unchecked: (), rawValue: "F")
+    public static let nm = Self(__unchecked: (), rawValue: "NM")
+    public static let m = Self(__unchecked: (), rawValue: "M")
+    public static let structParent = Self(__unchecked: (), rawValue: "StructParent")
+    public static let strokingAlpha = Self(__unchecked: (), rawValue: "CA")
+    public static let nonStrokingAlpha = Self(__unchecked: (), rawValue: "ca")
+    public static let bm = Self(__unchecked: (), rawValue: "BM")
+    public static let lang = Self(__unchecked: (), rawValue: "Lang")
+    public static let ap = Self(__unchecked: (), rawValue: "AP")
+    public static let appearanceState = Self(__unchecked: (), rawValue: "AS")
+    public static let r = Self(__unchecked: (), rawValue: "R")
+    public static let d = Self(__unchecked: (), rawValue: "D")
+    public static let h = Self(__unchecked: (), rawValue: "H")
+    public static let quadPoints = Self(__unchecked: (), rawValue: "QuadPoints")
+    public static let bBox = Self(__unchecked: (), rawValue: "BBox")
+    public static let form = Self(__unchecked: (), rawValue: "Form")
 }
 
 extension ISO_32000.`7`.`3` {

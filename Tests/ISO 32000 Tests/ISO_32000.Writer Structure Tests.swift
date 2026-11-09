@@ -86,6 +86,75 @@ struct `ISO_32000.Writer Structure Tests` {
     }
 
     @Test
+    func `a link annotation writes its common entries and its link entries`() throws {
+        let link = ISO_32000.Annotation(
+            rect: .letter,
+            content: .link(
+                ISO_32000.Annotation.Link(uri: try RFC_3986.URI("https://example.com"), highlightMode: .outline)
+            ),
+            contents: "Example",
+            name: "link-1",
+            modificationDate: "D:20260101000000Z",
+            flags: [.print],
+            border: ISO_32000.`12`.`5`.Border(width: 2, dashArray: [3, 2]),
+            color: .rgb(1, 0, 0),
+            structParent: 7,
+            fillOpacity: 0.5,
+            strokeOpacity: 0.25,
+            blendMode: .multiply,
+            appearance: ISO_32000.`12`.`5`.Appearance(
+                normal: .subdictionary(["Off": "", "On": "0 0 m 10 10 l S"])
+            ),
+            appearanceState: "On"
+        )
+        let str = try Self.text(
+            ISO_32000.Document(pages: [ISO_32000.Page(mediaBox: .letter, annotations: [link])])
+        )
+
+        #expect(str.contains("/Contents (Example)"))
+        #expect(str.contains("/NM (link-1)"))
+        #expect(str.contains("/M (D:20260101000000Z)"))
+        #expect(str.contains("/F 4"))
+        #expect(str.contains("/H /O"))
+        #expect(str.contains("/StructParent 7"))
+        #expect(str.contains("/BM /Multiply"))
+        #expect(str.contains("/CA "))
+        #expect(str.contains("/ca "))
+        #expect(str.contains("/C ["))
+        #expect(str.contains("/AS /On"))
+        #expect(str.contains("/AP <<"))
+        #expect(str.contains("/Off "))
+        #expect(str.ranges(of: "/Subtype /Form").count == 2)
+        #expect(str.contains("0 0 m 10 10 l S"))
+
+        let border = try #require(str.range(of: "/Border ["))
+        let entries = str[border.upperBound...].prefix { $0 != "/" && $0 != ">" }
+        #expect(entries.filter { $0 == "[" }.count == 1)
+    }
+
+    @Test
+    func `a non-link annotation is reported instead of written without its entries`() throws {
+        let note = ISO_32000.Annotation(rect: .letter, content: .text(ISO_32000.Annotation.Text()))
+        let document = ISO_32000.Document(pages: [ISO_32000.Page(mediaBox: .letter, annotations: [note])])
+        #expect(throws: ISO_32000.Writer.Error.unsupportedAnnotation(.text)) {
+            try Self.text(document)
+        }
+    }
+
+    @Test
+    func `an appearance state that is not a PDF name is reported`() throws {
+        let link = ISO_32000.Annotation(
+            rect: .letter,
+            content: .link(ISO_32000.Annotation.Link(destination: .fit(page: 0))),
+            appearanceState: "On Off"
+        )
+        let document = ISO_32000.Document(pages: [ISO_32000.Page(mediaBox: .letter, annotations: [link])])
+        #expect(throws: ISO_32000.Writer.Error.invalidName("On Off")) {
+            try Self.text(document)
+        }
+    }
+
+    @Test
     func `a closed outline item counts its would-be-visible descendants negatively`() throws {
         let closed = ISO_32000.Outline.Item(
             title: "Closed",
