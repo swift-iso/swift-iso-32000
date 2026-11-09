@@ -412,6 +412,36 @@ extension `ISO_32000.MacExpertEncoding Tests` {
         func `Fraction slash`() {
             #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0x2F)) == "\u{2044}")
         }
+
+        @Test
+        func `Every defined byte round-trips through encode`() {
+            for byte in 0...255 {
+                let b = Byte(bitPattern: UInt8(byte))
+                guard let scalar = ISO_32000.MacExpertEncoding.decode(b) else { continue }
+                #expect(ISO_32000.MacExpertEncoding.encode(scalar) == b)
+            }
+        }
+
+        @Test
+        func `Annex D defines 165 codes`() {
+            #expect(ISO_32000.MacExpertEncoding.decodeTable.compactMap { $0 }.count == 165)
+        }
+
+        @Test
+        func `Digit one encodes to its oldstyle code, onefitted keeps 0x7C`() {
+            #expect(ISO_32000.MacExpertEncoding.encode("1") == Byte(bitPattern: 0x31))
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0x7C)) == "\u{F6DC}")
+        }
+
+        @Test
+        func `Formerly doubly assigned codes hold their Annex D glyphs`() {
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0x89)) == "\u{F7E2}")
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0xBC)) == "\u{2080}")
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0xF1)) == "\u{F6EE}")
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0xF3)) == "\u{02D8}")
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0xA7)) == "\u{F6FD}")
+            #expect(ISO_32000.MacExpertEncoding.decode(Byte(bitPattern: 0xE5)) == "\u{F6F1}")
+        }
     }
 }
 
@@ -547,5 +577,48 @@ extension `ISO_32000.ZapfDingbatsEncoding Tests` {
                 #expect(value >= 0x2700 && value <= 0x27BF)
             }
         }
+    }
+}
+
+@Suite
+struct `Byte constants Tests` {
+
+    @Test(arguments: [
+        (Byte.PDFDoc.quotesinglbase, "\u{201A}"),
+        (Byte.PDFDoc.quotedblbase, "\u{201E}"),
+        (Byte.PDFDoc.quotedblleft, "\u{201C}"),
+        (Byte.PDFDoc.quotedblright, "\u{201D}"),
+        (Byte.PDFDoc.quoteleft, "\u{2018}"),
+        (Byte.PDFDoc.quoteright, "\u{2019}"),
+        (Byte.PDFDoc.trademark, "\u{2122}"),
+        (Byte.PDFDoc.fi, "\u{FB01}"),
+        (Byte.PDFDoc.fl, "\u{FB02}"),
+        (Byte.PDFDoc.OE, "\u{0152}"),
+        (Byte.PDFDoc.Scaron, "\u{0160}"),
+        (Byte.PDFDoc.Ydieresis, "\u{0178}"),
+        (Byte.PDFDoc.oe, "\u{0153}"),
+        (Byte.PDFDoc.scaron, "\u{0161}"),
+        (Byte.PDFDoc.bullet, "\u{2022}"),
+        (Byte.PDFDoc.perthousand, "\u{2030}"),
+        (Byte.PDFDoc.euro, "\u{20AC}"),
+    ] as [(Byte, Unicode.Scalar)])
+    func `PDFDoc constant decodes to its glyph`(_ byte: Byte, _ scalar: Unicode.Scalar) {
+        #expect(ISO_32000.PDFDocEncoding.decode(byte) == scalar)
+    }
+
+    @Test(arguments: [
+        (Byte.ZapfDingbats.scissors, "\u{2701}"),
+        (Byte.ZapfDingbats.writingHand, "\u{270D}"),
+        (Byte.ZapfDingbats.checkmark, "\u{2713}"),
+        (Byte.ZapfDingbats.ballotX, "\u{2717}"),
+        (Byte.ZapfDingbats.blackStar, "\u{2605}"),
+        (Byte.ZapfDingbats.club, "\u{2663}"),
+        (Byte.ZapfDingbats.diamond, "\u{2666}"),
+        (Byte.ZapfDingbats.heart, "\u{2665}"),
+        (Byte.ZapfDingbats.spade, "\u{2660}"),
+        (Byte.ZapfDingbats.arrowRight, "\u{2192}"),
+    ] as [(Byte, Unicode.Scalar)])
+    func `ZapfDingbats constant decodes to its glyph`(_ byte: Byte, _ scalar: Unicode.Scalar) {
+        #expect(ISO_32000.ZapfDingbatsEncoding.decode(byte) == scalar)
     }
 }

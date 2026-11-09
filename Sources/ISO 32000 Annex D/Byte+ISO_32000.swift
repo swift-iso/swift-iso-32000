@@ -629,33 +629,33 @@ extension Byte.PDFDoc {
 
     public static let perthousand: Byte = Byte(bitPattern: 0x8B)
 
-    public static let quotesinglbase: Byte = Byte(bitPattern: 0x8C)
+    public static let quotesinglbase: Byte = Byte(bitPattern: 0x91)
 
-    public static let quotedblbase: Byte = Byte(bitPattern: 0x8D)
+    public static let quotedblbase: Byte = Byte(bitPattern: 0x8C)
 
-    public static let quotedblleft: Byte = Byte(bitPattern: 0x8E)
+    public static let quotedblleft: Byte = Byte(bitPattern: 0x8D)
 
-    public static let quotedblright: Byte = Byte(bitPattern: 0x8F)
+    public static let quotedblright: Byte = Byte(bitPattern: 0x8E)
 
-    public static let quoteleft: Byte = Byte(bitPattern: 0x90)
+    public static let quoteleft: Byte = Byte(bitPattern: 0x8F)
 
-    public static let quoteright: Byte = Byte(bitPattern: 0x91)
+    public static let quoteright: Byte = Byte(bitPattern: 0x90)
 
-    public static let trademark: Byte = Byte(bitPattern: 0x95)
+    public static let trademark: Byte = Byte(bitPattern: 0x92)
 
-    public static let fi: Byte = Byte(bitPattern: 0x96)
+    public static let fi: Byte = Byte(bitPattern: 0x93)
 
-    public static let fl: Byte = Byte(bitPattern: 0x97)
+    public static let fl: Byte = Byte(bitPattern: 0x94)
 
-    public static let OE: Byte = Byte(bitPattern: 0x9A)
+    public static let OE: Byte = Byte(bitPattern: 0x96)
 
-    public static let Scaron: Byte = Byte(bitPattern: 0x9B)
+    public static let Scaron: Byte = Byte(bitPattern: 0x97)
 
-    public static let Ydieresis: Byte = Byte(bitPattern: 0x9C)
+    public static let Ydieresis: Byte = Byte(bitPattern: 0x98)
 
-    public static let oe: Byte = Byte(bitPattern: 0x9E)
+    public static let oe: Byte = Byte(bitPattern: 0x9C)
 
-    public static let scaron: Byte = Byte(bitPattern: 0x9F)
+    public static let scaron: Byte = Byte(bitPattern: 0x9D)
 
     public static let euro: Byte = Byte(bitPattern: 0xA0)
 }
@@ -791,7 +791,7 @@ extension Byte.ZapfDingbats {
 
     public static let scissors: Byte = Byte(bitPattern: 0x21)
 
-    public static let writingHand: Byte = Byte(bitPattern: 0x2A)
+    public static let writingHand: Byte = Byte(bitPattern: 0x2D)
 
     public static let checkmark: Byte = Byte(bitPattern: 0x33)
 
@@ -801,13 +801,13 @@ extension Byte.ZapfDingbats {
 
     public static let whiteStar: Byte = Byte(bitPattern: 0x49)
 
-    public static let club: Byte = Byte(bitPattern: 0xAB)
+    public static let club: Byte = Byte(bitPattern: 0xA8)
 
-    public static let diamond: Byte = Byte(bitPattern: 0xAC)
+    public static let diamond: Byte = Byte(bitPattern: 0xA9)
 
-    public static let heart: Byte = Byte(bitPattern: 0xAD)
+    public static let heart: Byte = Byte(bitPattern: 0xAA)
 
-    public static let spade: Byte = Byte(bitPattern: 0xAE)
+    public static let spade: Byte = Byte(bitPattern: 0xAB)
 
     public static let arrowRight: Byte = Byte(bitPattern: 0xD5)
 }
