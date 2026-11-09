@@ -10,24 +10,24 @@ import Testing
 struct `ISO_32000.Writer Tests` {
 
     @Test
-    func `Writes valid PDF header`() {
+    func `Writes valid PDF header`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.hasPrefix("%PDF-1.7"))
     }
 
     @Test
-    func `Includes binary marker after header`() {
+    func `Includes binary marker after header`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
 
         let headerEnd = pdf.firstIndex(of: Byte(UInt8(ascii: "\n")))!
         let markerStart = pdf.index(after: headerEnd)
@@ -35,24 +35,24 @@ struct `ISO_32000.Writer Tests` {
     }
 
     @Test
-    func `Writes catalog object`() {
+    func `Writes catalog object`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Type /Catalog"))
     }
 
     @Test
-    func `Writes pages object`() {
+    func `Writes pages object`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Type /Pages"))
@@ -60,12 +60,12 @@ struct `ISO_32000.Writer Tests` {
     }
 
     @Test
-    func `Writes page object`() {
+    func `Writes page object`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Type /Page"))
@@ -73,12 +73,12 @@ struct `ISO_32000.Writer Tests` {
     }
 
     @Test
-    func `Writes cross-reference table`() {
+    func `Writes cross-reference table`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("xref"))
@@ -86,12 +86,12 @@ struct `ISO_32000.Writer Tests` {
     }
 
     @Test
-    func `Writes trailer`() {
+    func `Writes trailer`() throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("trailer"))
@@ -110,19 +110,19 @@ struct `ISO_32000.Writer Tests` {
         rect: ISO_32000.UserSpace.Rectangle,
         width: Double,
         height: Double
-    ) {
+    ) throws {
         let document = ISO_32000.Document(
             pages: [ISO_32000.Page.empty(size: rect)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/MediaBox"))
     }
 
     @Test
-    func `Writes document info`() {
+    func `Writes document info`() throws {
         let document = ISO_32000.Document(
             info: ISO_32000.Document.Info(
                 title: "Test Document",
@@ -132,7 +132,7 @@ struct `ISO_32000.Writer Tests` {
             pages: [ISO_32000.Page.empty(size: .letter)]
         )
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Title"))
@@ -142,7 +142,7 @@ struct `ISO_32000.Writer Tests` {
     }
 
     @Test
-    func `Writes compressed content with FlateDecode`() {
+    func `Writes compressed content with FlateDecode`() throws {
         let content = ISO_32000.ContentStream { builder in
             builder.beginText()
             builder.setFont(ISO_32000.Font.helvetica, size: 12)
@@ -171,21 +171,21 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer.flate()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Filter /FlateDecode"))
     }
 
     @Test
-    func `Writes multi-page document`() {
+    func `Writes multi-page document`() throws {
         let page1 = ISO_32000.Page.empty(size: .letter)
         let page2 = ISO_32000.Page.empty(size: .letter)
 
         let document = ISO_32000.Document(pages: [page1, page2])
 
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(str.contains("/Count 2"))
@@ -220,7 +220,7 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
 
         #expect(!pdf.isEmpty)
     }
@@ -259,7 +259,7 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
 
         #expect(!pdf.isEmpty)
     }
@@ -316,7 +316,7 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(pdf.count > fontBytes.count, "PDF \(pdf.count) bytes must carry the whole \(fontBytes.count)-byte program")
@@ -395,7 +395,7 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer()
-        let pdf = writer.write(document)
+        let pdf = try writer.write(document)
         let str = String(decoding: pdf, as: UTF8.self)
 
         #expect(pdf.count < fullSize, "PDF \(pdf.count) bytes must be smaller than the full \(fullSize)-byte program")
@@ -426,7 +426,7 @@ struct `ISO_32000.Writer Tests` {
         )
 
         var writer = ISO_32000.Writer()
-        let str = String(decoding: writer.write(document), as: UTF8.self)
+        let str = try String(decoding: writer.write(document), as: UTF8.self)
         let lines = str.split(separator: "\n").map(String.init)
 
         var groupSizes: [Int] = []

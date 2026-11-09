@@ -92,7 +92,11 @@ extension ISO_32000.Outline {
 
         case destination(ISO_32000.Destination)
 
-        case action(ISO_32000.Action.Kind)
+        case uri(ISO_32000.Action.URI)
+
+        case named(ISO_32000.Action.Named)
+
+        case javaScript(ISO_32000.Action.JavaScript)
     }
 }
 
@@ -139,24 +143,6 @@ extension ISO_32000.Outline {
             self.init(
                 title: title,
                 target: .destination(destination),
-                children: children,
-                isOpen: isOpen,
-                color: color,
-                flags: flags
-            )
-        }
-
-        public init(
-            title: String,
-            action: ISO_32000.Action.Kind,
-            children: [Item] = [],
-            isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
-            flags: ItemOptions = []
-        ) {
-            self.init(
-                title: title,
-                target: .action(action),
                 children: children,
                 isOpen: isOpen,
                 color: color,

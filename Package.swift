@@ -237,6 +237,7 @@ let package = Package(
                 .product(name: "Witness", package: "swift-witness"),
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Scale", package: "swift-scale"),
+                .product(name: "IEC 61966", package: "swift-iec-61966"),
             ]
         ),
         .target(
@@ -265,6 +266,8 @@ let package = Package(
                 .product(name: "Binary", package: "swift-binary"),
                 .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "ISO 14496-22", package: "swift-iso-14496-22"),
+                .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(name: "IEC 61966", package: "swift-iec-61966"),
             ],
             resources: [
                 .copy("Fixtures")

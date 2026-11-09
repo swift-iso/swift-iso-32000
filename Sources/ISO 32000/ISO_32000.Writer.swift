@@ -1,5 +1,5 @@
-public import Binary
 import Byte
+import IEC_61966
 import ISO_32000_9_Text
 import Ownership
 import RFC_3986
@@ -24,23 +24,25 @@ extension ISO_32000.Writer {
     public mutating func write<Buffer: RangeReplaceableCollection>(
         _ document: ISO_32000.Document,
         into buffer: inout Buffer
-    ) where Buffer.Element == Byte {
-        var state = State()
+    ) throws(Error) where Buffer.Element == Byte {
+        var state = State(origin: buffer.count)
 
         writeHeader(document.version, into: &buffer)
 
         buffer.append(contentsOf: "%\u{E2}\u{E3}\u{CF}\u{D3}\n".utf8.map(Byte.init(bitPattern:)))
 
+        let pageResources = document.pages.map(Self.resources(of:))
+
         var allFonts: [ISO_32000.COS.Name: ISO_32000.Font] = [:]
-        for page in document.pages {
-            for (name, font) in page.resources.fonts {
+        for resources in pageResources {
+            for (name, font) in resources.fonts {
                 allFonts[name] = font
             }
         }
 
         var allImages: [ISO_32000.COS.Name: ISO_32000.Image] = [:]
-        for page in document.pages {
-            for (name, image) in page.resources.xObjects {
+        for resources in pageResources {
+            for (name, image) in resources.xObjects {
                 allImages[name] = image
             }
         }
@@ -70,7 +72,7 @@ extension ISO_32000.Writer {
                     fontDict[.encoding] = .name(.winAnsiEncoding)
                 }
 
-                state.objectOffsets[objNum] = buffer.count
+                state.objectOffsets[objNum] = buffer.count - state.origin
                 writeIndirectObject(objNum, object: .dictionary(fontDict), into: &buffer)
             }
         }
@@ -107,7 +109,7 @@ extension ISO_32000.Writer {
             }
 
             let stream = ISO_32000.COS.Stream(dictionary: imageDict, data: image.data)
-            state.objectOffsets[objNum] = buffer.count
+            state.objectOffsets[objNum] = buffer.count - state.origin
             writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
         }
 
@@ -131,7 +133,7 @@ extension ISO_32000.Writer {
                 }
 
                 let stream = ISO_32000.COS.Stream(dictionary: streamDict, data: streamData)
-                state.objectOffsets[objNum] = buffer.count
+                state.objectOffsets[objNum] = buffer.count - state.origin
                 writeIndirectObject(objNum, object: .stream(stream), into: &buffer)
             }
             contentRefs.append(pageContentRefs)
@@ -178,7 +180,7 @@ extension ISO_32000.Writer {
 
                     case .destination(let dest):
 
-                        annotDict[.dest] = serializeDestination(dest, pageRefs: pageRefs)
+                        annotDict[.dest] = try serializeDestination(dest, pageRefs: pageRefs)
                     }
 
                 default:
@@ -186,7 +188,7 @@ extension ISO_32000.Writer {
                     break
                 }
 
-                state.objectOffsets[objNum] = buffer.count
+                state.objectOffsets[objNum] = buffer.count - state.origin
                 writeIndirectObject(objNum, object: .dictionary(annotDict), into: &buffer)
             }
             annotRefs.append(pageAnnotRefs)
@@ -204,6 +206,18 @@ extension ISO_32000.Writer {
                 pageDict[.cropBox] = ISO_32000.COS.Object(cropBox)
             }
 
+            if let bleedBox = page.bleedBox {
+                pageDict[.bleedBox] = ISO_32000.COS.Object(bleedBox)
+            }
+
+            if let trimBox = page.trimBox {
+                pageDict[.trimBox] = ISO_32000.COS.Object(trimBox)
+            }
+
+            if let artBox = page.artBox {
+                pageDict[.artBox] = ISO_32000.COS.Object(artBox)
+            }
+
             if let rotation = page.rotation, rotation.underlying != 0 {
                 pageDict[.rotate] = .integer(Int64(rotation.underlying))
             }
@@ -218,11 +232,12 @@ extension ISO_32000.Writer {
                 pageDict[.annots] = .array(annotRefs[i].map { .reference($0) })
             }
 
+            let resources = pageResources[i]
             var resourcesDict = ISO_32000.COS.Dictionary()
 
-            if !page.resources.fonts.isEmpty {
+            if !resources.fonts.isEmpty {
                 var fontResourceDict = ISO_32000.COS.Dictionary()
-                for name in page.resources.fonts.keys
+                for name in resources.fonts.keys
                     .sorted(by: { $0.rawValue < $1.rawValue })
                 {
                     if let ref = fontRefs[name] {
@@ -232,9 +247,9 @@ extension ISO_32000.Writer {
                 resourcesDict[.font] = .dictionary(fontResourceDict)
             }
 
-            if !page.resources.xObjects.isEmpty {
+            if !resources.xObjects.isEmpty {
                 var xObjectDict = ISO_32000.COS.Dictionary()
-                for name in page.resources.xObjects.keys
+                for name in resources.xObjects.keys
                     .sorted(by: { $0.rawValue < $1.rawValue })
                 {
                     if let ref = imageRefs[name] {
@@ -245,7 +260,7 @@ extension ISO_32000.Writer {
             }
 
             var procSetArray: [ISO_32000.COS.Object] = [.name(.pdf), .name(.text)]
-            if !page.resources.xObjects.isEmpty {
+            if !resources.xObjects.isEmpty {
                 procSetArray.append(ISO_32000.COS.Object.name(.imagec))
                 procSetArray.append(ISO_32000.COS.Object.name(.imageb))
             }
@@ -253,7 +268,7 @@ extension ISO_32000.Writer {
 
             pageDict[.resources] = .dictionary(resourcesDict)
 
-            state.objectOffsets[pageRef.objectNumber] = buffer.count
+            state.objectOffsets[pageRef.objectNumber] = buffer.count - state.origin
             writeIndirectObject(
                 pageRef.objectNumber,
                 object: .dictionary(pageDict),
@@ -266,12 +281,12 @@ extension ISO_32000.Writer {
         pagesDict[.kids] = .array(pageRefs.map { .reference($0) })
         pagesDict[.count] = .integer(Int64(document.pages.count))
 
-        state.objectOffsets[pagesObjNum] = buffer.count
+        state.objectOffsets[pagesObjNum] = buffer.count - state.origin
         writeIndirectObject(pagesObjNum, object: .dictionary(pagesDict), into: &buffer)
 
         var outlineRef: ISO_32000.COS.IndirectReference?
         if let outline = document.outline, !outline.isEmpty {
-            outlineRef = writeOutline(outline, pageRefs: pageRefs, state: &state, into: &buffer)
+            outlineRef = try writeOutline(outline, pageRefs: pageRefs, state: &state, into: &buffer)
         }
 
         let catalogObjNum = state.nextObjectNumber()
@@ -283,7 +298,11 @@ extension ISO_32000.Writer {
             catalogDict[.outlines] = .reference(outlineRef)
         }
 
-        state.objectOffsets[catalogObjNum] = buffer.count
+        if let viewer = document.viewer, viewer != .default {
+            catalogDict[.viewerPreferences] = .dictionary(viewerPreferences(viewer))
+        }
+
+        state.objectOffsets[catalogObjNum] = buffer.count - state.origin
         writeIndirectObject(catalogObjNum, object: .dictionary(catalogDict), into: &buffer)
 
         var infoRef: ISO_32000.COS.IndirectReference?
@@ -317,11 +336,11 @@ extension ISO_32000.Writer {
                 infoDict[.modDate] = .string(ISO_32000.COS.StringValue(date.description))
             }
 
-            state.objectOffsets[infoObjNum] = buffer.count
+            state.objectOffsets[infoObjNum] = buffer.count - state.origin
             writeIndirectObject(infoObjNum, object: .dictionary(infoDict), into: &buffer)
         }
 
-        let xrefOffset = buffer.count
+        let xrefOffset = buffer.count - state.origin
         writeXref(state: state, into: &buffer)
 
         writeTrailer(
@@ -333,9 +352,9 @@ extension ISO_32000.Writer {
         )
     }
 
-    public mutating func write(_ document: ISO_32000.Document) -> [Byte] {
+    public mutating func write(_ document: ISO_32000.Document) throws(Error) -> [Byte] {
         var buffer: [Byte] = []
-        write(document, into: &buffer)
+        try write(document, into: &buffer)
         return buffer
     }
 
@@ -391,7 +410,7 @@ extension ISO_32000.Writer {
         pageRefs: [ISO_32000.COS.IndirectReference],
         state: inout State,
         into buffer: inout Buffer
-    ) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
+    ) throws(Error) -> ISO_32000.COS.IndirectReference where Buffer.Element == Byte {
 
         let outlineObjNum = state.nextObjectNumber()
         let outlineRef = ISO_32000.COS.IndirectReference(objectNumber: outlineObjNum)
@@ -498,7 +517,7 @@ extension ISO_32000.Writer {
 
         outlineDict[.count] = .integer(Int64(outline.count))
 
-        state.objectOffsets[outlineObjNum] = buffer.count
+        state.objectOffsets[outlineObjNum] = buffer.count - state.origin
         writeIndirectObject(outlineObjNum, object: .dictionary(outlineDict), into: &buffer)
 
         for fi in flatItems {
@@ -522,7 +541,7 @@ extension ISO_32000.Writer {
             }
 
             if !fi.item.children.isEmpty {
-                let descendantCount = fi.item.visibleDescendantCount - 1
+                let descendantCount = fi.item.children.reduce(0) { $0 + $1.visibleDescendantCount }
                 let countValue = fi.item.isOpen ? descendantCount : -descendantCount
                 itemDict[.count] = .integer(Int64(countValue))
             }
@@ -530,28 +549,130 @@ extension ISO_32000.Writer {
             if let target = fi.item.target {
                 switch target {
                 case .destination(let destination):
-                    itemDict[.dest] = serializeDestination(destination, pageRefs: pageRefs)
+                    itemDict[.dest] = try serializeDestination(destination, pageRefs: pageRefs)
 
-                case .action:
+                case .uri(let action):
+                    var actionDict = ISO_32000.COS.Dictionary()
+                    actionDict[.s] = .name(.uri)
+                    actionDict[.uri] = .string(ISO_32000.COS.StringValue(action.uri.value))
+                    if action.isMap {
+                        actionDict[.isMap] = .boolean(true)
+                    }
+                    itemDict[.a] = .dictionary(actionDict)
 
-                    break
+                case .named(let action):
+                    var actionDict = ISO_32000.COS.Dictionary()
+                    actionDict[.s] = .name(.named)
+                    actionDict[.n] = .name(Self.name(action.name.rawValue))
+                    itemDict[.a] = .dictionary(actionDict)
+
+                case .javaScript(let action):
+                    var actionDict = ISO_32000.COS.Dictionary()
+                    actionDict[.s] = .name(.javaScript)
+                    actionDict[.js] = .string(ISO_32000.COS.StringValue(action.script))
+                    itemDict[.a] = .dictionary(actionDict)
                 }
             }
 
-            state.objectOffsets[fi.objNum] = buffer.count
+            if let color = fi.item.color {
+                itemDict[.c] = .array([.real(color.r), .real(color.g), .real(color.b)])
+            }
+
+            if !fi.item.flags.isEmpty {
+                itemDict[.f] = .integer(Int64(fi.item.flags.rawValue))
+            }
+
+            state.objectOffsets[fi.objNum] = buffer.count - state.origin
             writeIndirectObject(fi.objNum, object: .dictionary(itemDict), into: &buffer)
         }
 
         return outlineRef
     }
 
+    private static func resources(of page: ISO_32000.Page) -> ISO_32000.Resources {
+        var resources = page.resources
+        for content in page.contents {
+            for font in content.fontsUsed where resources.fonts[font.resourceName] == nil {
+                resources.addFont(font)
+            }
+            for image in content.imagesUsed where resources.xObjects[image.resourceName] == nil {
+                resources.addImage(image)
+            }
+        }
+        return resources
+    }
+
+    private func viewerPreferences(_ viewer: ISO_32000.Viewer) -> ISO_32000.COS.Dictionary {
+        let defaults = ISO_32000.Viewer.default
+        var dict = ISO_32000.COS.Dictionary()
+        let flags: [(ISO_32000.COS.Name, Bool, Bool)] = [
+            (.hideToolbar, viewer.hideToolbar, defaults.hideToolbar),
+            (.hideMenubar, viewer.hideMenubar, defaults.hideMenubar),
+            (.hideWindowUI, viewer.hideWindowUI, defaults.hideWindowUI),
+            (.fitWindow, viewer.fitWindow, defaults.fitWindow),
+            (.centerWindow, viewer.centerWindow, defaults.centerWindow),
+            (.displayDocTitle, viewer.displayDocTitle, defaults.displayDocTitle),
+        ]
+        for (key, value, fallback) in flags where value != fallback {
+            dict[key] = .boolean(value)
+        }
+        let names: [(ISO_32000.COS.Name, String, String)] = [
+            (.nonFullScreenPageMode, viewer.nonFullScreenPageMode.rawValue, defaults.nonFullScreenPageMode.rawValue),
+            (.direction, viewer.direction.rawValue, defaults.direction.rawValue),
+            (.viewArea, viewer.view.area.rawValue, defaults.view.area.rawValue),
+            (.viewClip, viewer.view.clip.rawValue, defaults.view.clip.rawValue),
+            (.printArea, viewer.print.area.rawValue, defaults.print.area.rawValue),
+            (.printClip, viewer.print.clip.rawValue, defaults.print.clip.rawValue),
+            (.printScaling, viewer.print.scaling.rawValue, defaults.print.scaling.rawValue),
+        ]
+        for (key, value, fallback) in names where value != fallback {
+            dict[key] = .name(Self.name(value))
+        }
+        if let duplex = viewer.print.duplex {
+            dict[.duplex] = .name(Self.name(duplex.rawValue))
+        }
+        if let pickTray = viewer.print.pickTrayByPDFSize {
+            dict[.pickTrayByPDFSize] = .boolean(pickTray)
+        }
+        if let ranges = viewer.print.pageRange, !ranges.isEmpty {
+            dict[.printPageRange] = .array(
+                ranges.flatMap { [.integer(Int64($0.first)), .integer(Int64($0.last))] }
+            )
+        }
+        if let copies = viewer.print.numCopies {
+            dict[.numCopies] = .integer(Int64(copies))
+        }
+        if !viewer.enforce.isEmpty {
+            dict[.enforce] = .array(viewer.enforce.map { .name(Self.name($0.rawValue)) })
+        }
+        return dict
+    }
+
+    private static func reference(
+        toPage index: Int,
+        in pageRefs: [ISO_32000.COS.IndirectReference]
+    ) throws(Error) -> ISO_32000.COS.IndirectReference {
+        guard pageRefs.indices.contains(index) else {
+            throw .pageOutOfRange(index: index, pageCount: pageRefs.count)
+        }
+        return pageRefs[index]
+    }
+
+    private static func name(_ rawValue: String) -> ISO_32000.COS.Name {
+        do {
+            return try ISO_32000.COS.Name(rawValue)
+        } catch {
+            preconditionFailure("A viewer preference or named action raw value is a valid PDF name: \(error)")
+        }
+    }
+
     private func serializeDestination(
         _ dest: ISO_32000.Destination,
         pageRefs: [ISO_32000.COS.IndirectReference]
-    ) -> ISO_32000.COS.Object {
+    ) throws(Error) -> ISO_32000.COS.Object {
         switch dest {
         case .xyz(let page, let left, let top, let zoom):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.xyz),
@@ -561,11 +682,11 @@ extension ISO_32000.Writer {
             ])
 
         case .fit(let page):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([.reference(pageRef), .name(.fit)])
 
         case .fitH(let page, let top):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.fitH),
@@ -573,7 +694,7 @@ extension ISO_32000.Writer {
             ])
 
         case .fitV(let page, let left):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.fitV),
@@ -581,7 +702,7 @@ extension ISO_32000.Writer {
             ])
 
         case .fitR(let page, let left, let bottom, let right, let top):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.fitR),
@@ -592,11 +713,11 @@ extension ISO_32000.Writer {
             ])
 
         case .fitB(let page):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([.reference(pageRef), .name(.fitB)])
 
         case .fitBH(let page, let top):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.fitBH),
@@ -604,7 +725,7 @@ extension ISO_32000.Writer {
             ])
 
         case .fitBV(let page, let left):
-            let pageRef = pageRefs.indices.contains(page) ? pageRefs[page] : pageRefs[0]
+            let pageRef = try Self.reference(toPage: page, in: pageRefs)
             return .array([
                 .reference(pageRef),
                 .name(.fitBV),
@@ -664,7 +785,7 @@ extension ISO_32000.Writer {
         }
 
         let fontFileStream = ISO_32000.COS.Stream(dictionary: fontFileDict, data: fontFileData)
-        state.objectOffsets[fontFileObjNum] = buffer.count
+        state.objectOffsets[fontFileObjNum] = buffer.count - state.origin
         writeIndirectObject(fontFileObjNum, object: .stream(fontFileStream), into: &buffer)
 
         let descriptorObjNum = state.nextObjectNumber()
@@ -688,7 +809,7 @@ extension ISO_32000.Writer {
         descriptorDict[.stemV] = .integer(Int64(descriptor.stemV.underlying))
         descriptorDict[.fontFile2] = .reference(fontFileRef)
 
-        state.objectOffsets[descriptorObjNum] = buffer.count
+        state.objectOffsets[descriptorObjNum] = buffer.count - state.origin
         writeIndirectObject(
             descriptorObjNum,
             object: .dictionary(descriptorDict),
@@ -711,7 +832,7 @@ extension ISO_32000.Writer {
         }
 
         let toUnicodeStream = ISO_32000.COS.Stream(dictionary: toUnicodeDict, data: toUnicodeData)
-        state.objectOffsets[toUnicodeObjNum] = buffer.count
+        state.objectOffsets[toUnicodeObjNum] = buffer.count - state.origin
         writeIndirectObject(toUnicodeObjNum, object: .stream(toUnicodeStream), into: &buffer)
 
         let fontObjNum = state.nextObjectNumber()
@@ -733,15 +854,16 @@ extension ISO_32000.Writer {
         var widthsArray: [ISO_32000.COS.Object] = []
         let unitsPerEm = embedded.metrics.unitsPerEm
         (firstChar...lastChar).forEach { charCode in
-
-            let width = embedded.metrics.width(forCodePoint: UInt32(charCode))
+            let codePoint =
+                ISO_32000.WinAnsiEncoding.decode(Byte(UInt8(charCode)))?.value ?? UInt32(charCode)
+            let width = embedded.metrics.width(forCodePoint: codePoint)
 
             let scaledWidth = (width * 1000) / unitsPerEm
             widthsArray.append(.integer(Int64(scaledWidth)))
         }
         fontDict[.widths] = .array(widthsArray)
 
-        state.objectOffsets[fontObjNum] = buffer.count
+        state.objectOffsets[fontObjNum] = buffer.count - state.origin
         writeIndirectObject(fontObjNum, object: .dictionary(fontDict), into: &buffer)
 
         return fontRef
@@ -836,7 +958,16 @@ extension ISO_32000.Writer {
 
 extension ISO_32000.Writer {
 
+    public enum Error: Swift::Error, Sendable, Hashable {
+
+        case pageOutOfRange(index: Int, pageCount: Int)
+    }
+}
+
+extension ISO_32000.Writer {
+
     struct State {
+        let origin: Int
         var objectCount: Int = 0
         var objectOffsets: [Int: Int] = [:]
     }
@@ -867,13 +998,3 @@ extension ISO_32000.StreamCompression {
     }
 }
 
-extension ISO_32000.Document: Binary.Serializable {
-
-    public static func serialize<Buffer: RangeReplaceableCollection>(
-        _ document: Self,
-        into buffer: inout Buffer
-    ) where Buffer.Element == Byte {
-        var writer = ISO_32000.Writer()
-        writer.write(document, into: &buffer)
-    }
-}
