@@ -48,26 +48,27 @@ extension ISO_32000.`8`.`6`.Color {
         }
 
         let scanner = hexString.unicodeScalars
-        var value: UInt64 = 0
+        guard scanner.count == 3 || scanner.count == 6 else { return nil }
+        var value: UInt32 = 0
 
         for scalar in scanner {
             value *= 16
             switch scalar {
             case "0"..."9":
-                value += UInt64(scalar.value - UnicodeScalar("0").value)
+                value += UInt32(scalar.value - UnicodeScalar("0").value)
 
             case "a"..."f":
-                value += UInt64(scalar.value - UnicodeScalar("a").value + 10)
+                value += UInt32(scalar.value - UnicodeScalar("a").value + 10)
 
             case "A"..."F":
-                value += UInt64(scalar.value - UnicodeScalar("A").value + 10)
+                value += UInt32(scalar.value - UnicodeScalar("A").value + 10)
 
             default:
                 return nil
             }
         }
 
-        switch hexString.count {
+        switch scanner.count {
         case 3:
 
             let r = Double((value >> 8) & 0xF) / 15.0
