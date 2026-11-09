@@ -91,6 +91,29 @@ struct `ISO_32000.Encoding Tests` {
             let decoded = String(winAnsi: bytes, withReplacement: true)
             #expect(decoded == "Hello")
         }
+
+        @Test
+        func `Replacement decodes an undefined byte to U+FFFD, no replacement drops it`() {
+            let bytes: [Byte] = [0x41, 0x81, 0x42].map(Byte.init(bitPattern:))
+            #expect(String(winAnsi: bytes, withReplacement: true) == "A\u{FFFD}B")
+            #expect(String(winAnsi: bytes, withReplacement: false) == "AB")
+        }
+
+        @Test
+        func `Fallback substitutes a look-alike, no fallback writes a question mark`() {
+            let ascii: (String) -> [Byte] = { $0.utf8.map(Byte.init(bitPattern:)) }
+            #expect([Byte](winAnsi: "a\u{2192}b", withFallback: true) == ascii("a->b"))
+            #expect([Byte](winAnsi: "a\u{2192}b", withFallback: false) == ascii("a?b"))
+        }
+
+        @Test
+        func `encodeWithFallback substitutes like the fallback initializer`() {
+            let text = "x \u{2192} \u{2713} \u{4E00}"
+            #expect(
+                ISO_32000.WinAnsiEncoding.encodeWithFallback(text.unicodeScalars)
+                    == [Byte](winAnsi: text, withFallback: true)
+            )
+        }
     }
 }
 

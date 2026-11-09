@@ -45,7 +45,13 @@ extension ISO_32000.Encoding {
     ) -> [Byte] where Scalars.Element == Unicode.Scalar {
         var result: [Byte] = []
         for scalar in scalars {
-            result.append(encode(scalar) ?? Byte(bitPattern: 0x3F))
+            if let byte = encode(scalar) {
+                result.append(byte)
+            } else if let fallback = ISO_32000.unicodeFallbackMap[scalar.value] {
+                result.append(contentsOf: fallback)
+            } else {
+                result.append(Byte(bitPattern: 0x3F))
+            }
         }
         return result
     }
@@ -149,10 +155,8 @@ extension Array where Element == Byte {
             if preservingControlChars && value < 0x20 {
                 result.append(Byte(UInt8(value)))
             } else if let byte = E.encode(scalar) {
-
                 result.append(byte)
-            } else if let fallback = ISO_32000.unicodeFallbackMap[value] {
-
+            } else if withFallback, let fallback = ISO_32000.unicodeFallbackMap[value] {
                 result.append(contentsOf: fallback)
             } else {
 
@@ -188,7 +192,11 @@ extension String {
         var scalars = String.UnicodeScalarView()
         scalars.reserveCapacity(bytes.count)
         for byte in bytes {
-            scalars.append(E.decode(byte) ?? "\u{FFFD}")
+            if let scalar = E.decode(byte) {
+                scalars.append(scalar)
+            } else if withReplacement {
+                scalars.append("\u{FFFD}")
+            }
         }
         self.init(scalars)
     }
