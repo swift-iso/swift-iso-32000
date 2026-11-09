@@ -606,41 +606,45 @@ extension `ISO_32000.ZapfDingbatsEncoding Tests` {
 @Suite
 struct `Byte constants Tests` {
 
-    @Test(arguments: [
-        (Byte.PDFDoc.quotesinglbase, "\u{201A}"),
-        (Byte.PDFDoc.quotedblbase, "\u{201E}"),
-        (Byte.PDFDoc.quotedblleft, "\u{201C}"),
-        (Byte.PDFDoc.quotedblright, "\u{201D}"),
-        (Byte.PDFDoc.quoteleft, "\u{2018}"),
-        (Byte.PDFDoc.quoteright, "\u{2019}"),
-        (Byte.PDFDoc.trademark, "\u{2122}"),
-        (Byte.PDFDoc.fi, "\u{FB01}"),
-        (Byte.PDFDoc.fl, "\u{FB02}"),
-        (Byte.PDFDoc.OE, "\u{0152}"),
-        (Byte.PDFDoc.Scaron, "\u{0160}"),
-        (Byte.PDFDoc.Ydieresis, "\u{0178}"),
-        (Byte.PDFDoc.oe, "\u{0153}"),
-        (Byte.PDFDoc.scaron, "\u{0161}"),
-        (Byte.PDFDoc.bullet, "\u{2022}"),
-        (Byte.PDFDoc.perthousand, "\u{2030}"),
-        (Byte.PDFDoc.euro, "\u{20AC}"),
-    ] as [(Byte, Unicode.Scalar)])
+    @Test(
+        arguments: [
+            (Byte.PDFDoc.quotesinglbase, "\u{201A}"),
+            (Byte.PDFDoc.quotedblbase, "\u{201E}"),
+            (Byte.PDFDoc.quotedblleft, "\u{201C}"),
+            (Byte.PDFDoc.quotedblright, "\u{201D}"),
+            (Byte.PDFDoc.quoteleft, "\u{2018}"),
+            (Byte.PDFDoc.quoteright, "\u{2019}"),
+            (Byte.PDFDoc.trademark, "\u{2122}"),
+            (Byte.PDFDoc.fi, "\u{FB01}"),
+            (Byte.PDFDoc.fl, "\u{FB02}"),
+            (Byte.PDFDoc.OE, "\u{0152}"),
+            (Byte.PDFDoc.Scaron, "\u{0160}"),
+            (Byte.PDFDoc.Ydieresis, "\u{0178}"),
+            (Byte.PDFDoc.oe, "\u{0153}"),
+            (Byte.PDFDoc.scaron, "\u{0161}"),
+            (Byte.PDFDoc.bullet, "\u{2022}"),
+            (Byte.PDFDoc.perthousand, "\u{2030}"),
+            (Byte.PDFDoc.euro, "\u{20AC}"),
+        ] as [(Byte, Unicode.Scalar)]
+    )
     func `PDFDoc constant decodes to its glyph`(_ byte: Byte, _ scalar: Unicode.Scalar) {
         #expect(ISO_32000.PDFDocEncoding.decode(byte) == scalar)
     }
 
-    @Test(arguments: [
-        (Byte.ZapfDingbats.scissors, "\u{2701}"),
-        (Byte.ZapfDingbats.writingHand, "\u{270D}"),
-        (Byte.ZapfDingbats.checkmark, "\u{2713}"),
-        (Byte.ZapfDingbats.ballotX, "\u{2717}"),
-        (Byte.ZapfDingbats.blackStar, "\u{2605}"),
-        (Byte.ZapfDingbats.club, "\u{2663}"),
-        (Byte.ZapfDingbats.diamond, "\u{2666}"),
-        (Byte.ZapfDingbats.heart, "\u{2665}"),
-        (Byte.ZapfDingbats.spade, "\u{2660}"),
-        (Byte.ZapfDingbats.arrowRight, "\u{2192}"),
-    ] as [(Byte, Unicode.Scalar)])
+    @Test(
+        arguments: [
+            (Byte.ZapfDingbats.scissors, "\u{2701}"),
+            (Byte.ZapfDingbats.writingHand, "\u{270D}"),
+            (Byte.ZapfDingbats.checkmark, "\u{2713}"),
+            (Byte.ZapfDingbats.ballotX, "\u{2717}"),
+            (Byte.ZapfDingbats.blackStar, "\u{2605}"),
+            (Byte.ZapfDingbats.club, "\u{2663}"),
+            (Byte.ZapfDingbats.diamond, "\u{2666}"),
+            (Byte.ZapfDingbats.heart, "\u{2665}"),
+            (Byte.ZapfDingbats.spade, "\u{2660}"),
+            (Byte.ZapfDingbats.arrowRight, "\u{2192}"),
+        ] as [(Byte, Unicode.Scalar)]
+    )
     func `ZapfDingbats constant decodes to its glyph`(_ byte: Byte, _ scalar: Unicode.Scalar) {
         #expect(ISO_32000.ZapfDingbatsEncoding.decode(byte) == scalar)
     }

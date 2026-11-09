@@ -997,4 +997,3 @@ extension ISO_32000.StreamCompression {
         _compress(input, &output)
     }
 }
-
