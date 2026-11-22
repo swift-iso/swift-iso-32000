@@ -1,17 +1,17 @@
 public import ISO_32000_Shared
 public import RFC_3986
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `6` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Action {}
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public enum Kind: String, Sendable, Codable, CaseIterable {
 
@@ -57,22 +57,22 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct GoTo: Sendable {
 
-        public var destination: ISO_32000.Destination
+        public var destination: ISO.`32000`.Destination
 
         public var structureDestination: [String]?
 
-        public init(destination: ISO_32000.Destination) {
+        public init(destination: ISO.`32000`.Destination) {
             self.destination = destination
             self.structureDestination = nil
         }
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct GoToR: Sendable {
 
@@ -80,13 +80,13 @@ extension ISO_32000.Action {
         // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String
 
-        public var destination: ISO_32000.Destination
+        public var destination: ISO.`32000`.Destination
 
         public var newWindow: Bool?
 
         // swift-linter:disable:next raw concept
         // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
-        public init(file: String, destination: ISO_32000.Destination, newWindow: Bool? = nil) {
+        public init(file: String, destination: ISO.`32000`.Destination, newWindow: Bool? = nil) {
             self.file = file
             self.destination = destination
             self.newWindow = newWindow
@@ -94,7 +94,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct URI: Sendable, Equatable, Hashable {
 
@@ -109,7 +109,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Hide: Sendable, Equatable, Hashable, Codable {
 
@@ -124,7 +124,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Hide {
+extension ISO.`32000`.Action.Hide {
 
     public enum Target: Sendable, Equatable, Hashable, Codable {
 
@@ -136,7 +136,7 @@ extension ISO_32000.Action.Hide {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Named: Sendable, Equatable, Hashable, Codable {
 
@@ -148,7 +148,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Named {
+extension ISO.`32000`.Action.Named {
 
     public enum Name: String, Sendable, Codable, CaseIterable {
 
@@ -162,7 +162,7 @@ extension ISO_32000.Action.Named {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct JavaScript: Sendable, Equatable, Hashable, Codable {
 
@@ -174,7 +174,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct GoToE: Sendable, Hashable {
 
@@ -182,14 +182,14 @@ extension ISO_32000.Action {
         // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
         public var file: String?
 
-        public var destination: ISO_32000.Destination
+        public var destination: ISO.`32000`.Destination
 
         public var target: Target?
 
         public var newWindow: Bool?
 
         public init(
-            destination: ISO_32000.Destination,
+            destination: ISO.`32000`.Destination,
             // swift-linter:disable:next raw concept
             // REASON: A PDF file specification string (ISO 32000 7.11.2), in PDF's own platform-independent syntax, whatever machine reads the document; looked at Path and File.Path, which hold this platform's paths, and RFC_3986.URI, which it isn't; ISO 32000 has no file specification type of its own.
             file: String? = nil,
@@ -220,7 +220,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.GoToE {
+extension ISO.`32000`.Action.GoToE {
 
     public struct Target: Sendable, Hashable {
 
@@ -232,7 +232,7 @@ extension ISO_32000.Action.GoToE {
 
         public var annotationIndex: Int?
 
-        public var next: ISO_32000.Action.Box<Target>?
+        public var next: ISO.`32000`.Action.Box<Target>?
 
         public init(
             relation: Relation,
@@ -245,12 +245,12 @@ extension ISO_32000.Action.GoToE {
             self.name = name
             self.pageNumber = pageNumber
             self.annotationIndex = annotationIndex
-            self.next = next.map { ISO_32000.Action.Box($0) }
+            self.next = next.map { ISO.`32000`.Action.Box($0) }
         }
     }
 }
 
-extension ISO_32000.Action.GoToE.Target {
+extension ISO.`32000`.Action.GoToE.Target {
 
     public enum Relation: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -260,7 +260,7 @@ extension ISO_32000.Action.GoToE.Target {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct GoToDp: Sendable, Hashable {
 
@@ -272,7 +272,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Launch: Sendable, Hashable {
 
@@ -298,7 +298,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Launch {
+extension ISO.`32000`.Action.Launch {
 
     public struct WindowsLaunch: Sendable, Hashable {
 
@@ -332,7 +332,7 @@ extension ISO_32000.Action.Launch {
     }
 }
 
-extension ISO_32000.Action.Launch.WindowsLaunch {
+extension ISO.`32000`.Action.Launch.WindowsLaunch {
 
     public enum Operation: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -342,7 +342,7 @@ extension ISO_32000.Action.Launch.WindowsLaunch {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Thread: Sendable, Hashable {
 
@@ -368,7 +368,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Thread {
+extension ISO.`32000`.Action.Thread {
 
     public enum ThreadSpec: Sendable, Hashable {
 
@@ -387,7 +387,7 @@ extension ISO_32000.Action.Thread {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct SetOCGState: Sendable, Hashable {
 
@@ -402,7 +402,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.SetOCGState {
+extension ISO.`32000`.Action.SetOCGState {
 
     public enum Command: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -426,7 +426,7 @@ extension ISO_32000.Action.SetOCGState {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Rendition: Sendable, Hashable {
 
@@ -452,7 +452,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Rendition {
+extension ISO.`32000`.Action.Rendition {
 
     public enum Operation: Int, Sendable, Hashable, Codable, CaseIterable {
 
@@ -468,7 +468,7 @@ extension ISO_32000.Action.Rendition {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct Transition: Sendable, Hashable {
 
@@ -480,7 +480,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.Transition {
+extension ISO.`32000`.Action.Transition {
 
     public struct TransitionDict: Sendable, Hashable {
 
@@ -495,7 +495,7 @@ extension ISO_32000.Action.Transition {
     }
 }
 
-extension ISO_32000.Action.Transition.TransitionDict {
+extension ISO.`32000`.Action.Transition.TransitionDict {
 
     public enum Style: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -525,7 +525,7 @@ extension ISO_32000.Action.Transition.TransitionDict {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct RichMediaExecute: Sendable, Hashable {
 
@@ -540,7 +540,7 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.Action.RichMediaExecute {
+extension ISO.`32000`.Action.RichMediaExecute {
 
     public struct Command: Sendable, Hashable {
 
@@ -558,7 +558,7 @@ extension ISO_32000.Action.RichMediaExecute {
     }
 }
 
-extension ISO_32000.Action.RichMediaExecute.Command {
+extension ISO.`32000`.Action.RichMediaExecute.Command {
 
     public enum CommandType: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -566,7 +566,7 @@ extension ISO_32000.Action.RichMediaExecute.Command {
     }
 }
 
-extension ISO_32000.Action {
+extension ISO.`32000`.Action {
 
     public struct FormFieldTriggers: Sendable, Hashable {
 
@@ -639,39 +639,39 @@ extension ISO_32000.Action {
     }
 }
 
-extension ISO_32000.`12`.`6` {
+extension ISO.`32000`.`12`.`6` {
 
-    public typealias Kind = ISO_32000.Action.Kind
+    public typealias Kind = ISO.`32000`.Action.Kind
 
-    public typealias GoTo = ISO_32000.Action.GoTo
+    public typealias GoTo = ISO.`32000`.Action.GoTo
 
-    public typealias GoToR = ISO_32000.Action.GoToR
+    public typealias GoToR = ISO.`32000`.Action.GoToR
 
-    public typealias GoToE = ISO_32000.Action.GoToE
+    public typealias GoToE = ISO.`32000`.Action.GoToE
 
-    public typealias GoToDp = ISO_32000.Action.GoToDp
+    public typealias GoToDp = ISO.`32000`.Action.GoToDp
 
-    public typealias Launch = ISO_32000.Action.Launch
+    public typealias Launch = ISO.`32000`.Action.Launch
 
-    public typealias Thread = ISO_32000.Action.Thread
+    public typealias Thread = ISO.`32000`.Action.Thread
 
-    public typealias URI = ISO_32000.Action.URI
+    public typealias URI = ISO.`32000`.Action.URI
 
-    public typealias Hide = ISO_32000.Action.Hide
+    public typealias Hide = ISO.`32000`.Action.Hide
 
-    public typealias Named = ISO_32000.Action.Named
+    public typealias Named = ISO.`32000`.Action.Named
 
-    public typealias SetOCGState = ISO_32000.Action.SetOCGState
+    public typealias SetOCGState = ISO.`32000`.Action.SetOCGState
 
-    public typealias Rendition = ISO_32000.Action.Rendition
+    public typealias Rendition = ISO.`32000`.Action.Rendition
 
-    public typealias Transition = ISO_32000.Action.Transition
+    public typealias Transition = ISO.`32000`.Action.Transition
 
-    public typealias JavaScript = ISO_32000.Action.JavaScript
+    public typealias JavaScript = ISO.`32000`.Action.JavaScript
 
-    public typealias RichMediaExecute = ISO_32000.Action.RichMediaExecute
+    public typealias RichMediaExecute = ISO.`32000`.Action.RichMediaExecute
 
-    public typealias FormFieldTriggers = ISO_32000.Action.FormFieldTriggers
+    public typealias FormFieldTriggers = ISO.`32000`.Action.FormFieldTriggers
 
-    public typealias AnnotationTriggers = ISO_32000.Action.AnnotationTriggers
+    public typealias AnnotationTriggers = ISO.`32000`.Action.AnnotationTriggers
 }

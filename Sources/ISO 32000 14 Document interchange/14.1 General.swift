@@ -1,5 +1,5 @@
 import ISO_32000_Shared
 
-extension ISO_32000.`14` {
+extension ISO.`32000`.`14` {
 
 }

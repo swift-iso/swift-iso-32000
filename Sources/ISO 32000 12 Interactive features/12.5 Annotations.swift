@@ -5,16 +5,16 @@ public import ISO_32000_Shared
 public import RFC_3986
 public import RFC_5646
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `5` {}
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public struct Annotation: Sendable, Hashable {
 
-        public var rect: ISO_32000.UserSpace.Rectangle
+        public var rect: ISO.`32000`.UserSpace.Rectangle
 
         public var contents: String?
 
@@ -34,18 +34,18 @@ extension ISO_32000.`12`.`5` {
 
         public var strokeOpacity: Double?
 
-        public var blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode?
+        public var blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode?
 
         public var language: RFC_5646.LanguageTag?
 
-        public var appearance: ISO_32000.`12`.`5`.Appearance?
+        public var appearance: ISO.`32000`.`12`.`5`.Appearance?
 
         public var appearanceState: String?
 
         public var content: Content
 
         public init(
-            rect: ISO_32000.UserSpace.Rectangle,
+            rect: ISO.`32000`.UserSpace.Rectangle,
             content: Content,
             contents: String? = nil,
             name: String? = nil,
@@ -56,9 +56,9 @@ extension ISO_32000.`12`.`5` {
             structParent: Int? = nil,
             fillOpacity: Double? = nil,
             strokeOpacity: Double? = nil,
-            blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode? = nil,
+            blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode? = nil,
             language: RFC_5646.LanguageTag? = nil,
-            appearance: ISO_32000.`12`.`5`.Appearance? = nil,
+            appearance: ISO.`32000`.`12`.`5`.Appearance? = nil,
             appearanceState: String? = nil
         ) {
             self.rect = rect
@@ -80,12 +80,12 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public var subtype: Subtype { content.subtype }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public enum Content: Sendable, Hashable {
 
@@ -119,9 +119,9 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Content {
+extension ISO.`32000`.`12`.`5`.Annotation.Content {
 
-    public var subtype: ISO_32000.`12`.`5`.Annotation.Subtype {
+    public var subtype: ISO.`32000`.`12`.`5`.Annotation.Subtype {
         switch self {
         case .link: return .link
         case .text: return .text
@@ -149,7 +149,7 @@ extension ISO_32000.`12`.`5`.Annotation.Content {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public enum Subtype: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -211,7 +211,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Subtype {
+extension ISO.`32000`.`12`.`5`.Annotation.Subtype {
 
     public var isMarkup: Bool {
         switch self {
@@ -237,17 +237,17 @@ extension ISO_32000.`12`.`5`.Annotation.Subtype {
         }
     }
 
-    public var name: ISO_32000.`7`.`3`.COS.Name {
+    public var name: ISO.`32000`.`7`.`3`.COS.Name {
 
         do {
-            return try ISO_32000.`7`.`3`.COS.Name(rawValue)
+            return try ISO.`32000`.`7`.`3`.COS.Name(rawValue)
         } catch {
             preconditionFailure("An annotation subtype raw value is a valid PDF name: \(error)")
         }
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Flags: OptionSet, Sendable, Hashable, Codable {
         public let rawValue: Int
@@ -258,30 +258,30 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Flags {
+extension ISO.`32000`.`12`.`5`.Annotation.Flags {
 
-    public static let invisible = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 0)
+    public static let invisible = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 0)
 
-    public static let hidden = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 1)
+    public static let hidden = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 1)
 
-    public static let print = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 2)
+    public static let print = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 2)
 
-    public static let noZoom = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 3)
+    public static let noZoom = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 3)
 
-    public static let noRotate = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 4)
+    public static let noRotate = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 4)
 
-    public static let noView = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 5)
+    public static let noView = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 5)
 
-    public static let readOnly = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 6)
+    public static let readOnly = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 6)
 
-    public static let locked = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 7)
+    public static let locked = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 7)
 
-    public static let toggleNoView = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 8)
+    public static let toggleNoView = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 8)
 
-    public static let lockedContents = ISO_32000.`12`.`5`.Annotation.Flags(rawValue: 1 << 9)
+    public static let lockedContents = ISO.`32000`.`12`.`5`.Annotation.Flags(rawValue: 1 << 9)
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public enum Color: Sendable, Hashable {
 
@@ -295,18 +295,18 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Color {
+extension ISO.`32000`.`12`.`5`.Annotation.Color {
 
     public static func rgb(
         _ red: Double,
         _ green: Double,
         _ blue: Double
-    ) -> ISO_32000.`12`.`5`.Annotation.Color {
+    ) -> ISO.`32000`.`12`.`5`.Annotation.Color {
         .rgb(red: red, green: green, blue: blue)
     }
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public struct Border: Sendable, Hashable {
 
@@ -332,14 +332,14 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5`.Border {
+extension ISO.`32000`.`12`.`5`.Border {
 
-    public static let `default` = ISO_32000.`12`.`5`.Border()
+    public static let `default` = ISO.`32000`.`12`.`5`.Border()
 
-    public static let none = ISO_32000.`12`.`5`.Border(width: 0)
+    public static let none = ISO.`32000`.`12`.`5`.Border(width: 0)
 }
 
-extension ISO_32000.`12`.`5`.Border {
+extension ISO.`32000`.`12`.`5`.Border {
 
     public struct Style: Sendable, Hashable {
 
@@ -361,7 +361,7 @@ extension ISO_32000.`12`.`5`.Border {
     }
 }
 
-extension ISO_32000.`12`.`5`.Border.Style {
+extension ISO.`32000`.`12`.`5`.Border.Style {
 
     public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -376,10 +376,10 @@ extension ISO_32000.`12`.`5`.Border.Style {
         case underline = "U"
     }
 
-    public static let `default` = ISO_32000.`12`.`5`.Border.Style()
+    public static let `default` = ISO.`32000`.`12`.`5`.Border.Style()
 }
 
-extension ISO_32000.`12`.`5`.Border {
+extension ISO.`32000`.`12`.`5`.Border {
 
     public struct Effect: Sendable, Hashable {
 
@@ -394,7 +394,7 @@ extension ISO_32000.`12`.`5`.Border {
     }
 }
 
-extension ISO_32000.`12`.`5`.Border.Effect {
+extension ISO.`32000`.`12`.`5`.Border.Effect {
 
     public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -404,7 +404,7 @@ extension ISO_32000.`12`.`5`.Border.Effect {
     }
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public struct Appearance: Sendable, Hashable {
 
@@ -426,7 +426,7 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5`.Appearance {
+extension ISO.`32000`.`12`.`5`.Appearance {
 
     public enum Entry: Sendable, Hashable {
 
@@ -436,7 +436,7 @@ extension ISO_32000.`12`.`5`.Appearance {
     }
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public enum TabOrder: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -452,7 +452,7 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public struct Markup: Sendable, Hashable {
 
@@ -490,7 +490,7 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5`.Markup {
+extension ISO.`32000`.`12`.`5`.Markup {
 
     public enum ReplyType: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -500,7 +500,7 @@ extension ISO_32000.`12`.`5`.Markup {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Link: Sendable, Hashable {
 
@@ -508,12 +508,12 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         public var highlightMode: HighlightMode
 
-        public var quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]?
+        public var quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]?
 
         public init(
             target: Target,
             highlightMode: HighlightMode = .invert,
-            quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]? = nil
+            quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]? = nil
         ) {
             self.target = target
             self.highlightMode = highlightMode
@@ -526,7 +526,7 @@ extension ISO_32000.`12`.`5`.Annotation {
             self.quadPoints = nil
         }
 
-        public init(destination: ISO_32000.Destination, highlightMode: HighlightMode = .invert) {
+        public init(destination: ISO.`32000`.Destination, highlightMode: HighlightMode = .invert) {
             self.target = .destination(destination)
             self.highlightMode = highlightMode
             self.quadPoints = nil
@@ -534,13 +534,13 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Link {
+extension ISO.`32000`.`12`.`5`.Annotation.Link {
 
     public enum Target: Sendable, Hashable {
 
         case uri(RFC_3986.URI)
 
-        case destination(ISO_32000.Destination)
+        case destination(ISO.`32000`.Destination)
     }
 
     public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
@@ -555,26 +555,26 @@ extension ISO_32000.`12`.`5`.Annotation.Link {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct TextMarkup: Sendable, Hashable {
 
         public var kind: Kind
 
-        public var quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]
+        public var quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]
 
-        public init(kind: Kind, quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]) {
+        public init(kind: Kind, quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]) {
             self.kind = kind
             self.quadPoints = quadPoints
         }
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.TextMarkup {
+extension ISO.`32000`.`12`.`5`.Annotation.TextMarkup {
 
     public enum Kind: Sendable, Hashable {
 
-        case highlight(ISO_32000.`12`.`5`.Annotation.Color)
+        case highlight(ISO.`32000`.`12`.`5`.Annotation.Color)
 
         case underline
 
@@ -584,7 +584,7 @@ extension ISO_32000.`12`.`5`.Annotation.TextMarkup {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public enum StateModel: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -611,9 +611,9 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.State {
+extension ISO.`32000`.`12`.`5`.Annotation.State {
 
-    public var stateModel: ISO_32000.`12`.`5`.Annotation.StateModel {
+    public var stateModel: ISO.`32000`.`12`.`5`.Annotation.StateModel {
         switch self {
         case .marked, .unmarked:
             return .marked
@@ -636,7 +636,7 @@ extension ISO_32000.`12`.`5`.Annotation.State {
     }
 }
 
-extension ISO_32000.`12`.`5` {
+extension ISO.`32000`.`12`.`5` {
 
     public enum LineEnding: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -662,7 +662,7 @@ extension ISO_32000.`12`.`5` {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Text: Sendable, Hashable {
 
@@ -684,7 +684,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Text {
+extension ISO.`32000`.`12`.`5`.Annotation.Text {
 
     public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
         case comment = "Comment"
@@ -697,7 +697,7 @@ extension ISO_32000.`12`.`5`.Annotation.Text {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct FreeText: Sendable, Hashable {
 
@@ -709,14 +709,14 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         public var calloutLine: [Double]?
 
-        public var lineEnding: ISO_32000.`12`.`5`.LineEnding
+        public var lineEnding: ISO.`32000`.`12`.`5`.LineEnding
 
         public init(
             defaultAppearance: String,
             quadding: Quadding = .leftJustified,
             intent: Intent = .freeText,
             calloutLine: [Double]? = nil,
-            lineEnding: ISO_32000.`12`.`5`.LineEnding = .none
+            lineEnding: ISO.`32000`.`12`.`5`.LineEnding = .none
         ) {
             self.defaultAppearance = defaultAppearance
             self.quadding = quadding
@@ -727,7 +727,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.FreeText {
+extension ISO.`32000`.`12`.`5`.Annotation.FreeText {
 
     public enum Quadding: Int, Sendable, Hashable, Codable, CaseIterable {
 
@@ -748,7 +748,7 @@ extension ISO_32000.`12`.`5`.Annotation.FreeText {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Line: Sendable, Hashable {
 
@@ -760,9 +760,9 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         public var endY: Double
 
-        public var startLineEnding: ISO_32000.`12`.`5`.LineEnding
+        public var startLineEnding: ISO.`32000`.`12`.`5`.LineEnding
 
-        public var endLineEnding: ISO_32000.`12`.`5`.LineEnding
+        public var endLineEnding: ISO.`32000`.`12`.`5`.LineEnding
 
         public var interiorColor: Color?
 
@@ -787,8 +787,8 @@ extension ISO_32000.`12`.`5`.Annotation {
             startY: Double,
             endX: Double,
             endY: Double,
-            startLineEnding: ISO_32000.`12`.`5`.LineEnding = .none,
-            endLineEnding: ISO_32000.`12`.`5`.LineEnding = .none,
+            startLineEnding: ISO.`32000`.`12`.`5`.LineEnding = .none,
+            endLineEnding: ISO.`32000`.`12`.`5`.LineEnding = .none,
             interiorColor: Color? = nil,
             leaderLineLength: Double = 0,
             leaderLineExtension: Double = 0,
@@ -818,7 +818,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Line {
+extension ISO.`32000`.`12`.`5`.Annotation.Line {
 
     public enum CaptionPosition: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -835,7 +835,7 @@ extension ISO_32000.`12`.`5`.Annotation.Line {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Shape: Sendable, Hashable {
 
@@ -857,7 +857,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Shape {
+extension ISO.`32000`.`12`.`5`.Annotation.Shape {
 
     public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
         case square = "Square"
@@ -879,7 +879,7 @@ extension ISO_32000.`12`.`5`.Annotation.Shape {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Poly: Sendable, Hashable {
 
@@ -887,9 +887,9 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         public var vertices: [Double]
 
-        public var startLineEnding: ISO_32000.`12`.`5`.LineEnding?
+        public var startLineEnding: ISO.`32000`.`12`.`5`.LineEnding?
 
-        public var endLineEnding: ISO_32000.`12`.`5`.LineEnding?
+        public var endLineEnding: ISO.`32000`.`12`.`5`.LineEnding?
 
         public var interiorColor: Color?
 
@@ -898,8 +898,8 @@ extension ISO_32000.`12`.`5`.Annotation {
         public init(
             kind: Kind,
             vertices: [Double],
-            startLineEnding: ISO_32000.`12`.`5`.LineEnding? = nil,
-            endLineEnding: ISO_32000.`12`.`5`.LineEnding? = nil,
+            startLineEnding: ISO.`32000`.`12`.`5`.LineEnding? = nil,
+            endLineEnding: ISO.`32000`.`12`.`5`.LineEnding? = nil,
             interiorColor: Color? = nil,
             intent: Intent? = nil
         ) {
@@ -913,7 +913,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Poly {
+extension ISO.`32000`.`12`.`5`.Annotation.Poly {
 
     public enum Kind: String, Sendable, Hashable, Codable, CaseIterable {
         case polygon = "Polygon"
@@ -930,7 +930,7 @@ extension ISO_32000.`12`.`5`.Annotation.Poly {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Caret: Sendable, Hashable {
 
@@ -948,7 +948,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Caret {
+extension ISO.`32000`.`12`.`5`.Annotation.Caret {
 
     public enum Symbol: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -958,7 +958,7 @@ extension ISO_32000.`12`.`5`.Annotation.Caret {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Stamp: Sendable, Hashable {
 
@@ -976,7 +976,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Stamp {
+extension ISO.`32000`.`12`.`5`.Annotation.Stamp {
 
     public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
         case approved = "Approved"
@@ -1005,7 +1005,7 @@ extension ISO_32000.`12`.`5`.Annotation.Stamp {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Ink: Sendable, Hashable {
 
@@ -1017,7 +1017,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Popup: Sendable, Hashable {
 
@@ -1029,7 +1029,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct FileAttachment: Sendable, Hashable {
 
@@ -1041,7 +1041,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.FileAttachment {
+extension ISO.`32000`.`12`.`5`.Annotation.FileAttachment {
 
     public enum IconName: String, Sendable, Hashable, Codable, CaseIterable {
         case graph = "Graph"
@@ -1051,11 +1051,11 @@ extension ISO_32000.`12`.`5`.Annotation.FileAttachment {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Redaction: Sendable, Hashable {
 
-        public var quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]?
+        public var quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]?
 
         public var interiorColor: Color?
 
@@ -1066,7 +1066,7 @@ extension ISO_32000.`12`.`5`.Annotation {
         public var quadding: FreeText.Quadding
 
         public init(
-            quadPoints: [Geometry<Double, ISO_32000.UserSpace>.Quadrilateral]? = nil,
+            quadPoints: [Geometry<Double, ISO.`32000`.UserSpace>.Quadrilateral]? = nil,
             interiorColor: Color? = nil,
             overlayText: String? = nil,
             repeatText: Bool = false,
@@ -1081,15 +1081,15 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
-    public typealias Annotation = ISO_32000.`12`.`5`.Annotation
+    public typealias Annotation = ISO.`32000`.`12`.`5`.Annotation
 
-    public typealias Border = ISO_32000.`12`.`5`.Border
+    public typealias Border = ISO.`32000`.`12`.`5`.Border
 
-    public typealias Appearance = ISO_32000.`12`.`5`.Appearance
+    public typealias Appearance = ISO.`32000`.`12`.`5`.Appearance
 
-    public typealias Markup = ISO_32000.`12`.`5`.Markup
+    public typealias Markup = ISO.`32000`.`12`.`5`.Markup
 
-    public typealias LineEnding = ISO_32000.`12`.`5`.LineEnding
+    public typealias LineEnding = ISO.`32000`.`12`.`5`.LineEnding
 }

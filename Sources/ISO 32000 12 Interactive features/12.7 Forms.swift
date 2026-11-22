@@ -1,17 +1,17 @@
 public import ISO_32000_Shared
 public import RFC_3986
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `7` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Form {}
 }
 
-extension ISO_32000.Form {
+extension ISO.`32000`.Form {
 
     public struct AcroForm: Sendable, Hashable {
 
@@ -49,7 +49,7 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form {
+extension ISO.`32000`.Form {
 
     public struct SigOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -60,14 +60,14 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form.SigOptions {
+extension ISO.`32000`.Form.SigOptions {
 
-    public static let signaturesExist = ISO_32000.Form.SigOptions(rawValue: 1 << 0)
+    public static let signaturesExist = ISO.`32000`.Form.SigOptions(rawValue: 1 << 0)
 
-    public static let appendOnly = ISO_32000.Form.SigOptions(rawValue: 1 << 1)
+    public static let appendOnly = ISO.`32000`.Form.SigOptions(rawValue: 1 << 1)
 }
 
-extension ISO_32000.Form {
+extension ISO.`32000`.Form {
 
     public enum Quadding: Int, Sendable, Hashable, Codable, CaseIterable {
 
@@ -79,7 +79,7 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form {
+extension ISO.`32000`.Form {
 
     public struct Field: Sendable, Hashable {
 
@@ -133,7 +133,7 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public enum FieldType: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -147,7 +147,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public enum FieldValue: Sendable, Hashable {
 
@@ -161,7 +161,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public enum Content: Sendable, Hashable {
 
@@ -177,7 +177,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public struct FieldOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -188,16 +188,16 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.FieldOptions {
+extension ISO.`32000`.Form.Field.FieldOptions {
 
-    public static let readOnly = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 0)
+    public static let readOnly = ISO.`32000`.Form.Field.FieldOptions(rawValue: 1 << 0)
 
-    public static let required = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 1)
+    public static let required = ISO.`32000`.Form.Field.FieldOptions(rawValue: 1 << 1)
 
-    public static let noExport = ISO_32000.Form.Field.FieldOptions(rawValue: 1 << 2)
+    public static let noExport = ISO.`32000`.Form.Field.FieldOptions(rawValue: 1 << 2)
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public struct Button: Sendable, Hashable {
 
@@ -247,7 +247,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.Button {
+extension ISO.`32000`.Form.Field.Button {
 
     public struct ButtonOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -258,18 +258,18 @@ extension ISO_32000.Form.Field.Button {
     }
 }
 
-extension ISO_32000.Form.Field.Button.ButtonOptions {
+extension ISO.`32000`.Form.Field.Button.ButtonOptions {
 
-    public static let noToggleToOff = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 14)
+    public static let noToggleToOff = ISO.`32000`.Form.Field.Button.ButtonOptions(rawValue: 1 << 14)
 
-    public static let radio = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 15)
+    public static let radio = ISO.`32000`.Form.Field.Button.ButtonOptions(rawValue: 1 << 15)
 
-    public static let pushbutton = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 16)
+    public static let pushbutton = ISO.`32000`.Form.Field.Button.ButtonOptions(rawValue: 1 << 16)
 
-    public static let radiosInUnison = ISO_32000.Form.Field.Button.ButtonOptions(rawValue: 1 << 25)
+    public static let radiosInUnison = ISO.`32000`.Form.Field.Button.ButtonOptions(rawValue: 1 << 25)
 }
 
-extension ISO_32000.Form.Field.Button {
+extension ISO.`32000`.Form.Field.Button {
 
     public enum TextPosition: Int, Sendable, Hashable, Codable, CaseIterable {
 
@@ -289,7 +289,7 @@ extension ISO_32000.Form.Field.Button {
     }
 }
 
-extension ISO_32000.Form.Field.Button {
+extension ISO.`32000`.Form.Field.Button {
 
     public struct IconFit: Sendable, Hashable {
 
@@ -319,7 +319,7 @@ extension ISO_32000.Form.Field.Button {
     }
 }
 
-extension ISO_32000.Form.Field.Button.IconFit {
+extension ISO.`32000`.Form.Field.Button.IconFit {
 
     public enum ScaleMode: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -333,7 +333,7 @@ extension ISO_32000.Form.Field.Button.IconFit {
     }
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public struct Text: Sendable, Hashable {
 
@@ -343,7 +343,7 @@ extension ISO_32000.Form.Field {
 
         public var defaultAppearance: String?
 
-        public var quadding: ISO_32000.Form.Quadding
+        public var quadding: ISO.`32000`.Form.Quadding
 
         public var richText: String?
 
@@ -353,7 +353,7 @@ extension ISO_32000.Form.Field {
             flags: TextOptions = [],
             maxLength: Int? = nil,
             defaultAppearance: String? = nil,
-            quadding: ISO_32000.Form.Quadding = .left,
+            quadding: ISO.`32000`.Form.Quadding = .left,
             richText: String? = nil,
             defaultStyle: String? = nil
         ) {
@@ -367,7 +367,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.Text {
+extension ISO.`32000`.Form.Field.Text {
 
     public struct TextOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -378,24 +378,24 @@ extension ISO_32000.Form.Field.Text {
     }
 }
 
-extension ISO_32000.Form.Field.Text.TextOptions {
+extension ISO.`32000`.Form.Field.Text.TextOptions {
 
-    public static let multiline = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 12)
+    public static let multiline = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 12)
 
-    public static let password = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 13)
+    public static let password = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 13)
 
-    public static let fileSelect = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 20)
+    public static let fileSelect = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 20)
 
-    public static let doNotSpellCheck = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 22)
+    public static let doNotSpellCheck = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 22)
 
-    public static let doNotScroll = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 23)
+    public static let doNotScroll = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 23)
 
-    public static let comb = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 24)
+    public static let comb = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 24)
 
-    public static let richText = ISO_32000.Form.Field.Text.TextOptions(rawValue: 1 << 25)
+    public static let richText = ISO.`32000`.Form.Field.Text.TextOptions(rawValue: 1 << 25)
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public struct Choice: Sendable, Hashable {
 
@@ -407,14 +407,14 @@ extension ISO_32000.Form.Field {
 
         public var defaultAppearance: String?
 
-        public var quadding: ISO_32000.Form.Quadding
+        public var quadding: ISO.`32000`.Form.Quadding
 
         public init(
             flags: ChoiceOptions = [],
             options: [Option] = [],
             topIndex: Int? = nil,
             defaultAppearance: String? = nil,
-            quadding: ISO_32000.Form.Quadding = .left
+            quadding: ISO.`32000`.Form.Quadding = .left
         ) {
             self.flags = flags
             self.options = options
@@ -425,7 +425,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.Choice {
+extension ISO.`32000`.Form.Field.Choice {
 
     public struct Option: Sendable, Hashable {
 
@@ -440,7 +440,7 @@ extension ISO_32000.Form.Field.Choice {
     }
 }
 
-extension ISO_32000.Form.Field.Choice {
+extension ISO.`32000`.Form.Field.Choice {
 
     public struct ChoiceOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -451,24 +451,24 @@ extension ISO_32000.Form.Field.Choice {
     }
 }
 
-extension ISO_32000.Form.Field.Choice.ChoiceOptions {
+extension ISO.`32000`.Form.Field.Choice.ChoiceOptions {
 
-    public static let combo = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 17)
+    public static let combo = ISO.`32000`.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 17)
 
-    public static let edit = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 18)
+    public static let edit = ISO.`32000`.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 18)
 
-    public static let sort = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 19)
+    public static let sort = ISO.`32000`.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 19)
 
-    public static let multiSelect = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 21)
+    public static let multiSelect = ISO.`32000`.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 21)
 
-    public static let doNotSpellCheck = ISO_32000.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 22)
+    public static let doNotSpellCheck = ISO.`32000`.Form.Field.Choice.ChoiceOptions(rawValue: 1 << 22)
 
-    public static let commitOnSelChange = ISO_32000.Form.Field.Choice.ChoiceOptions(
+    public static let commitOnSelChange = ISO.`32000`.Form.Field.Choice.ChoiceOptions(
         rawValue: 1 << 26
     )
 }
 
-extension ISO_32000.Form.Field {
+extension ISO.`32000`.Form.Field {
 
     public struct Signature: Sendable, Hashable {
 
@@ -490,7 +490,7 @@ extension ISO_32000.Form.Field {
     }
 }
 
-extension ISO_32000.Form.Field.Signature {
+extension ISO.`32000`.Form.Field.Signature {
 
     public struct SeedValue: Sendable, Hashable {
 
@@ -532,7 +532,7 @@ extension ISO_32000.Form.Field.Signature {
     }
 }
 
-extension ISO_32000.Form.Field.Signature.SeedValue {
+extension ISO.`32000`.Form.Field.Signature.SeedValue {
 
     public struct SeedOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -566,38 +566,38 @@ extension ISO_32000.Form.Field.Signature.SeedValue {
     }
 }
 
-extension ISO_32000.Form.Field.Signature.SeedValue.SeedOptions {
+extension ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions {
 
-    public static let filter = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let filter = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 0
     )
 
-    public static let subFilter = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let subFilter = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 1
     )
 
-    public static let version = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let version = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 2
     )
 
-    public static let reasons = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let reasons = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 3
     )
 
-    public static let legalAttestation = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let legalAttestation = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 4
     )
 
-    public static let addRevInfo = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let addRevInfo = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 5
     )
 
-    public static let digestMethod = ISO_32000.Form.Field.Signature.SeedValue.SeedOptions(
+    public static let digestMethod = ISO.`32000`.Form.Field.Signature.SeedValue.SeedOptions(
         rawValue: 1 << 6
     )
 }
 
-extension ISO_32000.Form.Field.Signature {
+extension ISO.`32000`.Form.Field.Signature {
 
     public struct Lock: Sendable, Hashable {
 
@@ -612,7 +612,7 @@ extension ISO_32000.Form.Field.Signature {
     }
 }
 
-extension ISO_32000.Form.Field.Signature.Lock {
+extension ISO.`32000`.Form.Field.Signature.Lock {
 
     public enum Action: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -624,7 +624,7 @@ extension ISO_32000.Form.Field.Signature.Lock {
     }
 }
 
-extension ISO_32000.Form {
+extension ISO.`32000`.Form {
 
     public struct SubmitForm: Sendable, Hashable {
 
@@ -667,7 +667,7 @@ extension ISO_32000.Form {
     }
 }
 
-extension ISO_32000.Form.SubmitForm {
+extension ISO.`32000`.Form.SubmitForm {
 
     public struct SubmitOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -678,40 +678,40 @@ extension ISO_32000.Form.SubmitForm {
     }
 }
 
-extension ISO_32000.Form.SubmitForm.SubmitOptions {
+extension ISO.`32000`.Form.SubmitForm.SubmitOptions {
 
-    public static let exclude = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 0)
+    public static let exclude = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 0)
 
-    public static let includeNoValueFields = ISO_32000.Form.SubmitForm.SubmitOptions(
+    public static let includeNoValueFields = ISO.`32000`.Form.SubmitForm.SubmitOptions(
         rawValue: 1 << 1
     )
 
-    public static let exportFormat = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 2)
+    public static let exportFormat = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 2)
 
-    public static let getMethod = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 3)
+    public static let getMethod = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 3)
 
-    public static let submitCoordinates = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 4)
+    public static let submitCoordinates = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 4)
 
-    public static let xfdf = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 5)
+    public static let xfdf = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 5)
 
-    public static let includeAppendSaves = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 6)
+    public static let includeAppendSaves = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 6)
 
-    public static let includeAnnotations = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 7)
+    public static let includeAnnotations = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 7)
 
-    public static let submitPDF = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 8)
+    public static let submitPDF = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 8)
 
-    public static let canonicalFormat = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 9)
+    public static let canonicalFormat = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 9)
 
-    public static let excludeNonUserAnnots = ISO_32000.Form.SubmitForm.SubmitOptions(
+    public static let excludeNonUserAnnots = ISO.`32000`.Form.SubmitForm.SubmitOptions(
         rawValue: 1 << 10
     )
 
-    public static let excludeFKey = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 11)
+    public static let excludeFKey = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 11)
 
-    public static let embedForm = ISO_32000.Form.SubmitForm.SubmitOptions(rawValue: 1 << 13)
+    public static let embedForm = ISO.`32000`.Form.SubmitForm.SubmitOptions(rawValue: 1 << 13)
 }
 
-extension ISO_32000.`12`.`5`.Annotation {
+extension ISO.`32000`.`12`.`5`.Annotation {
 
     public struct Widget: Sendable, Hashable {
 
@@ -723,14 +723,14 @@ extension ISO_32000.`12`.`5`.Annotation {
 
         public var additionalActions: Int?
 
-        public var borderStyle: ISO_32000.`12`.`5`.Border.Style?
+        public var borderStyle: ISO.`32000`.`12`.`5`.Border.Style?
 
         public init(
             highlightMode: HighlightMode = .invert,
             appearanceCharacteristics: AppearanceCharacteristics? = nil,
             action: Int? = nil,
             additionalActions: Int? = nil,
-            borderStyle: ISO_32000.`12`.`5`.Border.Style? = nil
+            borderStyle: ISO.`32000`.`12`.`5`.Border.Style? = nil
         ) {
             self.highlightMode = highlightMode
             self.appearanceCharacteristics = appearanceCharacteristics
@@ -741,7 +741,7 @@ extension ISO_32000.`12`.`5`.Annotation {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Widget {
+extension ISO.`32000`.`12`.`5`.Annotation.Widget {
 
     public enum HighlightMode: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -757,15 +757,15 @@ extension ISO_32000.`12`.`5`.Annotation.Widget {
     }
 }
 
-extension ISO_32000.`12`.`5`.Annotation.Widget {
+extension ISO.`32000`.`12`.`5`.Annotation.Widget {
 
     public struct AppearanceCharacteristics: Sendable, Hashable {
 
         public var rotation: Int
 
-        public var borderColor: ISO_32000.`12`.`5`.Annotation.Color?
+        public var borderColor: ISO.`32000`.`12`.`5`.Annotation.Color?
 
-        public var backgroundColor: ISO_32000.`12`.`5`.Annotation.Color?
+        public var backgroundColor: ISO.`32000`.`12`.`5`.Annotation.Color?
 
         public var normalCaption: String?
 
@@ -779,22 +779,22 @@ extension ISO_32000.`12`.`5`.Annotation.Widget {
 
         public var alternateIcon: Int?
 
-        public var iconFit: ISO_32000.Form.Field.Button.IconFit?
+        public var iconFit: ISO.`32000`.Form.Field.Button.IconFit?
 
-        public var textPosition: ISO_32000.Form.Field.Button.TextPosition
+        public var textPosition: ISO.`32000`.Form.Field.Button.TextPosition
 
         public init(
             rotation: Int = 0,
-            borderColor: ISO_32000.`12`.`5`.Annotation.Color? = nil,
-            backgroundColor: ISO_32000.`12`.`5`.Annotation.Color? = nil,
+            borderColor: ISO.`32000`.`12`.`5`.Annotation.Color? = nil,
+            backgroundColor: ISO.`32000`.`12`.`5`.Annotation.Color? = nil,
             normalCaption: String? = nil,
             rolloverCaption: String? = nil,
             alternateCaption: String? = nil,
             normalIcon: Int? = nil,
             rolloverIcon: Int? = nil,
             alternateIcon: Int? = nil,
-            iconFit: ISO_32000.Form.Field.Button.IconFit? = nil,
-            textPosition: ISO_32000.Form.Field.Button.TextPosition = .captionOnly
+            iconFit: ISO.`32000`.Form.Field.Button.IconFit? = nil,
+            textPosition: ISO.`32000`.Form.Field.Button.TextPosition = .captionOnly
         ) {
             self.rotation = rotation
             self.borderColor = borderColor
@@ -811,17 +811,17 @@ extension ISO_32000.`12`.`5`.Annotation.Widget {
     }
 }
 
-extension ISO_32000.`12`.`7` {
+extension ISO.`32000`.`12`.`7` {
 
-    public typealias AcroForm = ISO_32000.Form.AcroForm
+    public typealias AcroForm = ISO.`32000`.Form.AcroForm
 
-    public typealias SigOptions = ISO_32000.Form.SigOptions
+    public typealias SigOptions = ISO.`32000`.Form.SigOptions
 
-    public typealias Field = ISO_32000.Form.Field
+    public typealias Field = ISO.`32000`.Form.Field
 
-    public typealias SubmitForm = ISO_32000.Form.SubmitForm
+    public typealias SubmitForm = ISO.`32000`.Form.SubmitForm
 
-    public typealias ResetForm = ISO_32000.Form.ResetForm
+    public typealias ResetForm = ISO.`32000`.Form.ResetForm
 
-    public typealias ImportData = ISO_32000.Form.ImportData
+    public typealias ImportData = ISO.`32000`.Form.ImportData
 }

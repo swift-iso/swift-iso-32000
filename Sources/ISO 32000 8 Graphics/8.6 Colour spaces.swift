@@ -1,20 +1,20 @@
 public import ISO_32000_Shared
 
-extension ISO_32000.`8` {
+extension ISO.`32000`.`8` {
 
     public enum `6` {}
 }
 
-extension ISO_32000.`8`.`6` {
+extension ISO.`32000`.`8`.`6` {
 }
 
-extension ISO_32000.`8`.`6`.`4` {
+extension ISO.`32000`.`8`.`6`.`4` {
 }
 
-extension ISO_32000.`8`.`6` {
+extension ISO.`32000`.`8`.`6` {
 }
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public static let black = Self.gray(0)
 
@@ -39,7 +39,7 @@ extension ISO_32000.`8`.`6`.Color {
     public static let lightGray = Self.gray(0.75)
 }
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public init?(hex: String) {
         var hexString = hex
@@ -89,7 +89,7 @@ extension ISO_32000.`8`.`6`.Color {
     }
 }
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public var colorSpaceName: String {
         switch self {
@@ -131,7 +131,7 @@ extension ISO_32000.`8`.`6`.Color {
     }
 }
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public var toGray: Self {
         switch self {

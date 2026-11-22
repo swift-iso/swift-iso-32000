@@ -1,0 +1,140 @@
+import Testing
+
+@testable import ISO_32000
+
+@Suite
+struct `ISO.32000.COS.StringValue Tests` {
+
+    @Test
+    func `Creates string from value`() {
+        let str = ISO.`32000`.COS.StringValue("Hello")
+        #expect(str.value == "Hello")
+    }
+
+    @Test
+    func `Creates string via string literal`() {
+        let str: ISO.`32000`.COS.StringValue = "World"
+        #expect(str.value == "World")
+    }
+
+    @Test
+    func `Serializes simple string as literal`() {
+        let str = ISO.`32000`.COS.StringValue("Hello")
+        let bytes = str.asLiteral()
+        #expect(bytes == [Byte](utf8: "(Hello)"))
+    }
+
+    @Test
+    func `Escapes parentheses in literal`() {
+        let str = ISO.`32000`.COS.StringValue("(test)")
+        let bytes = str.asLiteral()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("\\("))
+        #expect(result.contains("\\)"))
+    }
+
+    @Test
+    func `Escapes backslash in literal`() {
+        let str = ISO.`32000`.COS.StringValue("path\\file")
+        let bytes = str.asLiteral()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("\\\\"))
+    }
+
+    @Test
+    func `Escapes newline in literal`() {
+        let str = ISO.`32000`.COS.StringValue("line1\nline2")
+        let bytes = str.asLiteral()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("\\n"))
+    }
+
+    @Test
+    func `Escapes carriage return in literal`() {
+        let str = ISO.`32000`.COS.StringValue("line1\rline2")
+        let bytes = str.asLiteral()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("\\r"))
+    }
+
+    @Test
+    func `Escapes tab in literal`() {
+        let str = ISO.`32000`.COS.StringValue("col1\tcol2")
+        let bytes = str.asLiteral()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("\\t"))
+    }
+
+    @Test
+    func `Serializes simple string as hex`() {
+        let str = ISO.`32000`.COS.StringValue("Hi")
+        let bytes = str.asHexadecimal()
+        #expect(bytes == [Byte](utf8: "<4869>"))
+    }
+
+    @Test
+    func `Serializes empty string as hex`() {
+        let str = ISO.`32000`.COS.StringValue("")
+        let bytes = str.asHexadecimal()
+        #expect(bytes == [Byte](utf8: "<>"))
+    }
+
+    @Test
+    func `Hex uses uppercase letters`() {
+
+        let str = ISO.`32000`.COS.StringValue("\u{4F60}")
+        let bytes = str.asHexadecimal()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.contains("FEFF"))
+    }
+
+    @Test
+    func `Literal includes BOM for Unicode`() {
+
+        let str = ISO.`32000`.COS.StringValue("\u{4F60}")
+        let bytes = str.asLiteral()
+        #expect(bytes[0] == Byte(UInt8(ascii: "(")))
+        #expect(bytes.contains(Byte(bitPattern: 0xFE)))
+        #expect(bytes.contains(Byte(bitPattern: 0xFF)))
+    }
+
+    @Test
+    func `Hex includes BOM for Unicode`() {
+        let str = ISO.`32000`.COS.StringValue("日本語")
+        let bytes = str.asHexadecimal()
+        let result = String(decoding: bytes, as: UTF8.self)
+        #expect(result.hasPrefix("<FEFF"))
+    }
+
+    @Test
+    func `Prefers literal for simple strings`() {
+        let str = ISO.`32000`.COS.StringValue("Hello World")
+        #expect(str.preferredFormat == .literal)
+    }
+
+    @Test
+    func `Prefers hex when many escapes needed`() {
+        let str = ISO.`32000`.COS.StringValue("((()")
+        #expect(str.preferredFormat == .hexadecimal)
+    }
+
+    @Test
+    func `Description shows parenthesized form`() {
+        let str = ISO.`32000`.COS.StringValue("Test")
+        #expect(str.description == "(Test)")
+    }
+
+    @Test
+    func `Strings are equal when values match`() {
+        let a = ISO.`32000`.COS.StringValue("Test")
+        let b = ISO.`32000`.COS.StringValue("Test")
+        #expect(a == b)
+    }
+
+    @Test
+    func `Strings are case-sensitive`() {
+        let lower = ISO.`32000`.COS.StringValue("test")
+        let upper = ISO.`32000`.COS.StringValue("TEST")
+        #expect(lower != upper)
+    }
+}

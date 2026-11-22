@@ -1,18 +1,18 @@
 public import ISO_32000_Shared
 
-extension ISO_32000.`3` {
+extension ISO.`32000`.`3` {
 
     public struct `Binary data`<Source>
-    where Source: Swift::Collection, Source.Element == ISO_32000.`3`.Byte {
+    where Source: Swift::Collection, Source.Element == ISO.`32000`.`3`.Byte {
         public let source: Source
     }
 }
 
-extension ISO_32000.`3`.`Binary data`: ExpressibleByArrayLiteral
-where Source == [ISO_32000.`3`.Byte] {
-    public typealias ArrayLiteralElement = ISO_32000.`3`.Byte
+extension ISO.`32000`.`3`.`Binary data`: ExpressibleByArrayLiteral
+where Source == [ISO.`32000`.`3`.Byte] {
+    public typealias ArrayLiteralElement = ISO.`32000`.`3`.Byte
 
-    public init(arrayLiteral elements: ISO_32000.`3`.Byte...) {
+    public init(arrayLiteral elements: ISO.`32000`.`3`.Byte...) {
         self.source = elements
     }
 }

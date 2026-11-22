@@ -2,7 +2,7 @@ public import Byte
 import ISO_32000_Annex_D
 public import ISO_32000_Shared
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public struct Text: Sendable, Equatable, Hashable {
 
@@ -22,7 +22,7 @@ extension ISO_32000 {
     }
 }
 
-extension ISO_32000.Text {
+extension ISO.`32000`.Text {
 
     public var string: String? {
         String(winAnsi: content)

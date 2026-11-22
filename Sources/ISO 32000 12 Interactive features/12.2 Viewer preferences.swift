@@ -1,11 +1,11 @@
 public import ISO_32000_Shared
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `2` {}
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public enum Boundary: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -21,7 +21,7 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public struct PageRange: Sendable, Hashable, Codable {
 
@@ -41,7 +41,7 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public struct Viewer: Sendable, Hashable, Codable {
 
@@ -95,22 +95,22 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000.`12`.`2`.Viewer {
+extension ISO.`32000`.`12`.`2`.Viewer {
 
     public static let `default` = Self()
 }
 
-extension ISO_32000.`12`.`2`.Viewer {
+extension ISO.`32000`.`12`.`2`.Viewer {
 
     public struct View: Sendable, Hashable, Codable {
 
-        public var area: ISO_32000.`12`.`2`.Boundary
+        public var area: ISO.`32000`.`12`.`2`.Boundary
 
-        public var clip: ISO_32000.`12`.`2`.Boundary
+        public var clip: ISO.`32000`.`12`.`2`.Boundary
 
         public init(
-            area: ISO_32000.`12`.`2`.Boundary = .cropBox,
-            clip: ISO_32000.`12`.`2`.Boundary = .cropBox
+            area: ISO.`32000`.`12`.`2`.Boundary = .cropBox,
+            clip: ISO.`32000`.`12`.`2`.Boundary = .cropBox
         ) {
             self.area = area
             self.clip = clip
@@ -118,31 +118,31 @@ extension ISO_32000.`12`.`2`.Viewer {
     }
 }
 
-extension ISO_32000.`12`.`2`.Viewer {
+extension ISO.`32000`.`12`.`2`.Viewer {
 
     public struct Print: Sendable, Hashable, Codable {
 
-        public var area: ISO_32000.`12`.`2`.Boundary
+        public var area: ISO.`32000`.`12`.`2`.Boundary
 
-        public var clip: ISO_32000.`12`.`2`.Boundary
+        public var clip: ISO.`32000`.`12`.`2`.Boundary
 
-        public var scaling: ISO_32000.`12`.`2`.Print.Scaling
+        public var scaling: ISO.`32000`.`12`.`2`.Print.Scaling
 
-        public var duplex: ISO_32000.`12`.`2`.Print.Duplex?
+        public var duplex: ISO.`32000`.`12`.`2`.Print.Duplex?
 
         public var pickTrayByPDFSize: Bool?
 
-        public var pageRange: [ISO_32000.`12`.`2`.PageRange]?
+        public var pageRange: [ISO.`32000`.`12`.`2`.PageRange]?
 
         public var numCopies: Int?
 
         public init(
-            area: ISO_32000.`12`.`2`.Boundary = .cropBox,
-            clip: ISO_32000.`12`.`2`.Boundary = .cropBox,
-            scaling: ISO_32000.`12`.`2`.Print.Scaling = .appDefault,
-            duplex: ISO_32000.`12`.`2`.Print.Duplex? = nil,
+            area: ISO.`32000`.`12`.`2`.Boundary = .cropBox,
+            clip: ISO.`32000`.`12`.`2`.Boundary = .cropBox,
+            scaling: ISO.`32000`.`12`.`2`.Print.Scaling = .appDefault,
+            duplex: ISO.`32000`.`12`.`2`.Print.Duplex? = nil,
             pickTrayByPDFSize: Bool? = nil,
-            pageRange: [ISO_32000.`12`.`2`.PageRange]? = nil,
+            pageRange: [ISO.`32000`.`12`.`2`.PageRange]? = nil,
             numCopies: Int? = nil
         ) {
             self.area = area
@@ -156,7 +156,7 @@ extension ISO_32000.`12`.`2`.Viewer {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public enum NonFullScreenPageMode: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -170,7 +170,7 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public enum Direction: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -180,12 +180,12 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public enum Print {}
 }
 
-extension ISO_32000.`12`.`2`.Print {
+extension ISO.`32000`.`12`.`2`.Print {
 
     public enum Scaling: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -195,7 +195,7 @@ extension ISO_32000.`12`.`2`.Print {
     }
 }
 
-extension ISO_32000.`12`.`2`.Print {
+extension ISO.`32000`.`12`.`2`.Print {
 
     public enum Duplex: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -207,7 +207,7 @@ extension ISO_32000.`12`.`2`.Print {
     }
 }
 
-extension ISO_32000.`12`.`2` {
+extension ISO.`32000`.`12`.`2` {
 
     public enum EnforceableSetting: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -215,13 +215,13 @@ extension ISO_32000.`12`.`2` {
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
-    public typealias Viewer = ISO_32000.`12`.`2`.Viewer
+    public typealias Viewer = ISO.`32000`.`12`.`2`.Viewer
 
-    public typealias NonFullScreenPageMode = ISO_32000.`12`.`2`.NonFullScreenPageMode
+    public typealias NonFullScreenPageMode = ISO.`32000`.`12`.`2`.NonFullScreenPageMode
 
-    public typealias Direction = ISO_32000.`12`.`2`.Direction
+    public typealias Direction = ISO.`32000`.`12`.`2`.Direction
 
-    public typealias Print = ISO_32000.`12`.`2`.Print
+    public typealias Print = ISO.`32000`.`12`.`2`.Print
 }

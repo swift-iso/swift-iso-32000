@@ -1,17 +1,17 @@
 public import Byte
 public import ISO_32000_Shared
 
-extension ISO_32000.`7` {
+extension ISO.`32000`.`7` {
 
     public enum `5` {}
 }
 
-extension ISO_32000.`7`.`5` {
+extension ISO.`32000`.`7`.`5` {
 
     public enum `2` {}
 }
 
-extension ISO_32000.`7`.`5`.`2` {
+extension ISO.`32000`.`7`.`5`.`2` {
 
     public enum Version: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -27,9 +27,9 @@ extension ISO_32000.`7`.`5`.`2` {
     }
 }
 
-extension ISO_32000.`7`.`5`.`2`.Version {
+extension ISO.`32000`.`7`.`5`.`2`.Version {
 
-    public static let `default`: ISO_32000.`7`.`5`.`2`.Version = .v1_7
+    public static let `default`: ISO.`32000`.`7`.`5`.`2`.Version = .v1_7
 
     public var header: String {
         "%PDF-\(rawValue)"

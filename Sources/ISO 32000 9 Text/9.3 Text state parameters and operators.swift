@@ -2,42 +2,42 @@ import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 public import Space
 
-extension ISO_32000.`9` {
+extension ISO.`32000`.`9` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.Text {
+extension ISO.`32000`.Text {
 
     public struct State: Sendable, Equatable, Hashable {
 
-        public var characterSpacing: ISO_32000.TextSpace.Dx
+        public var characterSpacing: ISO.`32000`.TextSpace.Dx
 
-        public var wordSpacing: ISO_32000.TextSpace.Dx
+        public var wordSpacing: ISO.`32000`.TextSpace.Dx
 
         public var horizontalScaling: Scale<1, Double>
 
-        public var leading: ISO_32000.TextSpace.Dy
+        public var leading: ISO.`32000`.TextSpace.Dy
 
         public var font: Font.Reference?
 
-        public var fontSize: ISO_32000.UserSpace.Size<1>?
+        public var fontSize: ISO.`32000`.UserSpace.Size<1>?
 
         public var renderingMode: Rendering.Mode
 
-        public var rise: ISO_32000.TextSpace.Dy
+        public var rise: ISO.`32000`.TextSpace.Dy
 
         public var knockout: Bool
 
         public init(
-            characterSpacing: ISO_32000.TextSpace.Dx = .init(0),
-            wordSpacing: ISO_32000.TextSpace.Dx = .init(0),
+            characterSpacing: ISO.`32000`.TextSpace.Dx = .init(0),
+            wordSpacing: ISO.`32000`.TextSpace.Dx = .init(0),
             horizontalScaling: Scale<1, Double> = 100,
-            leading: ISO_32000.TextSpace.Dy = .init(0),
+            leading: ISO.`32000`.TextSpace.Dy = .init(0),
             font: Font.Reference? = nil,
-            fontSize: ISO_32000.UserSpace.Size<1>? = nil,
+            fontSize: ISO.`32000`.UserSpace.Size<1>? = nil,
             renderingMode: Rendering.Mode = .fill,
-            rise: ISO_32000.TextSpace.Dy = .init(0),
+            rise: ISO.`32000`.TextSpace.Dy = .init(0),
             knockout: Bool = true
         ) {
             self.characterSpacing = characterSpacing
@@ -54,15 +54,15 @@ extension ISO_32000.Text {
 }
 
 #if !hasFeature(Embedded)
-    extension ISO_32000.Text.State: Codable {}
+    extension ISO.`32000`.Text.State: Codable {}
 #endif
 
-extension ISO_32000.Text {
+extension ISO.`32000`.Text {
 
     public enum Font {}
 }
 
-extension ISO_32000.Text.Font {
+extension ISO.`32000`.Text.Font {
 
     public struct Reference: Sendable, Equatable, Hashable {
 
@@ -75,15 +75,15 @@ extension ISO_32000.Text.Font {
 }
 
 #if !hasFeature(Embedded)
-    extension ISO_32000.Text.Font.Reference: Codable {}
+    extension ISO.`32000`.Text.Font.Reference: Codable {}
 #endif
 
-extension ISO_32000.Text {
+extension ISO.`32000`.Text {
 
     public enum Rendering {}
 }
 
-extension ISO_32000.Text.Rendering {
+extension ISO.`32000`.Text.Rendering {
 
     public enum Mode: Int, Sendable, Equatable, Hashable, Codable, CaseIterable {
 
@@ -105,7 +105,7 @@ extension ISO_32000.Text.Rendering {
     }
 }
 
-extension ISO_32000.Text.Rendering.Mode {
+extension ISO.`32000`.Text.Rendering.Mode {
 
     public var fills: Bool {
         switch self {
@@ -142,9 +142,9 @@ extension ISO_32000.Text.Rendering.Mode {
     }
 }
 
-extension ISO_32000.`9`.`3` {
+extension ISO.`32000`.`9`.`3` {
 
-    public typealias State = ISO_32000.Text.State
+    public typealias State = ISO.`32000`.Text.State
 
-    public typealias RenderingMode = ISO_32000.Text.Rendering.Mode
+    public typealias RenderingMode = ISO.`32000`.Text.Rendering.Mode
 }

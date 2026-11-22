@@ -2,21 +2,21 @@ public import Geometry
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `9` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Measurement {}
 }
 
-extension ISO_32000.Measurement {
+extension ISO.`32000`.Measurement {
 
     public struct Viewport: Sendable, Hashable {
 
-        public var bbox: ISO_32000.UserSpace.Rectangle
+        public var bbox: ISO.`32000`.UserSpace.Rectangle
 
         public var name: String?
 
@@ -25,7 +25,7 @@ extension ISO_32000.Measurement {
         public var ptData: Int?
 
         public init(
-            bbox: ISO_32000.UserSpace.Rectangle,
+            bbox: ISO.`32000`.UserSpace.Rectangle,
             name: String? = nil,
             measure: Measure? = nil,
             ptData: Int? = nil
@@ -38,7 +38,7 @@ extension ISO_32000.Measurement {
     }
 }
 
-extension ISO_32000.Measurement {
+extension ISO.`32000`.Measurement {
 
     public struct Measure: Sendable, Hashable {
 
@@ -50,7 +50,7 @@ extension ISO_32000.Measurement {
     }
 }
 
-extension ISO_32000.Measurement.Measure {
+extension ISO.`32000`.Measurement.Measure {
 
     public enum Content: Sendable, Hashable {
 
@@ -60,23 +60,23 @@ extension ISO_32000.Measurement.Measure {
     }
 }
 
-extension ISO_32000.Measurement.Measure {
+extension ISO.`32000`.Measurement.Measure {
 
     public struct Rectilinear: Sendable, Hashable {
 
         public var scaleRatio: String
 
-        public var x: [ISO_32000.Measurement.NumberFormat]
+        public var x: [ISO.`32000`.Measurement.NumberFormat]
 
-        public var y: [ISO_32000.Measurement.NumberFormat]?
+        public var y: [ISO.`32000`.Measurement.NumberFormat]?
 
-        public var distance: [ISO_32000.Measurement.NumberFormat]
+        public var distance: [ISO.`32000`.Measurement.NumberFormat]
 
-        public var area: [ISO_32000.Measurement.NumberFormat]
+        public var area: [ISO.`32000`.Measurement.NumberFormat]
 
-        public var angle: [ISO_32000.Measurement.NumberFormat]?
+        public var angle: [ISO.`32000`.Measurement.NumberFormat]?
 
-        public var slope: [ISO_32000.Measurement.NumberFormat]?
+        public var slope: [ISO.`32000`.Measurement.NumberFormat]?
 
         public var origin: Origin?
 
@@ -84,12 +84,12 @@ extension ISO_32000.Measurement.Measure {
 
         public init(
             scaleRatio: String,
-            x: [ISO_32000.Measurement.NumberFormat],
-            y: [ISO_32000.Measurement.NumberFormat]? = nil,
-            distance: [ISO_32000.Measurement.NumberFormat],
-            area: [ISO_32000.Measurement.NumberFormat],
-            angle: [ISO_32000.Measurement.NumberFormat]? = nil,
-            slope: [ISO_32000.Measurement.NumberFormat]? = nil,
+            x: [ISO.`32000`.Measurement.NumberFormat],
+            y: [ISO.`32000`.Measurement.NumberFormat]? = nil,
+            distance: [ISO.`32000`.Measurement.NumberFormat],
+            area: [ISO.`32000`.Measurement.NumberFormat],
+            angle: [ISO.`32000`.Measurement.NumberFormat]? = nil,
+            slope: [ISO.`32000`.Measurement.NumberFormat]? = nil,
             origin: Origin? = nil,
             cyx: Double? = nil
         ) {
@@ -106,7 +106,7 @@ extension ISO_32000.Measurement.Measure {
     }
 }
 
-extension ISO_32000.Measurement.Measure.Rectilinear {
+extension ISO.`32000`.Measurement.Measure.Rectilinear {
 
     public struct Origin: Sendable, Hashable {
         public var x: Double
@@ -119,19 +119,19 @@ extension ISO_32000.Measurement.Measure.Rectilinear {
     }
 }
 
-extension ISO_32000.Measurement.Measure {
+extension ISO.`32000`.Measurement.Measure {
 
     public struct Geospatial: Sendable, Hashable {
 
-        public var geoMeasure: ISO_32000.Geospatial.Measure?
+        public var geoMeasure: ISO.`32000`.Geospatial.Measure?
 
-        public init(geoMeasure: ISO_32000.Geospatial.Measure? = nil) {
+        public init(geoMeasure: ISO.`32000`.Geospatial.Measure? = nil) {
             self.geoMeasure = geoMeasure
         }
     }
 }
 
-extension ISO_32000.Measurement {
+extension ISO.`32000`.Measurement {
 
     public struct NumberFormat: Sendable, Hashable {
 
@@ -181,7 +181,7 @@ extension ISO_32000.Measurement {
     }
 }
 
-extension ISO_32000.Measurement.NumberFormat {
+extension ISO.`32000`.Measurement.NumberFormat {
 
     public enum FractionalMode: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -202,11 +202,11 @@ extension ISO_32000.Measurement.NumberFormat {
     }
 }
 
-extension ISO_32000.`12`.`9` {
+extension ISO.`32000`.`12`.`9` {
 
-    public typealias Viewport = ISO_32000.Measurement.Viewport
+    public typealias Viewport = ISO.`32000`.Measurement.Viewport
 
-    public typealias Measure = ISO_32000.Measurement.Measure
+    public typealias Measure = ISO.`32000`.Measurement.Measure
 
-    public typealias NumberFormat = ISO_32000.Measurement.NumberFormat
+    public typealias NumberFormat = ISO.`32000`.Measurement.NumberFormat
 }

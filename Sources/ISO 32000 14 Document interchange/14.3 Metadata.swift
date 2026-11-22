@@ -1,17 +1,17 @@
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 
-extension ISO_32000.`14` {
+extension ISO.`32000`.`14` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`14`.`3` {
+extension ISO.`32000`.`14`.`3` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`14`.`3`.`3` {
+extension ISO.`32000`.`14`.`3`.`3` {
 
     public struct Info: Sendable {
 
@@ -27,9 +27,9 @@ extension ISO_32000.`14`.`3`.`3` {
 
         public var producer: String?
 
-        public var creationDate: ISO_32000.`7`.`9`.`4`.Date?
+        public var creationDate: ISO.`32000`.`7`.`9`.`4`.Date?
 
-        public var modificationDate: ISO_32000.`7`.`9`.`4`.Date?
+        public var modificationDate: ISO.`32000`.`7`.`9`.`4`.Date?
 
         public init(
             title: String? = nil,
@@ -38,8 +38,8 @@ extension ISO_32000.`14`.`3`.`3` {
             keywords: String? = nil,
             creator: String? = nil,
             producer: String? = nil,
-            creationDate: ISO_32000.`7`.`9`.`4`.Date? = nil,
-            modificationDate: ISO_32000.`7`.`9`.`4`.Date? = nil
+            creationDate: ISO.`32000`.`7`.`9`.`4`.Date? = nil,
+            modificationDate: ISO.`32000`.`7`.`9`.`4`.Date? = nil
         ) {
             self.title = title
             self.author = author

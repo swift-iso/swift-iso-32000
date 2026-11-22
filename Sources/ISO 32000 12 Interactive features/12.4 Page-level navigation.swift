@@ -2,17 +2,17 @@ public import Geometry
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `4` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum PageLabel {}
 }
 
-extension ISO_32000.PageLabel {
+extension ISO.`32000`.PageLabel {
 
     public struct Entry: Sendable, Equatable, Hashable, Codable {
 
@@ -34,7 +34,7 @@ extension ISO_32000.PageLabel {
     }
 }
 
-extension ISO_32000.PageLabel.Entry {
+extension ISO.`32000`.PageLabel.Entry {
 
     public enum Style: String, Sendable, Codable, CaseIterable {
 
@@ -50,12 +50,12 @@ extension ISO_32000.PageLabel.Entry {
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Article {}
 }
 
-extension ISO_32000.Article {
+extension ISO.`32000`.Article {
 
     public struct Thread: Sendable {
 
@@ -70,7 +70,7 @@ extension ISO_32000.Article {
     }
 }
 
-extension ISO_32000.Article {
+extension ISO.`32000`.Article {
 
     public struct Info: Sendable, Equatable, Hashable, Codable {
 
@@ -96,27 +96,27 @@ extension ISO_32000.Article {
     }
 }
 
-extension ISO_32000.Article {
+extension ISO.`32000`.Article {
 
     public struct Bead: Sendable {
 
         public var pageIndex: Int
 
-        public var rect: ISO_32000.UserSpace.Rectangle
+        public var rect: ISO.`32000`.UserSpace.Rectangle
 
-        public init(pageIndex: Int, rect: ISO_32000.UserSpace.Rectangle) {
+        public init(pageIndex: Int, rect: ISO.`32000`.UserSpace.Rectangle) {
             self.pageIndex = pageIndex
             self.rect = rect
         }
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Transition {}
 }
 
-extension ISO_32000.Transition {
+extension ISO.`32000`.Transition {
 
     public enum Style: String, Sendable, Codable, CaseIterable {
 
@@ -146,7 +146,7 @@ extension ISO_32000.Transition {
     }
 }
 
-extension ISO_32000.Transition {
+extension ISO.`32000`.Transition {
 
     public enum Dimension: String, Sendable, Codable {
 
@@ -156,7 +156,7 @@ extension ISO_32000.Transition {
     }
 }
 
-extension ISO_32000.Transition {
+extension ISO.`32000`.Transition {
 
     public enum Motion: String, Sendable, Codable {
 
@@ -166,7 +166,7 @@ extension ISO_32000.Transition {
     }
 }
 
-extension ISO_32000.Transition {
+extension ISO.`32000`.Transition {
 
     public enum Direction: Sendable, Equatable, Hashable, Codable {
 
@@ -184,7 +184,7 @@ extension ISO_32000.Transition {
     }
 }
 
-extension ISO_32000.Transition.Direction {
+extension ISO.`32000`.Transition.Direction {
 
     public var degrees: Int? {
         switch self {
@@ -198,7 +198,7 @@ extension ISO_32000.Transition.Direction {
     }
 }
 
-extension ISO_32000.Transition {
+extension ISO.`32000`.Transition {
 
     public struct Effect: Sendable {
 
@@ -236,24 +236,24 @@ extension ISO_32000.Transition {
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Navigation {}
 }
 
-extension ISO_32000.Navigation {
+extension ISO.`32000`.Navigation {
 
     public struct Node: Sendable {
 
-        public var nextAction: ISO_32000.Action.GoTo?
+        public var nextAction: ISO.`32000`.Action.GoTo?
 
-        public var previousAction: ISO_32000.Action.GoTo?
+        public var previousAction: ISO.`32000`.Action.GoTo?
 
         public var duration: Double?
 
         public init(
-            nextAction: ISO_32000.Action.GoTo? = nil,
-            previousAction: ISO_32000.Action.GoTo? = nil,
+            nextAction: ISO.`32000`.Action.GoTo? = nil,
+            previousAction: ISO.`32000`.Action.GoTo? = nil,
             duration: Double? = nil
         ) {
             self.nextAction = nextAction
@@ -263,17 +263,17 @@ extension ISO_32000.Navigation {
     }
 }
 
-extension ISO_32000.`12`.`4` {
+extension ISO.`32000`.`12`.`4` {
 
-    public typealias Label = ISO_32000.PageLabel.Entry
+    public typealias Label = ISO.`32000`.PageLabel.Entry
 
-    public typealias Thread = ISO_32000.Article.Thread
+    public typealias Thread = ISO.`32000`.Article.Thread
 
-    public typealias Bead = ISO_32000.Article.Bead
+    public typealias Bead = ISO.`32000`.Article.Bead
 
-    public typealias TransitionStyle = ISO_32000.Transition.Style
+    public typealias TransitionStyle = ISO.`32000`.Transition.Style
 
-    public typealias TransitionEffect = ISO_32000.Transition.Effect
+    public typealias TransitionEffect = ISO.`32000`.Transition.Effect
 
-    public typealias NavigationNode = ISO_32000.Navigation.Node
+    public typealias NavigationNode = ISO.`32000`.Navigation.Node
 }

@@ -1,0 +1,290 @@
+import Testing
+
+@testable import ISO_32000
+
+@Suite
+struct `ISO.32000.Table Tests` {
+
+    @Test
+    func `Table with summary`() {
+        let table = ISO.`32000`.Table(summary: "Sales data for Q4 2024")
+        #expect(table.summary == "Sales data for Q4 2024")
+    }
+
+    @Test
+    func `Table without summary`() {
+        let table = ISO.`32000`.Table()
+        #expect(table.summary == nil)
+    }
+
+    @Test
+    func `TR creation`() {
+        let row = ISO.`32000`.`14`.`8`.`4`.`8`.`3`.TR()
+        #expect(row == ISO.`32000`.`14`.`8`.`4`.`8`.`3`.TR())
+    }
+
+    @Test
+    func `TH with default values`() {
+        let header = ISO.`32000`.TH()
+        #expect(header.row.span == 1)
+        #expect(header.col.span == 1)
+        #expect(header.headers.isEmpty)
+        #expect(header.scope == nil)
+        #expect(header.short == nil)
+    }
+
+    @Test
+    func `TH spanning multiple rows`() {
+        let header = ISO.`32000`.TH(row: .init(span: 3))
+        #expect(header.row.span == 3)
+        #expect(header.col.span == 1)
+    }
+
+    @Test
+    func `TH spanning multiple columns`() {
+        let header = ISO.`32000`.TH(col: .init(span: 4))
+        #expect(header.row.span == 1)
+        #expect(header.col.span == 4)
+    }
+
+    @Test
+    func `TH with row scope`() {
+        let header = ISO.`32000`.TH(scope: .row)
+        #expect(header.scope == .row)
+    }
+
+    @Test
+    func `TH with column scope`() {
+        let header = ISO.`32000`.TH(scope: .column)
+        #expect(header.scope == .column)
+    }
+
+    @Test
+    func `TH with both scope`() {
+        let header = ISO.`32000`.TH(scope: .both)
+        #expect(header.scope == .both)
+    }
+
+    @Test
+    func `TH with headers association`() {
+        let header = ISO.`32000`.TH(headers: ["h1", "h2", "h3"])
+        #expect(header.headers == ["h1", "h2", "h3"])
+    }
+
+    @Test
+    func `TH with short form (PDF 2.0)`() {
+        let header = ISO.`32000`.TH(short: "Qty")
+        #expect(header.short == "Qty")
+    }
+
+    @Test
+    func `TH fully configured`() {
+        let header = ISO.`32000`.TH(
+            row: .init(span: 2),
+            col: .init(span: 3),
+            headers: ["region-header"],
+            scope: .column,
+            short: "Region"
+        )
+        #expect(header.row.span == 2)
+        #expect(header.col.span == 3)
+        #expect(header.headers == ["region-header"])
+        #expect(header.scope == .column)
+        #expect(header.short == "Region")
+    }
+
+    @Test
+    func `TD with default values`() {
+        let cell = ISO.`32000`.TD()
+        #expect(cell.row.span == 1)
+        #expect(cell.col.span == 1)
+        #expect(cell.headers.isEmpty)
+    }
+
+    @Test
+    func `TD spanning multiple rows`() {
+        let cell = ISO.`32000`.TD(row: .init(span: 2))
+        #expect(cell.row.span == 2)
+    }
+
+    @Test
+    func `TD spanning multiple columns`() {
+        let cell = ISO.`32000`.TD(col: .init(span: 5))
+        #expect(cell.col.span == 5)
+    }
+
+    @Test
+    func `TD with headers association`() {
+        let cell = ISO.`32000`.TD(headers: ["name-header", "date-header"])
+        #expect(cell.headers == ["name-header", "date-header"])
+    }
+
+    @Test
+    func `THead creation`() {
+        let thead = ISO.`32000`.THead()
+        #expect(thead == ISO.`32000`.THead())
+    }
+
+    @Test
+    func `TBody creation`() {
+        let tbody = ISO.`32000`.TBody()
+        #expect(tbody == ISO.`32000`.TBody())
+    }
+
+    @Test
+    func `TFoot creation`() {
+        let tfoot = ISO.`32000`.TFoot()
+        #expect(tfoot == ISO.`32000`.TFoot())
+    }
+}
+
+@Suite
+struct `ISO.32000.TH.Scope Tests` {
+
+    @Test
+    func `Scope raw values match spec`() {
+        #expect(ISO.`32000`.TH.Scope.row.rawValue == "Row")
+        #expect(ISO.`32000`.TH.Scope.column.rawValue == "Column")
+        #expect(ISO.`32000`.TH.Scope.both.rawValue == "Both")
+    }
+
+    @Test
+    func `Scope allCases`() {
+        let cases = ISO.`32000`.TH.Scope.allCases
+        #expect(cases.count == 3)
+        #expect(cases.contains(.row))
+        #expect(cases.contains(.column))
+        #expect(cases.contains(.both))
+    }
+}
+
+@Suite
+struct `ISO.32000.Caption Tests` {
+
+    @Test
+    func `Caption creation`() {
+        let caption = ISO.`32000`.`14`.`8`.`4`.`8`.`4`.Caption()
+        #expect(caption == ISO.`32000`.`14`.`8`.`4`.`8`.`4`.Caption())
+    }
+}
+
+@Suite
+struct `ISO.32000.Table.Hashable Tests` {
+
+    @Test
+    func `Table is Hashable`() {
+        var set: Set<ISO.`32000`.Table> = []
+        set.insert(.init(summary: "test"))
+        set.insert(.init(summary: "test"))
+        #expect(set.count == 1)
+    }
+
+    @Test
+    func `TH is Hashable`() {
+        var set: Set<ISO.`32000`.TH> = []
+        set.insert(.init(scope: .row))
+        set.insert(.init(scope: .row))
+        #expect(set.count == 1)
+    }
+
+    @Test
+    func `TD is Hashable`() {
+        var set: Set<ISO.`32000`.TD> = []
+        set.insert(.init(col: .init(span: 2)))
+        set.insert(.init(col: .init(span: 2)))
+        #expect(set.count == 1)
+    }
+}
+
+@Suite
+struct `ISO.32000.Table.Serialization Tests` {
+
+    @Test
+    func `TH serializes to PDF bytes`() {
+        let header = ISO.`32000`.TH(
+            col: .init(span: 2),
+            scope: .column
+        )
+
+        var buffer: [Byte] = []
+        ISO.`32000`.TH.serialize(header, into: &buffer)
+
+        let output = String(decoding: buffer, as: UTF8.self)
+        #expect(output.contains("/S /TH"))
+        #expect(output.contains("/ColSpan 2"))
+        #expect(output.contains("/Scope /Column"))
+    }
+
+    @Test
+    func `TD serializes to PDF bytes`() {
+        let cell = ISO.`32000`.TD(
+            row: .init(span: 3),
+            headers: ["h1"]
+        )
+
+        var buffer: [Byte] = []
+        ISO.`32000`.TD.serialize(cell, into: &buffer)
+
+        let output = String(decoding: buffer, as: UTF8.self)
+        #expect(output.contains("/S /TD"))
+        #expect(output.contains("/RowSpan 3"))
+        #expect(output.contains("/Headers"))
+    }
+
+    @Test
+    func `Table with summary serializes`() {
+        let table = ISO.`32000`.Table(summary: "Test table")
+
+        var buffer: [Byte] = []
+        ISO.`32000`.Table.serialize(table, into: &buffer)
+
+        let output = String(decoding: buffer, as: UTF8.self)
+        #expect(output.contains("/S /Table"))
+        #expect(output.contains("/Summary"))
+    }
+
+    @Test
+    func `TH default values omit optional attributes`() {
+        let header = ISO.`32000`.TH()
+
+        var buffer: [Byte] = []
+        ISO.`32000`.TH.serialize(header, into: &buffer)
+
+        let output = String(decoding: buffer, as: UTF8.self)
+
+        #expect(!output.contains("/RowSpan"))
+        #expect(!output.contains("/ColSpan"))
+        #expect(!output.contains("/Headers"))
+        #expect(!output.contains("/Scope"))
+        #expect(!output.contains("/Short"))
+    }
+}
+
+@Suite
+struct `ISO.32000.Table.Name Tests` {
+
+    @Test
+    func `Table structure type names`() {
+        #expect(ISO.`32000`.COS.Name.table.rawValue == "Table")
+        #expect(ISO.`32000`.COS.Name.tr.rawValue == "TR")
+        #expect(ISO.`32000`.COS.Name.th.rawValue == "TH")
+        #expect(ISO.`32000`.COS.Name.td.rawValue == "TD")
+        #expect(ISO.`32000`.COS.Name.thead.rawValue == "THead")
+        #expect(ISO.`32000`.COS.Name.tbody.rawValue == "TBody")
+        #expect(ISO.`32000`.COS.Name.tfoot.rawValue == "TFoot")
+    }
+
+    @Test
+    func `Table attribute names`() {
+        #expect(ISO.`32000`.COS.Name.rowSpan.rawValue == "RowSpan")
+        #expect(ISO.`32000`.COS.Name.colSpan.rawValue == "ColSpan")
+
+    }
+
+    @Test
+    func `Scope value names`() {
+        #expect(ISO.`32000`.COS.Name.row.rawValue == "Row")
+        #expect(ISO.`32000`.COS.Name.column.rawValue == "Column")
+        #expect(ISO.`32000`.COS.Name.both.rawValue == "Both")
+    }
+}

@@ -2,11 +2,11 @@ public import ISO_14496_22
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 
-extension ISO_32000.`9`.`8` {
+extension ISO.`32000`.`9`.`8` {
 
     public struct Descriptor: Sendable, Equatable {
 
-        public let fontName: ISO_32000.`7`.`3`.COS.Name
+        public let fontName: ISO.`32000`.`7`.`3`.COS.Name
 
         public let flags: Flags
 
@@ -14,35 +14,35 @@ extension ISO_32000.`9`.`8` {
 
         public let italicAngle: Double
 
-        public let ascent: ISO_32000.FontDesign.Height
+        public let ascent: ISO.`32000`.FontDesign.Height
 
-        public let descent: ISO_32000.FontDesign.Height
+        public let descent: ISO.`32000`.FontDesign.Height
 
-        public let leading: ISO_32000.FontDesign.Height
+        public let leading: ISO.`32000`.FontDesign.Height
 
-        public let capHeight: ISO_32000.FontDesign.Height
+        public let capHeight: ISO.`32000`.FontDesign.Height
 
-        public let xHeight: ISO_32000.FontDesign.Height
+        public let xHeight: ISO.`32000`.FontDesign.Height
 
-        public let stemV: ISO_32000.FontDesign.Width
+        public let stemV: ISO.`32000`.FontDesign.Width
 
-        public let stemH: ISO_32000.FontDesign.Width?
+        public let stemH: ISO.`32000`.FontDesign.Width?
 
-        public let missingWidth: ISO_32000.FontDesign.Width
+        public let missingWidth: ISO.`32000`.FontDesign.Width
 
         public init(
-            fontName: ISO_32000.`7`.`3`.COS.Name,
+            fontName: ISO.`32000`.`7`.`3`.COS.Name,
             flags: Flags,
             fontBBox: BoundingBox,
             italicAngle: Double,
-            ascent: ISO_32000.FontDesign.Height,
-            descent: ISO_32000.FontDesign.Height,
-            leading: ISO_32000.FontDesign.Height = .init(0),
-            capHeight: ISO_32000.FontDesign.Height,
-            xHeight: ISO_32000.FontDesign.Height,
-            stemV: ISO_32000.FontDesign.Width,
-            stemH: ISO_32000.FontDesign.Width? = nil,
-            missingWidth: ISO_32000.FontDesign.Width = .init(0)
+            ascent: ISO.`32000`.FontDesign.Height,
+            descent: ISO.`32000`.FontDesign.Height,
+            leading: ISO.`32000`.FontDesign.Height = .init(0),
+            capHeight: ISO.`32000`.FontDesign.Height,
+            xHeight: ISO.`32000`.FontDesign.Height,
+            stemV: ISO.`32000`.FontDesign.Width,
+            stemH: ISO.`32000`.FontDesign.Width? = nil,
+            missingWidth: ISO.`32000`.FontDesign.Width = .init(0)
         ) {
             self.fontName = fontName
             self.flags = flags
@@ -60,7 +60,7 @@ extension ISO_32000.`9`.`8` {
     }
 }
 
-extension ISO_32000.`9`.`8`.Descriptor {
+extension ISO.`32000`.`9`.`8`.Descriptor {
 
     public struct BoundingBox: Sendable, Equatable {
 
@@ -81,7 +81,7 @@ extension ISO_32000.`9`.`8`.Descriptor {
     }
 }
 
-extension ISO_32000.`9`.`8`.Descriptor {
+extension ISO.`32000`.`9`.`8`.Descriptor {
 
     public struct Flags: OptionSet, Sendable, Equatable {
         public let rawValue: UInt32
@@ -92,7 +92,7 @@ extension ISO_32000.`9`.`8`.Descriptor {
     }
 }
 
-extension ISO_32000.`9`.`8`.Descriptor.Flags {
+extension ISO.`32000`.`9`.`8`.Descriptor.Flags {
 
     public static let fixedPitch = Self(rawValue: 1 << 0)
 
@@ -113,11 +113,11 @@ extension ISO_32000.`9`.`8`.Descriptor.Flags {
     public static let forceBold = Self(rawValue: 1 << 18)
 }
 
-extension ISO_32000.`9`.`8`.Descriptor {
+extension ISO.`32000`.`9`.`8`.Descriptor {
 
     public init(
-        fontFile: ISO_14496_22.FontFile,
-        fontName: ISO_32000.`7`.`3`.COS.Name
+        fontFile: ISO.`14496`.`22`.FontFile,
+        fontName: ISO.`32000`.`7`.`3`.COS.Name
     ) {
 
         var flags: Flags = []
@@ -144,16 +144,16 @@ extension ISO_32000.`9`.`8`.Descriptor {
             ury: scale(Int(fontFile.head.yMax))
         )
 
-        let ascent = ISO_32000.FontDesign.Height(scale(Int(fontFile.hhea.ascender)))
-        let descent = ISO_32000.FontDesign.Height(scale(Int(fontFile.hhea.descender)))
-        let leading = ISO_32000.FontDesign.Height(scale(Int(fontFile.hhea.lineGap)))
+        let ascent = ISO.`32000`.FontDesign.Height(scale(Int(fontFile.hhea.ascender)))
+        let descent = ISO.`32000`.FontDesign.Height(scale(Int(fontFile.hhea.descender)))
+        let leading = ISO.`32000`.FontDesign.Height(scale(Int(fontFile.hhea.lineGap)))
 
         let capHeight = ascent
-        let xHeight = ISO_32000.FontDesign.Height(ascent.underlying * 2 / 3)
+        let xHeight = ISO.`32000`.FontDesign.Height(ascent.underlying * 2 / 3)
 
-        let stemV = ISO_32000.FontDesign.Width(80)
+        let stemV = ISO.`32000`.FontDesign.Width(80)
 
-        let missingWidth = ISO_32000.FontDesign.Width(
+        let missingWidth = ISO.`32000`.FontDesign.Width(
             scale(Int(fontFile.hmtx.advanceWidth(for: 0)))
         )
 

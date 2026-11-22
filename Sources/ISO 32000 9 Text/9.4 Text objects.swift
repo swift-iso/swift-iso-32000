@@ -1,27 +1,27 @@
 public import Byte
 public import ISO_32000_Shared
 
-extension ISO_32000.`9` {
+extension ISO.`32000`.`9` {
 
     public enum `4` {}
 }
 
-extension ISO_32000.`9`.`4` {
+extension ISO.`32000`.`9`.`4` {
 
     public enum `4` {}
 }
 
-extension ISO_32000.`9`.`4`.`4` {
+extension ISO.`32000`.`9`.`4`.`4` {
 
     public enum TextSpace {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
-    public typealias TextSpace = Geometry<Double, ISO_32000.`9`.`4`.`4`.TextSpace>
+    public typealias TextSpace = Geometry<Double, ISO.`32000`.`9`.`4`.`4`.TextSpace>
 }
 
-extension ISO_32000.`9`.`4` {
+extension ISO.`32000`.`9`.`4` {
 
     public struct Matrix: Sendable, Hashable {
 
@@ -55,7 +55,7 @@ extension ISO_32000.`9`.`4` {
     }
 }
 
-extension ISO_32000.`9`.`4`.Matrix {
+extension ISO.`32000`.`9`.`4`.Matrix {
 
     public static let identity = Self()
 
@@ -104,12 +104,12 @@ extension ISO_32000.`9`.`4`.Matrix {
     }
 }
 
-extension ISO_32000.`9`.`4` {
+extension ISO.`32000`.`9`.`4` {
 
     public enum Displacement {}
 }
 
-extension ISO_32000.`9`.`4`.Displacement {
+extension ISO.`32000`.`9`.`4`.Displacement {
 
     public static func horizontal(
         glyphWidth: Double,
@@ -138,7 +138,7 @@ extension ISO_32000.`9`.`4`.Displacement {
     }
 }
 
-extension ISO_32000.`9`.`4` {
+extension ISO.`32000`.`9`.`4` {
 
     public enum TJElement: Sendable {
 
@@ -148,9 +148,9 @@ extension ISO_32000.`9`.`4` {
     }
 }
 
-extension ISO_32000.Text {
+extension ISO.`32000`.Text {
 
-    public typealias Matrix = ISO_32000.`9`.`4`.Matrix
+    public typealias Matrix = ISO.`32000`.`9`.`4`.Matrix
 
-    public typealias TJElement = ISO_32000.`9`.`4`.TJElement
+    public typealias TJElement = ISO.`32000`.`9`.`4`.TJElement
 }

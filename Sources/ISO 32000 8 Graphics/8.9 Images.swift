@@ -4,12 +4,12 @@ public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 import Synchronization
 
-extension ISO_32000.`8` {
+extension ISO.`32000`.`8` {
 
     public enum `9` {}
 }
 
-extension ISO_32000.`8`.`9` {
+extension ISO.`32000`.`8`.`9` {
 
     public struct Image: Sendable, Hashable {
 
@@ -52,7 +52,7 @@ extension ISO_32000.`8`.`9` {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     private static let idCounter = Atomic<UInt64>(0)
 
@@ -61,7 +61,7 @@ extension ISO_32000.`8`.`9`.Image {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
@@ -72,12 +72,12 @@ extension ISO_32000.`8`.`9`.Image {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     public enum Color {}
 }
 
-extension ISO_32000.`8`.`9`.Image.Color {
+extension ISO.`32000`.`8`.`9`.Image.Color {
 
     public enum Space: Sendable, Hashable {
 
@@ -89,7 +89,7 @@ extension ISO_32000.`8`.`9`.Image.Color {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image.Color.Space {
+extension ISO.`32000`.`8`.`9`.Image.Color.Space {
 
     public var components: Int {
         switch self {
@@ -100,7 +100,7 @@ extension ISO_32000.`8`.`9`.Image.Color.Space {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     public enum Filter: Sendable, Hashable {
 
@@ -110,12 +110,12 @@ extension ISO_32000.`8`.`9`.Image {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     public enum Parse {}
 }
 
-extension ISO_32000.`8`.`9`.Image.Parse {
+extension ISO.`32000`.`8`.`9`.Image.Parse {
 
     public enum Error: Swift::Error, Sendable, Hashable {
 
@@ -131,7 +131,7 @@ extension ISO_32000.`8`.`9`.Image.Parse {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
     public init(jpeg jpegData: [Byte]) throws(Parse.Error) {
 
@@ -221,9 +221,9 @@ extension ISO_32000.`8`.`9`.Image {
     }
 }
 
-extension ISO_32000.`8`.`9`.Image {
+extension ISO.`32000`.`8`.`9`.Image {
 
-    public var resourceName: ISO_32000.`7`.`3`.COS.Name {
+    public var resourceName: ISO.`32000`.`7`.`3`.COS.Name {
 
         do {
             return try .init("Im\(id)")

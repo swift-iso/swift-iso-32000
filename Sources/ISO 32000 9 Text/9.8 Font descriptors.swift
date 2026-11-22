@@ -3,18 +3,18 @@ import ISO_32000_8_Graphics
 import ISO_32000_Annex_D
 public import ISO_32000_Shared
 
-extension ISO_32000.`9` {
+extension ISO.`32000`.`9` {
 
     public enum `8` {}
 }
 
-extension ISO_32000.`9`.`8` {
+extension ISO.`32000`.`9`.`8` {
 
     public enum FontDesign {}
 }
 
 extension Tagged: @retroactive AdditiveArithmetic
-where Tag == ISO_32000.`9`.`8`.FontDesign, Underlying: AdditiveArithmetic {
+where Tag == ISO.`32000`.`9`.`8`.FontDesign, Underlying: AdditiveArithmetic {
 
     @inlinable
     public static var zero: Self { Self(_unchecked: Underlying.zero) }
@@ -30,49 +30,49 @@ where Tag == ISO_32000.`9`.`8`.FontDesign, Underlying: AdditiveArithmetic {
     }
 }
 
-extension ISO_32000.FontDesign.Width {
+extension ISO.`32000`.FontDesign.Width {
 
     @inlinable
     public func scaled(
-        by fontSize: ISO_32000.UserSpace.Size<1>,
+        by fontSize: ISO.`32000`.UserSpace.Size<1>,
         unitsPerEm: Int = 1000
-    ) -> ISO_32000.UserSpace.Width {
+    ) -> ISO.`32000`.UserSpace.Width {
         let scale = fontSize.length.underlying / Double(unitsPerEm)
-        return ISO_32000.UserSpace.Width(Double(self.underlying) * scale)
+        return ISO.`32000`.UserSpace.Width(Double(self.underlying) * scale)
     }
 }
 
-extension ISO_32000.FontDesign.Height {
+extension ISO.`32000`.FontDesign.Height {
 
     @inlinable
     public func scaled(
-        by fontSize: ISO_32000.UserSpace.Size<1>,
+        by fontSize: ISO.`32000`.UserSpace.Size<1>,
         unitsPerEm: Int = 1000
-    ) -> ISO_32000.UserSpace.Height {
+    ) -> ISO.`32000`.UserSpace.Height {
         let scale = fontSize.length.underlying / Double(unitsPerEm)
-        return ISO_32000.UserSpace.Height(Double(self.underlying) * scale)
+        return ISO.`32000`.UserSpace.Height(Double(self.underlying) * scale)
     }
 }
 
-extension ISO_32000.`9`.`8` {
+extension ISO.`32000`.`9`.`8` {
 
     public struct Metrics: Sendable {
 
-        private let widths: [UInt32: ISO_32000.FontDesign.Width]
+        private let widths: [UInt32: ISO.`32000`.FontDesign.Width]
 
-        private let defaultWidth: ISO_32000.FontDesign.Width
+        private let defaultWidth: ISO.`32000`.FontDesign.Width
 
-        private let winAnsiByteWidths: [ISO_32000.FontDesign.Width]
+        private let winAnsiByteWidths: [ISO.`32000`.FontDesign.Width]
 
-        public let ascender: ISO_32000.FontDesign.Height
+        public let ascender: ISO.`32000`.FontDesign.Height
 
-        public let descender: ISO_32000.FontDesign.Height
+        public let descender: ISO.`32000`.FontDesign.Height
 
-        public let capHeight: ISO_32000.FontDesign.Height
+        public let capHeight: ISO.`32000`.FontDesign.Height
 
-        public let xHeight: ISO_32000.FontDesign.Height
+        public let xHeight: ISO.`32000`.FontDesign.Height
 
-        public let leading: ISO_32000.FontDesign.Height
+        public let leading: ISO.`32000`.FontDesign.Height
 
         public let unitsPerEm: Int
 
@@ -86,22 +86,22 @@ extension ISO_32000.`9`.`8` {
             leading: Int = 0,
             unitsPerEm: Int = 1000
         ) {
-            let typedWidths = widths.mapValues { ISO_32000.FontDesign.Width($0) }
-            let typedDefaultWidth = ISO_32000.FontDesign.Width(defaultWidth)
+            let typedWidths = widths.mapValues { ISO.`32000`.FontDesign.Width($0) }
+            let typedDefaultWidth = ISO.`32000`.FontDesign.Width(defaultWidth)
 
             self.widths = typedWidths
             self.defaultWidth = typedDefaultWidth
-            self.ascender = ISO_32000.FontDesign.Height(ascender)
-            self.descender = ISO_32000.FontDesign.Height(descender)
-            self.capHeight = ISO_32000.FontDesign.Height(capHeight)
-            self.xHeight = ISO_32000.FontDesign.Height(xHeight)
-            self.leading = ISO_32000.FontDesign.Height(leading)
+            self.ascender = ISO.`32000`.FontDesign.Height(ascender)
+            self.descender = ISO.`32000`.FontDesign.Height(descender)
+            self.capHeight = ISO.`32000`.FontDesign.Height(capHeight)
+            self.xHeight = ISO.`32000`.FontDesign.Height(xHeight)
+            self.leading = ISO.`32000`.FontDesign.Height(leading)
             self.unitsPerEm = unitsPerEm
 
-            var byteWidths = [ISO_32000.FontDesign.Width](repeating: typedDefaultWidth, count: 256)
+            var byteWidths = [ISO.`32000`.FontDesign.Width](repeating: typedDefaultWidth, count: 256)
             (UInt8.min...UInt8.max).forEach { byte in
 
-                if let scalar = ISO_32000.WinAnsiEncoding.decode(Byte(byte)) {
+                if let scalar = ISO.`32000`.WinAnsiEncoding.decode(Byte(byte)) {
                     byteWidths[Int(byte)] = typedWidths[scalar.value] ?? typedDefaultWidth
                 }
             }
@@ -110,7 +110,7 @@ extension ISO_32000.`9`.`8` {
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics {
+extension ISO.`32000`.`9`.`8`.Metrics {
 
     public func width(forCodePoint codePoint: UInt32) -> Int {
         (widths[codePoint] ?? defaultWidth).underlying
@@ -118,125 +118,125 @@ extension ISO_32000.`9`.`8`.Metrics {
 
     public var missingWidth: Int { defaultWidth.underlying }
 
-    public func width(of byte: Byte) -> ISO_32000.FontDesign.Width {
+    public func width(of byte: Byte) -> ISO.`32000`.FontDesign.Width {
         winAnsiByteWidths[Int(byte.underlying)]
     }
 
-    public func width<Bytes: Swift::Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
+    public func width<Bytes: Swift::Collection>(of bytes: Bytes) -> ISO.`32000`.FontDesign.Width
     where Bytes.Element == Byte {
         var total = 0
         for byte in bytes {
             total += winAnsiByteWidths[Int(byte.underlying)].underlying
         }
-        return ISO_32000.FontDesign.Width(total)
+        return ISO.`32000`.FontDesign.Width(total)
     }
 
     public func width<Bytes: Swift::Collection>(
         of bytes: Bytes,
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width where Bytes.Element == Byte {
         width(of: bytes).scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     /// The width of the bytes `showText(_:)` draws for `scalar`: its WinAnsi byte, or the
     /// ``ISO_32000/unicodeFallbackMap`` substitute when WinAnsi has none.
-    public func glyphWidth(for scalar: UnicodeScalar) -> ISO_32000.FontDesign.Width {
+    public func glyphWidth(for scalar: UnicodeScalar) -> ISO.`32000`.FontDesign.Width {
         width(of: String(scalar))
     }
 
     /// The width of the bytes `showText(_:)` draws for `text`: WinAnsi, with the
     /// ``ISO_32000/unicodeFallbackMap`` substitute for a character WinAnsi has no byte for.
-    public func width(of text: String) -> ISO_32000.FontDesign.Width {
+    public func width(of text: String) -> ISO.`32000`.FontDesign.Width {
         width(of: [Byte](winAnsi: text, withFallback: true))
     }
 
     public func width(
         of text: String,
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width {
         width(of: text).scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public var winAnsi: WinAnsi { WinAnsi(metrics: self) }
 
     public struct WinAnsi: Sendable {
-        let metrics: ISO_32000.`9`.`8`.Metrics
+        let metrics: ISO.`32000`.`9`.`8`.Metrics
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics.WinAnsi {
+extension ISO.`32000`.`9`.`8`.Metrics.WinAnsi {
 
-    public func width(of byte: Byte) -> ISO_32000.FontDesign.Width {
+    public func width(of byte: Byte) -> ISO.`32000`.FontDesign.Width {
         metrics.width(of: byte)
     }
 
-    public func width<Bytes: Swift::Collection>(of bytes: Bytes) -> ISO_32000.FontDesign.Width
+    public func width<Bytes: Swift::Collection>(of bytes: Bytes) -> ISO.`32000`.FontDesign.Width
     where Bytes.Element == Byte {
         metrics.width(of: bytes)
     }
 
     public func width<Bytes: Swift::Collection>(
         of bytes: Bytes,
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width where Bytes.Element == Byte {
         metrics.width(of: bytes, atSize: fontSize)
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics {
+extension ISO.`32000`.`9`.`8`.Metrics {
 
-    public var lineHeight: ISO_32000.FontDesign.Height {
+    public var lineHeight: ISO.`32000`.FontDesign.Height {
         ascender - descender
     }
 
-    public var normalLineHeight: ISO_32000.FontDesign.Height {
+    public var normalLineHeight: ISO.`32000`.FontDesign.Height {
         ascender - descender + leading
     }
 
     public func lineHeight(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         lineHeight.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public func normalLineHeight(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         normalLineHeight.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public func ascender(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         ascender.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public func descender(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         descender.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public func xHeight(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         xHeight.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public func capHeight(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Height {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Height {
         capHeight.scaled(by: fontSize, unitsPerEm: unitsPerEm)
     }
 
     public var line: Line { Line(metrics: self) }
 
     public struct Line: Sendable {
-        let metrics: ISO_32000.`9`.`8`.Metrics
+        let metrics: ISO.`32000`.`9`.`8`.Metrics
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics.Line {
+extension ISO.`32000`.`9`.`8`.Metrics.Line {
 
     public var height: Multiplier {
         let h = metrics.ascender.underlying - metrics.descender.underlying
@@ -259,7 +259,7 @@ extension ISO_32000.`9`.`8`.Metrics.Line {
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics {
+extension ISO.`32000`.`9`.`8`.Metrics {
 
     public var bullet: Glyph {
         Glyph(scalar: "\u{2022}", metrics: self)
@@ -267,24 +267,24 @@ extension ISO_32000.`9`.`8`.Metrics {
 
     public struct Glyph: Sendable {
         let scalar: UnicodeScalar
-        let metrics: ISO_32000.`9`.`8`.Metrics
+        let metrics: ISO.`32000`.`9`.`8`.Metrics
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics.Glyph {
+extension ISO.`32000`.`9`.`8`.Metrics.Glyph {
 
-    public var width: ISO_32000.FontDesign.Width {
+    public var width: ISO.`32000`.FontDesign.Width {
         metrics.glyphWidth(for: scalar)
     }
 
     public func width(
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width {
         width.scaled(by: fontSize, unitsPerEm: metrics.unitsPerEm)
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics {
+extension ISO.`32000`.`9`.`8`.Metrics {
 
     public static let helvetica = Self(
         widths: [

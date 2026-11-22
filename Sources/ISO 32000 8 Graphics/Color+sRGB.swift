@@ -1,7 +1,7 @@
 public import IEC_61966
 public import ISO_32000_Shared
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public init(_ srgb: IEC_61966.`2`.`1`.SRGB) {
         self = .rgb(r: srgb.r, g: srgb.g, b: srgb.b)
@@ -36,7 +36,7 @@ extension ISO_32000.`8`.`6`.Color {
 
 extension IEC_61966.`2`.`1`.SRGB {
 
-    public init(_ color: ISO_32000.`8`.`6`.Color) {
+    public init(_ color: ISO.`32000`.`8`.`6`.Color) {
         switch color {
         case .gray(let g):
             self.init(gray: g)
@@ -54,7 +54,7 @@ extension IEC_61966.`2`.`1`.SRGB {
     }
 }
 
-extension ISO_32000.`8`.`6`.Color {
+extension ISO.`32000`.`8`.`6`.Color {
 
     public typealias sRGB = IEC_61966.`2`.`1`.SRGB
 

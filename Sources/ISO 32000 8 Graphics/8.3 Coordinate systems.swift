@@ -3,23 +3,23 @@ public import ISO_32000_Shared
 import Space
 import Tagged
 
-extension ISO_32000.`8` {
+extension ISO.`32000`.`8` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`8`.`3` {
+extension ISO.`32000`.`8`.`3` {
 }
 
-extension ISO_32000.`8`.`3`.`2` {
+extension ISO.`32000`.`8`.`3`.`2` {
 }
 
-extension ISO_32000.`8`.`3`.`2`.`3` {
+extension ISO.`32000`.`8`.`3`.`2`.`3` {
 
-    public typealias UserSpace = ISO_32000.UserSpace
+    public typealias UserSpace = ISO.`32000`.UserSpace
 }
 
-extension ISO_32000.UserSpace.Length {
+extension ISO.`32000`.UserSpace.Length {
 
     public static let inch: Self = .init(72)
 
@@ -45,7 +45,7 @@ extension ISO_32000.UserSpace.Length {
     public var centimeters: Self { Self(underlying / 28.3465) }
 }
 
-extension ISO_32000.UserSpace.Width {
+extension ISO.`32000`.UserSpace.Width {
 
     public static let inch: Self = .init(72)
 
@@ -62,7 +62,7 @@ extension ISO_32000.UserSpace.Width {
     public static func pixels(_ value: Double, dpi: Double = 96) -> Self { Self(value * 72 / dpi) }
 }
 
-extension ISO_32000.UserSpace.Height {
+extension ISO.`32000`.UserSpace.Height {
 
     public static let inch: Self = .init(72)
 
@@ -79,7 +79,7 @@ extension ISO_32000.UserSpace.Height {
     public static func pixels(_ value: Double, dpi: Double = 96) -> Self { Self(value * 72 / dpi) }
 }
 
-extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
+extension ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
 
     public static let a4 = Self(
         x: .init(0),
@@ -114,7 +114,7 @@ extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
     )
 }
 
-extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
+extension ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
 
     public var landscape: Self {
 
@@ -139,35 +139,35 @@ extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
     }
 }
 
-extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Coordinate {
+extension ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Coordinate {
 
     public static func fromTopLeft(
-        x: ISO_32000.UserSpace.X,
-        topY: ISO_32000.UserSpace.Dy,
-        pageTop: ISO_32000.UserSpace.Y
+        x: ISO.`32000`.UserSpace.X,
+        topY: ISO.`32000`.UserSpace.Dy,
+        pageTop: ISO.`32000`.UserSpace.Y
     ) -> Self {
         Self(x: x, y: pageTop - topY)
     }
 
     public func topLeftY(
-        pageTop: ISO_32000.UserSpace.Y
-    ) -> ISO_32000.UserSpace.Dy {
+        pageTop: ISO.`32000`.UserSpace.Y
+    ) -> ISO.`32000`.UserSpace.Dy {
         pageTop - y
     }
 }
 
-extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
+extension ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
 
     public static func fromTopLeft(
-        x: ISO_32000.UserSpace.X,
-        topY: ISO_32000.UserSpace.Dy,
-        width: ISO_32000.UserSpace.Width,
-        height: ISO_32000.UserSpace.Height,
-        pageTop: ISO_32000.UserSpace.Y
+        x: ISO.`32000`.UserSpace.X,
+        topY: ISO.`32000`.UserSpace.Dy,
+        width: ISO.`32000`.UserSpace.Width,
+        height: ISO.`32000`.UserSpace.Height,
+        pageTop: ISO.`32000`.UserSpace.Y
     ) -> Self {
 
-        let topLeftY: ISO_32000.UserSpace.Y = pageTop - topY
-        let bottomLeftY: ISO_32000.UserSpace.Y =
+        let topLeftY: ISO.`32000`.UserSpace.Y = pageTop - topY
+        let bottomLeftY: ISO.`32000`.UserSpace.Y =
             topLeftY - height.retag(Displacement.Y<UserSpace>.self)
         return Self(
             x: x,
@@ -178,14 +178,14 @@ extension ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Rectangle {
     }
 
     public func topY(
-        pageTop: ISO_32000.UserSpace.Y
-    ) -> ISO_32000.UserSpace.Dy {
+        pageTop: ISO.`32000`.UserSpace.Y
+    ) -> ISO.`32000`.UserSpace.Dy {
         pageTop - ury
     }
 
     public func topLeftOrigin(
-        pageTop: ISO_32000.UserSpace.Y
-    ) -> (x: ISO_32000.UserSpace.X, topY: ISO_32000.UserSpace.Dy) {
+        pageTop: ISO.`32000`.UserSpace.Y
+    ) -> (x: ISO.`32000`.UserSpace.X, topY: ISO.`32000`.UserSpace.Dy) {
         (x: llx, topY: pageTop - ury)
     }
 }

@@ -40,6 +40,8 @@ let package = Package(
     ],
     dependencies: [
 
+        .package(url: "https://github.com/swift-iso/swift-iso.git", branch: "main"),
+
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5646.git", branch: "main"),
         .package(
@@ -107,6 +109,7 @@ let package = Package(
         .target(
             name: "ISO 32000 Shared",
             dependencies: [
+                .product(name: "ISO", package: "swift-iso"),
                 .product(name: "Geometry", package: "swift-geometry"),
                 .product(name: "Quantizer", package: "swift-quantizer"),
                 .product(name: "Linear", package: "swift-linear"),

@@ -4,21 +4,21 @@ import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 public import Ownership
 
-extension ISO_32000.`9` {
+extension ISO.`32000`.`9` {
 
     public enum `6` {}
 }
 
-extension ISO_32000.`9`.`6` {
+extension ISO.`32000`.`9`.`6` {
 
     public struct Font: Sendable {
 
         private let _storage: Ownership.Immutable<Storage>
 
         public init(
-            baseFontName: ISO_32000.`7`.`3`.COS.Name,
-            resourceName: ISO_32000.`7`.`3`.COS.Name,
-            metrics: ISO_32000.`9`.`8`.Metrics,
+            baseFontName: ISO.`32000`.`7`.`3`.COS.Name,
+            resourceName: ISO.`32000`.`7`.`3`.COS.Name,
+            metrics: ISO.`32000`.`9`.`8`.Metrics,
             isMonospaced: Bool,
             weight: Weight,
             style: Style,
@@ -41,30 +41,30 @@ extension ISO_32000.`9`.`6` {
     }
 }
 
-extension ISO_32000.`9`.`6`.Font {
-    public var baseFontName: ISO_32000.`7`.`3`.COS.Name { _storage.value.baseFontName }
-    public var resourceName: ISO_32000.`7`.`3`.COS.Name { _storage.value.resourceName }
-    public var metrics: ISO_32000.`9`.`8`.Metrics { _storage.value.metrics }
+extension ISO.`32000`.`9`.`6`.Font {
+    public var baseFontName: ISO.`32000`.`7`.`3`.COS.Name { _storage.value.baseFontName }
+    public var resourceName: ISO.`32000`.`7`.`3`.COS.Name { _storage.value.resourceName }
+    public var metrics: ISO.`32000`.`9`.`8`.Metrics { _storage.value.metrics }
     public var isMonospaced: Bool { _storage.value.isMonospaced }
     public var weight: Weight { _storage.value.weight }
     public var style: Style { _storage.value.style }
     public var family: Family { _storage.value.family }
-    public var embeddedSource: ISO_32000.`9`.`6`.Embedded? { _storage.value.embeddedSource }
+    public var embeddedSource: ISO.`32000`.`9`.`6`.Embedded? { _storage.value.embeddedSource }
     public var isEmbedded: Bool { embeddedSource != nil }
 
     struct Storage: Sendable {
-        let baseFontName: ISO_32000.`7`.`3`.COS.Name
-        let resourceName: ISO_32000.`7`.`3`.COS.Name
-        let metrics: ISO_32000.`9`.`8`.Metrics
+        let baseFontName: ISO.`32000`.`7`.`3`.COS.Name
+        let resourceName: ISO.`32000`.`7`.`3`.COS.Name
+        let metrics: ISO.`32000`.`9`.`8`.Metrics
         let isMonospaced: Bool
         let weight: Weight
         let style: Style
         let family: Family
-        let embeddedSource: ISO_32000.`9`.`6`.Embedded?
+        let embeddedSource: ISO.`32000`.`9`.`6`.Embedded?
     }
 }
 
-extension ISO_32000.`9`.`6`.Font: Hashable {
+extension ISO.`32000`.`9`.`6`.Font: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.baseFontName == rhs.baseFontName
     }
@@ -74,7 +74,7 @@ extension ISO_32000.`9`.`6`.Font: Hashable {
     }
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
     public enum Weight: Sendable, Hashable {
         case regular
@@ -98,7 +98,7 @@ extension ISO_32000.`9`.`6`.Font {
     }
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
     public struct Helvetica: Sendable {
         private init() {}
@@ -131,9 +131,9 @@ extension ISO_32000.`9`.`6`.Font {
     public static var zapfDingbats: Self { ZapfDingbats.regular }
 }
 
-extension ISO_32000.`9`.`6`.Font.Helvetica {
+extension ISO.`32000`.`9`.`6`.Font.Helvetica {
 
-    public static let regular = ISO_32000.`9`.`6`.Font(
+    public static let regular = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .helvetica,
         resourceName: .f1,
         metrics: .helvetica,
@@ -143,7 +143,7 @@ extension ISO_32000.`9`.`6`.Font.Helvetica {
         family: .helvetica
     )
 
-    public static let bold = ISO_32000.`9`.`6`.Font(
+    public static let bold = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .helveticaBold,
         resourceName: .f2,
         metrics: .helveticaBold,
@@ -153,7 +153,7 @@ extension ISO_32000.`9`.`6`.Font.Helvetica {
         family: .helvetica
     )
 
-    public static let oblique = ISO_32000.`9`.`6`.Font(
+    public static let oblique = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .helveticaOblique,
         resourceName: .f3,
         metrics: .helvetica,
@@ -163,7 +163,7 @@ extension ISO_32000.`9`.`6`.Font.Helvetica {
         family: .helvetica
     )
 
-    public static let boldOblique = ISO_32000.`9`.`6`.Font(
+    public static let boldOblique = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .helveticaBoldOblique,
         resourceName: .f4,
         metrics: .helveticaBold,
@@ -174,9 +174,9 @@ extension ISO_32000.`9`.`6`.Font.Helvetica {
     )
 }
 
-extension ISO_32000.`9`.`6`.Font.Times {
+extension ISO.`32000`.`9`.`6`.Font.Times {
 
-    public static let regular = ISO_32000.`9`.`6`.Font(
+    public static let regular = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .timesRoman,
         resourceName: .f5,
         metrics: .timesRoman,
@@ -186,7 +186,7 @@ extension ISO_32000.`9`.`6`.Font.Times {
         family: .times
     )
 
-    public static let bold = ISO_32000.`9`.`6`.Font(
+    public static let bold = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .timesBold,
         resourceName: .f6,
         metrics: .timesBold,
@@ -196,7 +196,7 @@ extension ISO_32000.`9`.`6`.Font.Times {
         family: .times
     )
 
-    public static let italic = ISO_32000.`9`.`6`.Font(
+    public static let italic = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .timesItalic,
         resourceName: .f7,
         metrics: .timesRoman,
@@ -206,7 +206,7 @@ extension ISO_32000.`9`.`6`.Font.Times {
         family: .times
     )
 
-    public static let boldItalic = ISO_32000.`9`.`6`.Font(
+    public static let boldItalic = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .timesBoldItalic,
         resourceName: .f8,
         metrics: .timesBold,
@@ -217,9 +217,9 @@ extension ISO_32000.`9`.`6`.Font.Times {
     )
 }
 
-extension ISO_32000.`9`.`6`.Font.Courier {
+extension ISO.`32000`.`9`.`6`.Font.Courier {
 
-    public static let regular = ISO_32000.`9`.`6`.Font(
+    public static let regular = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .courier,
         resourceName: .f9,
         metrics: .courier,
@@ -229,7 +229,7 @@ extension ISO_32000.`9`.`6`.Font.Courier {
         family: .courier
     )
 
-    public static let bold = ISO_32000.`9`.`6`.Font(
+    public static let bold = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .courierBold,
         resourceName: .f10,
         metrics: .courier,
@@ -239,7 +239,7 @@ extension ISO_32000.`9`.`6`.Font.Courier {
         family: .courier
     )
 
-    public static let oblique = ISO_32000.`9`.`6`.Font(
+    public static let oblique = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .courierOblique,
         resourceName: .f11,
         metrics: .courier,
@@ -249,7 +249,7 @@ extension ISO_32000.`9`.`6`.Font.Courier {
         family: .courier
     )
 
-    public static let boldOblique = ISO_32000.`9`.`6`.Font(
+    public static let boldOblique = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .courierBoldOblique,
         resourceName: .f12,
         metrics: .courier,
@@ -260,9 +260,9 @@ extension ISO_32000.`9`.`6`.Font.Courier {
     )
 }
 
-extension ISO_32000.`9`.`6`.Font.Symbol {
+extension ISO.`32000`.`9`.`6`.Font.Symbol {
 
-    public static let regular = ISO_32000.`9`.`6`.Font(
+    public static let regular = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .symbol,
         resourceName: .f13,
         metrics: .symbol,
@@ -273,9 +273,9 @@ extension ISO_32000.`9`.`6`.Font.Symbol {
     )
 }
 
-extension ISO_32000.`9`.`6`.Font.ZapfDingbats {
+extension ISO.`32000`.`9`.`6`.Font.ZapfDingbats {
 
-    public static let regular = ISO_32000.`9`.`6`.Font(
+    public static let regular = ISO.`32000`.`9`.`6`.Font(
         baseFontName: .zapfDingbats,
         resourceName: .f14,
         metrics: .zapfDingbats,
@@ -286,9 +286,9 @@ extension ISO_32000.`9`.`6`.Font.ZapfDingbats {
     )
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
-    public static let standard14: [ISO_32000.`9`.`6`.Font] = [
+    public static let standard14: [ISO.`32000`.`9`.`6`.Font] = [
         Helvetica.regular,
         Helvetica.bold,
         Helvetica.oblique,
@@ -306,56 +306,56 @@ extension ISO_32000.`9`.`6`.Font {
     ]
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
     public func width(
         of text: String,
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width {
         metrics.width(of: text, atSize: fontSize)
     }
 
     public var winAnsi: WinAnsi { WinAnsi(font: self) }
 
     public struct WinAnsi: Sendable {
-        let font: ISO_32000.`9`.`6`.Font
+        let font: ISO.`32000`.`9`.`6`.Font
     }
 }
 
-extension ISO_32000.`9`.`6`.Font.WinAnsi {
+extension ISO.`32000`.`9`.`6`.Font.WinAnsi {
 
     public func width<Bytes: Swift::Collection>(
         of bytes: Bytes,
-        atSize fontSize: ISO_32000.UserSpace.Size<1>
-    ) -> ISO_32000.UserSpace.Width where Bytes.Element == Byte {
+        atSize fontSize: ISO.`32000`.UserSpace.Size<1>
+    ) -> ISO.`32000`.UserSpace.Width where Bytes.Element == Byte {
         font.metrics.winAnsi.width(of: bytes, atSize: fontSize)
     }
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
     public static func find(
         family: Family,
         weight: Weight = .regular,
         style: Style = .normal
-    ) -> ISO_32000.`9`.`6`.Font? {
+    ) -> ISO.`32000`.`9`.`6`.Font? {
         standard14.first { font in
             font.family == family && font.weight == weight && font.style == style
         }
     }
 
-    public var bold: ISO_32000.`9`.`6`.Font {
+    public var bold: ISO.`32000`.`9`.`6`.Font {
         if weight == .bold { return self }
         return Self.find(family: family, weight: .bold, style: style) ?? self
     }
 
-    public var italic: ISO_32000.`9`.`6`.Font {
+    public var italic: ISO.`32000`.`9`.`6`.Font {
         if style == .italic || style == .oblique { return self }
         let targetStyle: Style = (family == .times) ? .italic : .oblique
         return Self.find(family: family, weight: weight, style: targetStyle) ?? self
     }
 
-    public var regular: ISO_32000.`9`.`6`.Font {
+    public var regular: ISO.`32000`.`9`.`6`.Font {
         Self.find(family: family, weight: .regular, style: .normal) ?? self
     }
 }

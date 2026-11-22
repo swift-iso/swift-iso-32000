@@ -6,21 +6,21 @@ import ISO_32000_Annex_D
 public import ISO_32000_Shared
 import Standard_Library_Extensions
 
-extension ISO_32000.`7` {
+extension ISO.`32000`.`7` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
     public enum Table {}
 }
 
-extension ISO_32000.`7`.`3`.Table {
+extension ISO.`32000`.`7`.`3`.Table {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`7`.`3`.Table.`3` {
+extension ISO.`32000`.`7`.`3`.Table.`3` {
 
     public static let escapeTable: [Byte: [Byte]] = [
         .ascii.lf: [.ascii.backslash, .ascii.n],
@@ -79,43 +79,43 @@ extension ISO_32000.`7`.`3`.Table.`3` {
     }
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
 
     public enum `3` {}
 }
 
-extension ISO_32000.`7`.`3`.`3` {
+extension ISO.`32000`.`7`.`3`.`3` {
 
     public struct RealFormatStyle: Formatter.`Protocol`, Sendable {
         public init() {}
     }
 }
 
-extension ISO_32000.`7`.`3`.`3`.RealFormatStyle {
+extension ISO.`32000`.`7`.`3`.`3`.RealFormatStyle {
     public typealias Input = Double
     public typealias Output = String
     public typealias Failure = Never
 
     public func format(_ value: Double) -> String {
         var bytes: [Byte] = []
-        ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &bytes)
+        ISO.`32000`.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &bytes)
         return String(decoding: bytes, as: UTF8.self)
     }
 }
 
-extension Formatter.`Protocol` where Self == ISO_32000.`7`.`3`.`3`.RealFormatStyle {
+extension Formatter.`Protocol` where Self == ISO.`32000`.`7`.`3`.`3`.RealFormatStyle {
 
-    public static var pdf: ISO_32000.`7`.`3`.`3`.RealFormatStyle {
-        ISO_32000.`7`.`3`.`3`.RealFormatStyle()
+    public static var pdf: ISO.`32000`.`7`.`3`.`3`.RealFormatStyle {
+        ISO.`32000`.`7`.`3`.`3`.RealFormatStyle()
     }
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
 
     public enum `5` {}
 }
 
-extension ISO_32000.`7`.`3`.`5` {
+extension ISO.`32000`.`7`.`3`.`5` {
 
     public struct Name: Sendable, Hashable {
 
@@ -152,21 +152,21 @@ extension ISO_32000.`7`.`3`.`5` {
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name {
+extension ISO.`32000`.`7`.`3`.`5`.Name {
 
     package enum Limits {}
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name.Limits {
+extension ISO.`32000`.`7`.`3`.`5`.Name.Limits {
 
     static let maxLength = 127
 }
 
 #if !hasFeature(Embedded)
-    extension ISO_32000.`7`.`3`.`5`.Name: Codable {}
+    extension ISO.`32000`.`7`.`3`.`5`.Name: Codable {}
 #endif
 
-extension ISO_32000.`7`.`3`.`5`.Name {
+extension ISO.`32000`.`7`.`3`.`5`.Name {
     @inlinable
     public static var f1: Self {
         .init(
@@ -268,7 +268,7 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name {
+extension ISO.`32000`.`7`.`3`.`5`.Name {
     public enum Error: Swift::Error, Sendable, Equatable {
         case empty
         case tooLong(_ byteCount: Int)
@@ -277,7 +277,7 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
+extension ISO.`32000`.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
     public var description: String {
         switch self {
         case .empty:
@@ -285,7 +285,7 @@ extension ISO_32000.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
 
         case .tooLong(let count):
             return
-                "Name too long: \(count) bytes (max \(ISO_32000.`7`.`3`.`5`.Name.Limits.maxLength))"
+                "Name too long: \(count) bytes (max \(ISO.`32000`.`7`.`3`.`5`.Name.Limits.maxLength))"
 
         case .containsNullByte:
             return "Name cannot contain null bytes"
@@ -296,13 +296,13 @@ extension ISO_32000.`7`.`3`.`5`.Name.Error: CustomStringConvertible {
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name: CustomStringConvertible {
+extension ISO.`32000`.`7`.`3`.`5`.Name: CustomStringConvertible {
     public var description: String {
         "/\(rawValue)"
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name {
+extension ISO.`32000`.`7`.`3`.`5`.Name {
 
     public static let type = Self(__unchecked: (), rawValue: "Type")
     public static let catalog = Self(__unchecked: (), rawValue: "Catalog")
@@ -501,20 +501,20 @@ extension ISO_32000.`7`.`3`.`5`.Name {
     public static let form = Self(__unchecked: (), rawValue: "Form")
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
 
     public enum `8` {}
 }
 
-extension ISO_32000.`7`.`3`.`8` {
+extension ISO.`32000`.`7`.`3`.`8` {
 
     public struct Stream: Sendable, Hashable {
 
-        public var dictionary: ISO_32000.`7`.`3`.COS.Dictionary
+        public var dictionary: ISO.`32000`.`7`.`3`.COS.Dictionary
 
         public var data: [Byte]
 
-        public init(dictionary: ISO_32000.`7`.`3`.COS.Dictionary = [:], data: [Byte] = []) {
+        public init(dictionary: ISO.`32000`.`7`.`3`.COS.Dictionary = [:], data: [Byte] = []) {
             self.dictionary = dictionary
             self.data = data
         }
@@ -526,18 +526,18 @@ extension ISO_32000.`7`.`3`.`8` {
     }
 }
 
-extension ISO_32000.`7`.`3`.`8`.Stream: CustomStringConvertible {
+extension ISO.`32000`.`7`.`3`.`8`.Stream: CustomStringConvertible {
     public var description: String {
         "\(dictionary) stream<\(data.count) bytes>"
     }
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
 
     public enum `10` {}
 }
 
-extension ISO_32000.`7`.`3`.`10` {
+extension ISO.`32000`.`7`.`3`.`10` {
 
     public struct IndirectReference: Sendable, Hashable {
 
@@ -553,34 +553,34 @@ extension ISO_32000.`7`.`3`.`10` {
 }
 
 #if !hasFeature(Embedded)
-    extension ISO_32000.`7`.`3`.`10`.IndirectReference: Codable {}
+    extension ISO.`32000`.`7`.`3`.`10`.IndirectReference: Codable {}
 #endif
 
-extension ISO_32000.`7`.`3`.`10`.IndirectReference: CustomStringConvertible {
+extension ISO.`32000`.`7`.`3`.`10`.IndirectReference: CustomStringConvertible {
     public var description: String {
         "\(objectNumber) \(generation) R"
     }
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
 
     public enum CarouselObjectSystem {}
 }
 
-extension ISO_32000.`7`.`3` {
+extension ISO.`32000`.`7`.`3` {
     public typealias COS = CarouselObjectSystem
 }
 
-extension ISO_32000.`7`.`3`.COS {
+extension ISO.`32000`.`7`.`3`.COS {
 
-    public typealias Name = ISO_32000.`7`.`3`.`5`.Name
+    public typealias Name = ISO.`32000`.`7`.`3`.`5`.Name
 
-    public typealias Stream = ISO_32000.`7`.`3`.`8`.Stream
+    public typealias Stream = ISO.`32000`.`7`.`3`.`8`.Stream
 
-    public typealias IndirectReference = ISO_32000.`7`.`3`.`10`.IndirectReference
+    public typealias IndirectReference = ISO.`32000`.`7`.`3`.`10`.IndirectReference
 }
 
-extension ISO_32000.`7`.`3`.COS {
+extension ISO.`32000`.`7`.`3`.COS {
 
     public struct Dictionary: Sendable, Hashable {
         public var storage: [Name: Object]
@@ -595,17 +595,17 @@ extension ISO_32000.`7`.`3`.COS {
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Dictionary {
-    public subscript(key: ISO_32000.`7`.`3`.COS.Name) -> ISO_32000.`7`.`3`.COS.Object? {
+extension ISO.`32000`.`7`.`3`.COS.Dictionary {
+    public subscript(key: ISO.`32000`.`7`.`3`.COS.Name) -> ISO.`32000`.`7`.`3`.COS.Object? {
         get { storage[key] }
         set { storage[key] = newValue }
     }
 
-    public var keys: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Keys {
+    public var keys: Swift::Dictionary<ISO.`32000`.`7`.`3`.COS.Name, ISO.`32000`.`7`.`3`.COS.Object>.Keys {
         storage.keys
     }
 
-    public var values: Swift::Dictionary<ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object>.Values {
+    public var values: Swift::Dictionary<ISO.`32000`.`7`.`3`.COS.Name, ISO.`32000`.`7`.`3`.COS.Object>.Values {
         storage.values
     }
 
@@ -617,20 +617,20 @@ extension ISO_32000.`7`.`3`.COS.Dictionary {
         storage.isEmpty
     }
 
-    public var sortedEntries: [(key: ISO_32000.`7`.`3`.COS.Name, value: ISO_32000.`7`.`3`.COS.Object)] {
+    public var sortedEntries: [(key: ISO.`32000`.`7`.`3`.COS.Name, value: ISO.`32000`.`7`.`3`.COS.Object)] {
         storage.sorted { $0.key.rawValue < $1.key.rawValue }
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Dictionary: ExpressibleByDictionaryLiteral {
+extension ISO.`32000`.`7`.`3`.COS.Dictionary: ExpressibleByDictionaryLiteral {
     public init(
-        dictionaryLiteral elements: (ISO_32000.`7`.`3`.COS.Name, ISO_32000.`7`.`3`.COS.Object)...
+        dictionaryLiteral elements: (ISO.`32000`.`7`.`3`.COS.Name, ISO.`32000`.`7`.`3`.COS.Object)...
     ) {
         self.storage = .init(uniqueKeysWithValues: elements)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS {
+extension ISO.`32000`.`7`.`3`.COS {
 
     public enum Object: Sendable, Hashable {
 
@@ -656,16 +656,16 @@ extension ISO_32000.`7`.`3`.COS {
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object {
+extension ISO.`32000`.`7`.`3`.COS.Object {
 
     public static func integer(_ value: Int) -> Self {
         .integer(Int64(value))
     }
 
     public static func name(_ value: String) -> Self? {
-        let name: ISO_32000.`7`.`3`.COS.Name
-        do throws(ISO_32000.`7`.`3`.COS.Name.Error) {
-            name = try ISO_32000.`7`.`3`.COS.Name(value)
+        let name: ISO.`32000`.`7`.`3`.COS.Name
+        do throws(ISO.`32000`.`7`.`3`.COS.Name.Error) {
+            name = try ISO.`32000`.`7`.`3`.COS.Name(value)
         } catch {
             return nil
         }
@@ -673,35 +673,35 @@ extension ISO_32000.`7`.`3`.COS.Object {
     }
 
     public static func string(_ value: String) -> Self {
-        .string(ISO_32000.`7`.`3`.COS.StringValue(value))
+        .string(ISO.`32000`.`7`.`3`.COS.StringValue(value))
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByBooleanLiteral {
+extension ISO.`32000`.`7`.`3`.COS.Object: ExpressibleByBooleanLiteral {
     public init(booleanLiteral value: Bool) {
         self = .boolean(value)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByIntegerLiteral {
+extension ISO.`32000`.`7`.`3`.COS.Object: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: Int64) {
         self = .integer(value)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByFloatLiteral {
+extension ISO.`32000`.`7`.`3`.COS.Object: ExpressibleByFloatLiteral {
     public init(floatLiteral value: Double) {
         self = .real(value)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object: ExpressibleByArrayLiteral {
-    public init(arrayLiteral elements: ISO_32000.`7`.`3`.COS.Object...) {
+extension ISO.`32000`.`7`.`3`.COS.Object: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: ISO.`32000`.`7`.`3`.COS.Object...) {
         self = .array(elements)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS {
+extension ISO.`32000`.`7`.`3`.COS {
 
     public struct StringValue: Sendable, Hashable, Codable {
 
@@ -713,19 +713,19 @@ extension ISO_32000.`7`.`3`.COS {
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.StringValue: CustomStringConvertible {
+extension ISO.`32000`.`7`.`3`.COS.StringValue: CustomStringConvertible {
     public var description: String {
         "(\(value))"
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.StringValue: ExpressibleByStringLiteral {
+extension ISO.`32000`.`7`.`3`.COS.StringValue: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.value = value
     }
 }
 
-extension ISO_32000.`7`.`3`.COS {
+extension ISO.`32000`.`7`.`3`.COS {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Object,
@@ -746,7 +746,7 @@ extension ISO_32000.`7`.`3`.COS {
 
         case .real(let value):
 
-            ISO_32000.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &buffer)
+            ISO.`32000`.`7`.`3`.`3`.PDFNumber.serializeReal(value, into: &buffer)
 
         case .name(let name):
             Name.serialize(name, into: &buffer)
@@ -776,17 +776,17 @@ extension ISO_32000.`7`.`3`.COS {
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Object: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.COS.Object: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ object: Self,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        ISO_32000.`7`.`3`.COS.serialize(object, into: &buffer)
+        ISO.`32000`.`7`.`3`.COS.serialize(object, into: &buffer)
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.COS.Dictionary: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ dict: Self,
@@ -797,9 +797,9 @@ extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
 
         for (key, value) in dict.sortedEntries {
             buffer.append(.ascii.space)
-            ISO_32000.`7`.`3`.COS.Name.serialize(key, into: &buffer)
+            ISO.`32000`.`7`.`3`.COS.Name.serialize(key, into: &buffer)
             buffer.append(.ascii.space)
-            ISO_32000.`7`.`3`.COS.Object.serialize(value, into: &buffer)
+            ISO.`32000`.`7`.`3`.COS.Object.serialize(value, into: &buffer)
         }
 
         buffer.append(.ascii.greaterThan)
@@ -807,7 +807,7 @@ extension ISO_32000.`7`.`3`.COS.Dictionary: Binary.Serializable {
     }
 }
 
-extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.`5`.Name: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ name: Self,
@@ -844,7 +844,7 @@ extension ISO_32000.`7`.`3`.`5`.Name: Binary.Serializable {
     }
 }
 
-extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.COS.StringValue: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ str: Self,
@@ -852,12 +852,12 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
     ) where Buffer.Element == Byte {
         buffer.append(.ascii.leftParenthesis)
         let useDocEnc = str.value.unicodeScalars.allSatisfy {
-            ISO_32000.PDFDocEncoding.canEncode($0)
+            ISO.`32000`.PDFDocEncoding.canEncode($0)
         }
         if useDocEnc {
             for scalar in str.value.unicodeScalars {
-                guard let byte = ISO_32000.PDFDocEncoding.encode(scalar) else { continue }
-                if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[byte] {
+                guard let byte = ISO.`32000`.PDFDocEncoding.encode(scalar) else { continue }
+                if let escaped = ISO.`32000`.`7`.`3`.Table.`3`.escapeTable[byte] {
                     buffer.append(contentsOf: escaped)
                 } else {
                     buffer.append(byte)
@@ -869,7 +869,7 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
             for codeUnit in str.value.utf16 {
 
                 for byte in codeUnit.bytes(endianness: .big) {
-                    if let escaped = ISO_32000.`7`.`3`.Table.`3`.escapeTable[byte] {
+                    if let escaped = ISO.`32000`.`7`.`3`.Table.`3`.escapeTable[byte] {
                         buffer.append(contentsOf: escaped)
                     } else {
                         buffer.append(byte)
@@ -881,7 +881,7 @@ extension ISO_32000.`7`.`3`.COS.StringValue: Binary.Serializable {
     }
 }
 
-extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.`8`.Stream: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ stream: Self,
@@ -889,7 +889,7 @@ extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
     ) where Buffer.Element == Byte {
         var dict = stream.dictionary
         dict[.length] = .integer(Int64(stream.data.count))
-        ISO_32000.`7`.`3`.COS.Dictionary.serialize(dict, into: &buffer)
+        ISO.`32000`.`7`.`3`.COS.Dictionary.serialize(dict, into: &buffer)
 
         buffer.append(contentsOf: "\nstream\n".utf8.map(Byte.init(bitPattern:)))
         buffer.append(contentsOf: stream.data)
@@ -897,7 +897,7 @@ extension ISO_32000.`7`.`3`.`8`.Stream: Binary.Serializable {
     }
 }
 
-extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
+extension ISO.`32000`.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
         _ ref: Self,
@@ -909,21 +909,21 @@ extension ISO_32000.`7`.`3`.`10`.IndirectReference: Binary.Serializable {
 
 extension Double {
 
-    public var pdf: ISO_32000.`7`.`3`.`3`.PDFNumber {
-        ISO_32000.`7`.`3`.`3`.PDFNumber(value: self)
+    public var pdf: ISO.`32000`.`7`.`3`.`3`.PDFNumber {
+        ISO.`32000`.`7`.`3`.`3`.PDFNumber(value: self)
     }
 }
 
-extension ISO_32000.`7`.`3`.`3` {
+extension ISO.`32000`.`7`.`3`.`3` {
 
     public struct PDFNumber: Sendable, Binary.Serializable {
         public let value: Double
     }
 }
 
-extension ISO_32000.`7`.`3`.`3`.PDFNumber {
+extension ISO.`32000`.`7`.`3`.`3`.PDFNumber {
     public static func serialize<Buffer>(
-        _ number: ISO_32000_Shared::ISO_32000.`7`.`3`.`3`.PDFNumber,
+        _ number: ISO.`32000`.`7`.`3`.`3`.PDFNumber,
         into buffer: inout Buffer
     ) where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         serializeReal(number.value, into: &buffer)

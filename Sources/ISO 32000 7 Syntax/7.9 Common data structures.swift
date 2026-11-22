@@ -1,16 +1,16 @@
 public import ISO_32000_Shared
 
-extension ISO_32000.`7` {
+extension ISO.`32000`.`7` {
 
     public enum `9` {}
 }
 
-extension ISO_32000.`7`.`9` {
+extension ISO.`32000`.`7`.`9` {
 
     public enum `4` {}
 }
 
-extension ISO_32000.`7`.`9`.`4` {
+extension ISO.`32000`.`7`.`9`.`4` {
 
     public struct Date: Sendable, Hashable {
         public var year: Int
@@ -38,7 +38,7 @@ extension ISO_32000.`7`.`9`.`4` {
     }
 }
 
-extension ISO_32000.`7`.`9`.`4`.Date: CustomStringConvertible {
+extension ISO.`32000`.`7`.`9`.`4`.Date: CustomStringConvertible {
 
     public var description: Swift::String {
         func pad(_ value: Int, width: Int) -> Swift::String {
@@ -53,7 +53,7 @@ extension ISO_32000.`7`.`9`.`4`.Date: CustomStringConvertible {
     }
 }
 
-extension ISO_32000.`7`.`9` {
+extension ISO.`32000`.`7`.`9` {
 
     public enum `5` {}
 }

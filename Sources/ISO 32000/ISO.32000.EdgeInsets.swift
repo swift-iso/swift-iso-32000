@@ -1,0 +1,5 @@
+import ISO_32000_8_Graphics
+
+extension ISO.`32000` {
+    public typealias EdgeInsets = ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Insets
+}

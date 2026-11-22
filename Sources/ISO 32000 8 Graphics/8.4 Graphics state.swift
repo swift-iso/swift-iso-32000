@@ -4,23 +4,23 @@ public import Interval
 public import Numeric
 import Quantizer
 
-extension ISO_32000.`8` {
+extension ISO.`32000`.`8` {
     public enum `4` {}
 }
 
-extension ISO_32000.`8`.`4` {
+extension ISO.`32000`.`8`.`4` {
     public enum Graphics {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics {
+extension ISO.`32000`.`8`.`4`.Graphics {
     public enum State {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public enum Line {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Line {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Line {
     public enum Cap: Int, Sendable, Codable, Hashable, CaseIterable {
         case butt = 0
 
@@ -30,7 +30,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Line {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Line {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Line {
     public enum Join: Int, Sendable, Codable, Hashable, CaseIterable {
         case miter = 0
 
@@ -40,11 +40,11 @@ extension ISO_32000.`8`.`4`.Graphics.State.Line {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Line {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Line {
     public enum Dash {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash {
     public struct Pattern: Sendable, Codable, Hashable {
         public var array: [Double]
 
@@ -57,18 +57,18 @@ extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern {
-    public static let solid = ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern(
+extension ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash.Pattern {
+    public static let solid = ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash.Pattern(
         array: [],
         phase: 0
     )
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public enum Rendering {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Rendering {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Rendering {
     public enum Intent: String, Sendable, Codable, Hashable, CaseIterable {
         case relativeColorimetric = "RelativeColorimetric"
 
@@ -80,7 +80,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Rendering {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public struct BlackPoint {
         public var compensation: Compensation
 
@@ -90,7 +90,7 @@ extension ISO_32000.`8`.`4`.Graphics.State {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.BlackPoint {
+extension ISO.`32000`.`8`.`4`.Graphics.State.BlackPoint {
     public enum Compensation: String, Sendable, Codable, Hashable, CaseIterable {
         case off = "OFF"
 
@@ -100,7 +100,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.BlackPoint {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public struct Blend {
         public var mode: Blend.Mode
 
@@ -112,7 +112,7 @@ extension ISO_32000.`8`.`4`.Graphics.State {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Blend {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Blend {
     public enum Mode: String, Sendable, Codable, Hashable, CaseIterable {
         case normal = "Normal"
 
@@ -148,48 +148,48 @@ extension ISO_32000.`8`.`4`.Graphics.State.Blend {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public enum Device {}
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device {
     public struct Combined<TextState: Sendable>: Sendable {
         public var independent: Independent<TextState>
         public var dependent: Dependent
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device {
     public struct Independent<TextState: Sendable>: Sendable {
-        public var ctm: ISO_32000.Transform<ISO_32000_Shared::UserSpace>
+        public var ctm: ISO.`32000`.Transform<ISO_32000_Shared::UserSpace>
 
-        public var strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace
+        public var strokingColorSpace: ISO.`32000`.`8`.`4`.Graphics.State.ColorSpace
 
-        public var nonstrokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace
+        public var nonstrokingColorSpace: ISO.`32000`.`8`.`4`.Graphics.State.ColorSpace
 
-        public var strokingColor: ISO_32000.`8`.`4`.Graphics.State.Color
+        public var strokingColor: ISO.`32000`.`8`.`4`.Graphics.State.Color
 
-        public var nonstrokingColor: ISO_32000.`8`.`4`.Graphics.State.Color
+        public var nonstrokingColor: ISO.`32000`.`8`.`4`.Graphics.State.Color
 
         public var textState: TextState
 
-        public var lineWidth: ISO_32000.UserSpace.Width
+        public var lineWidth: ISO.`32000`.UserSpace.Width
 
-        public var lineCap: ISO_32000.`8`.`4`.Graphics.State.Line.Cap
+        public var lineCap: ISO.`32000`.`8`.`4`.Graphics.State.Line.Cap
 
-        public var lineJoin: ISO_32000.`8`.`4`.Graphics.State.Line.Join
+        public var lineJoin: ISO.`32000`.`8`.`4`.Graphics.State.Line.Join
 
         public var miterLimit: Scale<1, Double>
 
-        public var dashPattern: ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern
+        public var dashPattern: ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash.Pattern
 
-        public var renderingIntent: ISO_32000.`8`.`4`.Graphics.State.Rendering.Intent
+        public var renderingIntent: ISO.`32000`.`8`.`4`.Graphics.State.Rendering.Intent
 
         public var strokeAdjustment: Bool
 
-        public var blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode
+        public var blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode
 
-        public var softMask: ISO_32000.`8`.`4`.Graphics.State.SoftMask?
+        public var softMask: ISO.`32000`.`8`.`4`.Graphics.State.SoftMask?
 
         public var strokingAlphaConstant: Opacity<Double>
 
@@ -197,29 +197,29 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
 
         public var alphaSource: Bool
 
-        public var blackPointCompensation: ISO_32000.`8`.`4`.Graphics.State.BlackPoint.Compensation
+        public var blackPointCompensation: ISO.`32000`.`8`.`4`.Graphics.State.BlackPoint.Compensation
 
         public init(
-            ctm: ISO_32000.Transform<ISO_32000_Shared::UserSpace> = .identity,
-            strokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
-            nonstrokingColorSpace: ISO_32000.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
-            strokingColor: ISO_32000.`8`.`4`.Graphics.State.Color = .gray(0),
-            nonstrokingColor: ISO_32000.`8`.`4`.Graphics.State.Color = .gray(0),
+            ctm: ISO.`32000`.Transform<ISO_32000_Shared::UserSpace> = .identity,
+            strokingColorSpace: ISO.`32000`.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
+            nonstrokingColorSpace: ISO.`32000`.`8`.`4`.Graphics.State.ColorSpace = .deviceGray,
+            strokingColor: ISO.`32000`.`8`.`4`.Graphics.State.Color = .gray(0),
+            nonstrokingColor: ISO.`32000`.`8`.`4`.Graphics.State.Color = .gray(0),
             textState: TextState,
-            lineWidth: ISO_32000.UserSpace.Width = .init(1),
-            lineCap: ISO_32000.`8`.`4`.Graphics.State.Line.Cap = .butt,
-            lineJoin: ISO_32000.`8`.`4`.Graphics.State.Line.Join = .miter,
+            lineWidth: ISO.`32000`.UserSpace.Width = .init(1),
+            lineCap: ISO.`32000`.`8`.`4`.Graphics.State.Line.Cap = .butt,
+            lineJoin: ISO.`32000`.`8`.`4`.Graphics.State.Line.Join = .miter,
             miterLimit: Scale<1, Double> = .init(10),
-            dashPattern: ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern = .solid,
-            renderingIntent: ISO_32000.`8`.`4`.Graphics.State.Rendering.Intent =
+            dashPattern: ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash.Pattern = .solid,
+            renderingIntent: ISO.`32000`.`8`.`4`.Graphics.State.Rendering.Intent =
                 .relativeColorimetric,
             strokeAdjustment: Bool = false,
-            blendMode: ISO_32000.`8`.`4`.Graphics.State.Blend.Mode = .normal,
-            softMask: ISO_32000.`8`.`4`.Graphics.State.SoftMask? = nil,
+            blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode = .normal,
+            softMask: ISO.`32000`.`8`.`4`.Graphics.State.SoftMask? = nil,
             strokingAlphaConstant: Opacity<Double> = .one,
             nonstrokingAlphaConstant: Opacity<Double> = .one,
             alphaSource: Bool = false,
-            blackPointCompensation: ISO_32000.`8`.`4`.Graphics.State.BlackPoint.Compensation =
+            blackPointCompensation: ISO.`32000`.`8`.`4`.Graphics.State.BlackPoint.Compensation =
                 .default
         ) {
             self.ctm = ctm
@@ -245,7 +245,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device {
     public struct Dependent: Sendable {
         public var strokingOverprint: Bool
 
@@ -253,16 +253,16 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
 
         public var overprintMode: Int
 
-        public var blackGeneration: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault
+        public var blackGeneration: ISO.`32000`.`8`.`4`.Graphics.State.FunctionOrDefault
 
-        public var undercolorRemoval: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault
+        public var undercolorRemoval: ISO.`32000`.`8`.`4`.Graphics.State.FunctionOrDefault
 
         @available(*, deprecated, message: "Deprecated in PDF 2.0")
-        public var transfer: ISO_32000.`8`.`4`.Graphics.State.FunctionOrDefault = .default
+        public var transfer: ISO.`32000`.`8`.`4`.Graphics.State.FunctionOrDefault = .default
 
-        public var halftone: ISO_32000.`8`.`4`.Graphics.State.HalftoneOrDefault
+        public var halftone: ISO.`32000`.`8`.`4`.Graphics.State.HalftoneOrDefault
 
-        public var halftoneOrigin: ISO_32000.`8`.`3`.`2`.`3`.UserSpace.Coordinate?
+        public var halftoneOrigin: ISO.`32000`.`8`.`3`.`2`.`3`.UserSpace.Coordinate?
 
         public var flatness: Double
 
@@ -282,7 +282,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Device {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public enum FunctionOrDefault: Sendable, Hashable {
         case `default`
 
@@ -374,13 +374,13 @@ extension ISO_32000.`8`.`4`.Graphics.State {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Color {
-    public static let black = ISO_32000.`8`.`4`.Graphics.State.Color.gray(0)
+extension ISO.`32000`.`8`.`4`.Graphics.State.Color {
+    public static let black = ISO.`32000`.`8`.`4`.Graphics.State.Color.gray(0)
 
-    public static let white = ISO_32000.`8`.`4`.Graphics.State.Color.gray(1)
+    public static let white = ISO.`32000`.`8`.`4`.Graphics.State.Color.gray(1)
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State {
+extension ISO.`32000`.`8`.`4`.Graphics.State {
     public struct Stack<State: Sendable>: Sendable {
         private var states: [State]
 
@@ -390,7 +390,7 @@ extension ISO_32000.`8`.`4`.Graphics.State {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Stack {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Stack {
     public var current: State {
         get { states[states.count - 1] }
         set { states[states.count - 1] = newValue }
@@ -420,7 +420,7 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
     }
 }
 
-extension ISO_32000.`8`.`4` {
+extension ISO.`32000`.`8`.`4` {
     public enum Operator: Sendable, Hashable {
         case q
 
@@ -446,27 +446,27 @@ extension ISO_32000.`8`.`4` {
     }
 }
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device.Independent: Equatable
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent: Equatable
 where TextState: Equatable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device.Dependent: Equatable {}
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device.Dependent: Equatable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Stack: Equatable
+extension ISO.`32000`.`8`.`4`.Graphics.State.Stack: Equatable
 where State: Equatable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device.Independent: Hashable
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent: Hashable
 where TextState: Hashable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Device.Dependent: Hashable {}
+extension ISO.`32000`.`8`.`4`.Graphics.State.Device.Dependent: Hashable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Stack: Hashable
+extension ISO.`32000`.`8`.`4`.Graphics.State.Stack: Hashable
 where State: Hashable {}
 
-extension ISO_32000.`8`.`4`.Graphics.State.Stack {
+extension ISO.`32000`.`8`.`4`.Graphics.State.Stack {
     @inlinable
     public mutating func concatenate<TextState>(
-        _ transform: ISO_32000.Transform<ISO_32000_Shared::UserSpace>
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ transform: ISO.`32000`.Transform<ISO_32000_Shared::UserSpace>
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         precondition(
             transform[2, 0] == 0 && transform[2, 1] == 0 && transform[2, 2] == 1,
             "PDF requires an affine homogeneous matrix"
@@ -476,24 +476,24 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
 
     @inlinable
     public mutating func translate<TextState>(
-        dx: ISO_32000.UserSpace.Dx,
-        dy: ISO_32000.UserSpace.Dy
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        dx: ISO.`32000`.UserSpace.Dx,
+        dy: ISO.`32000`.UserSpace.Dy
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         concatenate(.init(rows: [[1, 0, dx.underlying], [0, 1, dy.underlying], [0, 0, 1]]))
     }
 
     @inlinable
     public mutating func scale<TextState>(
-        x: ISO_32000.UserSpace.X,
-        y: ISO_32000.UserSpace.Y
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        x: ISO.`32000`.UserSpace.X,
+        y: ISO.`32000`.UserSpace.Y
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         concatenate(.init(rows: [[x.underlying, 0, 0], [0, y.underlying, 0], [0, 0, 1]]))
     }
 
     @inlinable
     public mutating func rotate<TextState>(
         _ angle: Radian<Double>
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         let c = angle.cos.value
         let s = angle.sin.value
         concatenate(.init(rows: [[c, -s, 0], [s, c, 0], [0, 0, 1]]))
@@ -501,43 +501,43 @@ extension ISO_32000.`8`.`4`.Graphics.State.Stack {
 
     @inlinable
     public mutating func setFillColor<TextState>(
-        _ color: ISO_32000.`8`.`4`.Graphics.State.Color
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ color: ISO.`32000`.`8`.`4`.Graphics.State.Color
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.nonstrokingColor = color
     }
 
     @inlinable
     public mutating func setStrokeColor<TextState>(
-        _ color: ISO_32000.`8`.`4`.Graphics.State.Color
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ color: ISO.`32000`.`8`.`4`.Graphics.State.Color
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.strokingColor = color
     }
 
     @inlinable
     public mutating func setLineWidth<TextState>(
-        _ width: ISO_32000.UserSpace.Width
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ width: ISO.`32000`.UserSpace.Width
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.lineWidth = width
     }
 
     @inlinable
     public mutating func setLineCap<TextState>(
-        _ cap: ISO_32000.`8`.`4`.Graphics.State.Line.Cap
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ cap: ISO.`32000`.`8`.`4`.Graphics.State.Line.Cap
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.lineCap = cap
     }
 
     @inlinable
     public mutating func setLineJoin<TextState>(
-        _ join: ISO_32000.`8`.`4`.Graphics.State.Line.Join
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ join: ISO.`32000`.`8`.`4`.Graphics.State.Line.Join
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.lineJoin = join
     }
 
     @inlinable
     public mutating func setDashPattern<TextState>(
-        _ pattern: ISO_32000.`8`.`4`.Graphics.State.Line.Dash.Pattern
-    ) where State == ISO_32000.`8`.`4`.Graphics.State.Device.Independent<TextState> {
+        _ pattern: ISO.`32000`.`8`.`4`.Graphics.State.Line.Dash.Pattern
+    ) where State == ISO.`32000`.`8`.`4`.Graphics.State.Device.Independent<TextState> {
         current.dashPattern = pattern
     }
 

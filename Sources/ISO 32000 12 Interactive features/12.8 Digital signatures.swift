@@ -2,17 +2,17 @@ public import Byte
 public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `8` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum DigitalSignature {}
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct SignatureDictionary: Sendable, Hashable {
 
@@ -34,7 +34,7 @@ extension ISO_32000.DigitalSignature {
 
         public var name: String?
 
-        public var signingTime: ISO_32000.`7`.`9`.`4`.Date?
+        public var signingTime: ISO.`32000`.`7`.`9`.`4`.Date?
 
         public var location: String?
 
@@ -62,7 +62,7 @@ extension ISO_32000.DigitalSignature {
             reference: [SignatureReference]? = nil,
             changes: Changes? = nil,
             name: String? = nil,
-            signingTime: ISO_32000.`7`.`9`.`4`.Date? = nil,
+            signingTime: ISO.`32000`.`7`.`9`.`4`.Date? = nil,
             location: String? = nil,
             reason: String? = nil,
             contactInfo: String? = nil,
@@ -94,7 +94,7 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureDictionary {
+extension ISO.`32000`.DigitalSignature.SignatureDictionary {
 
     public enum PDFKey: String, CodingKey {
         case type = "Type"
@@ -118,7 +118,7 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureDictionary {
+extension ISO.`32000`.DigitalSignature.SignatureDictionary {
 
     public enum DictionaryType: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -176,7 +176,7 @@ extension ISO_32000.DigitalSignature.SignatureDictionary {
     }
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct SignatureReference: Sendable, Hashable {
 
@@ -202,7 +202,7 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference {
+extension ISO.`32000`.DigitalSignature.SignatureReference {
 
     public enum TransformMethod: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -235,7 +235,7 @@ extension ISO_32000.DigitalSignature.SignatureReference {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference {
+extension ISO.`32000`.DigitalSignature.SignatureReference {
 
     public struct DocMDPParams: Sendable, Hashable {
 
@@ -257,7 +257,7 @@ extension ISO_32000.DigitalSignature.SignatureReference {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.DocMDPParams {
+extension ISO.`32000`.DigitalSignature.SignatureReference.DocMDPParams {
 
     public enum Permission: Int, Sendable, Hashable, Codable, CaseIterable {
 
@@ -269,7 +269,7 @@ extension ISO_32000.DigitalSignature.SignatureReference.DocMDPParams {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference {
+extension ISO.`32000`.DigitalSignature.SignatureReference {
 
     public struct URParams: Sendable, Hashable {
 
@@ -315,7 +315,7 @@ extension ISO_32000.DigitalSignature.SignatureReference {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams {
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams {
 
     public struct DocumentRights: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -343,87 +343,87 @@ extension ISO_32000.DigitalSignature.SignatureReference.URParams {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams.DocumentRights {
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams.DocumentRights {
 
-    public static let fullSave = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let fullSave = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .DocumentRights(rawValue: 1 << 0)
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights {
-    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights {
+    public static let create = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 0
     )
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let delete = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 1
     )
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let modify = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 2
     )
-    public static let copy = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let copy = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 3
     )
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let `import` = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 4
     )
-    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let export = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 5
     )
 
-    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.AnnotRights(
+    public static let online = ISO.`32000`.DigitalSignature.SignatureReference.URParams.AnnotRights(
         rawValue: 1 << 6
     )
 
-    public static let summaryView = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let summaryView = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .AnnotRights(rawValue: 1 << 7)
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights {
-    public static let add = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights {
+    public static let add = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 0
     )
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+    public static let delete = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 1
     )
-    public static let fillIn = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+    public static let fillIn = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 2
     )
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+    public static let `import` = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 3
     )
-    public static let export = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+    public static let export = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 4
     )
-    public static let submitStandalone = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let submitStandalone = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .FormRights(rawValue: 1 << 5)
-    public static let spawnTemplate = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let spawnTemplate = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .FormRights(rawValue: 1 << 6)
 
-    public static let barcodePlaintext = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let barcodePlaintext = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .FormRights(rawValue: 1 << 7)
 
-    public static let online = ISO_32000.DigitalSignature.SignatureReference.URParams.FormRights(
+    public static let online = ISO.`32000`.DigitalSignature.SignatureReference.URParams.FormRights(
         rawValue: 1 << 8
     )
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams.SignatureRights {
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams.SignatureRights {
 
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let modify = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .SignatureRights(rawValue: 1 << 0)
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights {
-    public static let create = ISO_32000.DigitalSignature.SignatureReference.URParams
+extension ISO.`32000`.DigitalSignature.SignatureReference.URParams.EmbeddedFileRights {
+    public static let create = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .EmbeddedFileRights(rawValue: 1 << 0)
-    public static let delete = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let delete = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .EmbeddedFileRights(rawValue: 1 << 1)
-    public static let modify = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let modify = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .EmbeddedFileRights(rawValue: 1 << 2)
-    public static let `import` = ISO_32000.DigitalSignature.SignatureReference.URParams
+    public static let `import` = ISO.`32000`.DigitalSignature.SignatureReference.URParams
         .EmbeddedFileRights(rawValue: 1 << 3)
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference {
+extension ISO.`32000`.DigitalSignature.SignatureReference {
 
     public struct FieldMDPParams: Sendable, Hashable {
 
@@ -449,7 +449,7 @@ extension ISO_32000.DigitalSignature.SignatureReference {
     }
 }
 
-extension ISO_32000.DigitalSignature.SignatureReference.FieldMDPParams {
+extension ISO.`32000`.DigitalSignature.SignatureReference.FieldMDPParams {
 
     public enum Action: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -461,7 +461,7 @@ extension ISO_32000.DigitalSignature.SignatureReference.FieldMDPParams {
     }
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct DSS: Sendable, Hashable {
 
@@ -487,7 +487,7 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct VRI: Sendable, Hashable {
 
@@ -497,7 +497,7 @@ extension ISO_32000.DigitalSignature {
 
         public var ocsp: [Int]?
 
-        public var createdTime: ISO_32000.`7`.`9`.`4`.Date?
+        public var createdTime: ISO.`32000`.`7`.`9`.`4`.Date?
 
         public var timestamp: Int?
 
@@ -505,7 +505,7 @@ extension ISO_32000.DigitalSignature {
             cert: [Int]? = nil,
             crl: [Int]? = nil,
             ocsp: [Int]? = nil,
-            createdTime: ISO_32000.`7`.`9`.`4`.Date? = nil,
+            createdTime: ISO.`32000`.`7`.`9`.`4`.Date? = nil,
             timestamp: Int? = nil
         ) {
             self.cert = cert
@@ -517,7 +517,7 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.DigitalSignature.VRI {
+extension ISO.`32000`.DigitalSignature.VRI {
 
     public enum PDFKey: String, CodingKey {
         case cert = "Cert"
@@ -528,7 +528,7 @@ extension ISO_32000.DigitalSignature.VRI {
     }
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct Permissions: Sendable, Hashable {
 
@@ -546,7 +546,7 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.DigitalSignature {
+extension ISO.`32000`.DigitalSignature {
 
     public struct LegalAttestation: Sendable, Hashable {
 
@@ -644,17 +644,17 @@ extension ISO_32000.DigitalSignature {
     }
 }
 
-extension ISO_32000.`12`.`8` {
+extension ISO.`32000`.`12`.`8` {
 
-    public typealias SignatureDictionary = ISO_32000.DigitalSignature.SignatureDictionary
+    public typealias SignatureDictionary = ISO.`32000`.DigitalSignature.SignatureDictionary
 
-    public typealias SignatureReference = ISO_32000.DigitalSignature.SignatureReference
+    public typealias SignatureReference = ISO.`32000`.DigitalSignature.SignatureReference
 
-    public typealias DSS = ISO_32000.DigitalSignature.DSS
+    public typealias DSS = ISO.`32000`.DigitalSignature.DSS
 
-    public typealias VRI = ISO_32000.DigitalSignature.VRI
+    public typealias VRI = ISO.`32000`.DigitalSignature.VRI
 
-    public typealias Permissions = ISO_32000.DigitalSignature.Permissions
+    public typealias Permissions = ISO.`32000`.DigitalSignature.Permissions
 
-    public typealias LegalAttestation = ISO_32000.DigitalSignature.LegalAttestation
+    public typealias LegalAttestation = ISO.`32000`.DigitalSignature.LegalAttestation
 }

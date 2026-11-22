@@ -3,47 +3,47 @@ public import IEC_61966
 import ISO_32000_8_Graphics
 public import ISO_32000_Shared
 
-extension ISO_32000.`12` {
+extension ISO.`32000`.`12` {
 
     public enum `3` {}
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Destination: Sendable, Equatable, Hashable {
 
         case xyz(
             page: Int,
-            left: ISO_32000.UserSpace.X?,
-            top: ISO_32000.UserSpace.Y?,
+            left: ISO.`32000`.UserSpace.X?,
+            top: ISO.`32000`.UserSpace.Y?,
             zoom: Double?
         )
 
         case fit(page: Int)
 
-        case fitH(page: Int, top: ISO_32000.UserSpace.Y?)
+        case fitH(page: Int, top: ISO.`32000`.UserSpace.Y?)
 
-        case fitV(page: Int, left: ISO_32000.UserSpace.X?)
+        case fitV(page: Int, left: ISO.`32000`.UserSpace.X?)
 
         case fitR(
             page: Int,
-            left: ISO_32000.UserSpace.X,
-            bottom: ISO_32000.UserSpace.Y,
-            right: ISO_32000.UserSpace.X,
-            top: ISO_32000.UserSpace.Y
+            left: ISO.`32000`.UserSpace.X,
+            bottom: ISO.`32000`.UserSpace.Y,
+            right: ISO.`32000`.UserSpace.X,
+            top: ISO.`32000`.UserSpace.Y
         )
 
         case fitB(page: Int)
 
-        case fitBH(page: Int, top: ISO_32000.UserSpace.Y?)
+        case fitBH(page: Int, top: ISO.`32000`.UserSpace.Y?)
 
-        case fitBV(page: Int, left: ISO_32000.UserSpace.X?)
+        case fitBV(page: Int, left: ISO.`32000`.UserSpace.X?)
 
         case named(String)
     }
 }
 
-extension ISO_32000.Destination {
+extension ISO.`32000`.Destination {
 
     public var pageIndex: Int? {
         switch self {
@@ -60,12 +60,12 @@ extension ISO_32000.Destination {
     }
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public enum Outline {}
 }
 
-extension ISO_32000.Outline {
+extension ISO.`32000`.Outline {
 
     public struct Root: Sendable {
 
@@ -77,7 +77,7 @@ extension ISO_32000.Outline {
     }
 }
 
-extension ISO_32000.Outline.Root {
+extension ISO.`32000`.Outline.Root {
 
     public var count: Int {
         items.reduce(0) { $0 + $1.visibleDescendantCount }
@@ -86,21 +86,21 @@ extension ISO_32000.Outline.Root {
     public var isEmpty: Bool { items.isEmpty }
 }
 
-extension ISO_32000.Outline {
+extension ISO.`32000`.Outline {
 
     public enum Target: Sendable {
 
-        case destination(ISO_32000.Destination)
+        case destination(ISO.`32000`.Destination)
 
-        case uri(ISO_32000.Action.URI)
+        case uri(ISO.`32000`.Action.URI)
 
-        case named(ISO_32000.Action.Named)
+        case named(ISO.`32000`.Action.Named)
 
-        case javaScript(ISO_32000.Action.JavaScript)
+        case javaScript(ISO.`32000`.Action.JavaScript)
     }
 }
 
-extension ISO_32000.Outline {
+extension ISO.`32000`.Outline {
 
     public struct Item: Sendable {
 
@@ -112,7 +112,7 @@ extension ISO_32000.Outline {
 
         public var isOpen: Bool
 
-        public var color: ISO_32000.DeviceRGB?
+        public var color: ISO.`32000`.DeviceRGB?
 
         public var flags: ItemOptions
 
@@ -121,7 +121,7 @@ extension ISO_32000.Outline {
             target: Target? = nil,
             children: [Item] = [],
             isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
+            color: ISO.`32000`.DeviceRGB? = nil,
             flags: ItemOptions = []
         ) {
             self.title = title
@@ -134,10 +134,10 @@ extension ISO_32000.Outline {
 
         public init(
             title: String,
-            destination: ISO_32000.Destination,
+            destination: ISO.`32000`.Destination,
             children: [Item] = [],
             isOpen: Bool = true,
-            color: ISO_32000.DeviceRGB? = nil,
+            color: ISO.`32000`.DeviceRGB? = nil,
             flags: ItemOptions = []
         ) {
             self.init(
@@ -152,7 +152,7 @@ extension ISO_32000.Outline {
     }
 }
 
-extension ISO_32000.Outline.Item {
+extension ISO.`32000`.Outline.Item {
 
     public var visibleDescendantCount: Int {
         guard !children.isEmpty else { return 1 }
@@ -163,7 +163,7 @@ extension ISO_32000.Outline.Item {
     }
 }
 
-extension ISO_32000.Outline {
+extension ISO.`32000`.Outline {
 
     public struct ItemOptions: OptionSet, Sendable, Hashable {
         public let rawValue: Int
@@ -174,14 +174,14 @@ extension ISO_32000.Outline {
     }
 }
 
-extension ISO_32000.Outline.ItemOptions {
+extension ISO.`32000`.Outline.ItemOptions {
 
-    public static let italic = ISO_32000.Outline.ItemOptions(rawValue: 1 << 0)
+    public static let italic = ISO.`32000`.Outline.ItemOptions(rawValue: 1 << 0)
 
-    public static let bold = ISO_32000.Outline.ItemOptions(rawValue: 1 << 1)
+    public static let bold = ISO.`32000`.Outline.ItemOptions(rawValue: 1 << 1)
 }
 
-extension ISO_32000.`12`.`3` {
+extension ISO.`32000`.`12`.`3` {
 
     public struct Collection: Sendable {
 
@@ -247,7 +247,7 @@ extension ISO_32000.`12`.`3` {
     }
 }
 
-extension ISO_32000.`12`.`3` {
+extension ISO.`32000`.`12`.`3` {
 
     public enum NavigatorLayout: String, Sendable, Hashable, Codable, CaseIterable {
 
@@ -267,17 +267,17 @@ extension ISO_32000.`12`.`3` {
     }
 }
 
-extension ISO_32000.Outline {
+extension ISO.`32000`.Outline {
 
     public static func build(
         from headings: [(
             level: Int,
             title: String,
             pageIndex: Int,
-            yPosition: ISO_32000.UserSpace.Y
+            yPosition: ISO.`32000`.UserSpace.Y
         )],
         openToLevel: Int = 1,
-        color: ISO_32000.DeviceRGB? = nil,
+        color: ISO.`32000`.DeviceRGB? = nil,
         flags: ItemOptions = []
     ) -> Root {
         guard !headings.isEmpty else { return Root() }
@@ -286,7 +286,7 @@ extension ISO_32000.Outline {
         var stack: [(level: Int, item: Item)] = []
 
         for heading in headings {
-            let destination = ISO_32000.Destination.xyz(
+            let destination = ISO.`32000`.Destination.xyz(
                 page: heading.pageIndex,
                 left: nil,
                 top: heading.yPosition,
@@ -344,20 +344,20 @@ extension ISO_32000.Outline {
     }
 }
 
-extension ISO_32000.`12`.`3` {
+extension ISO.`32000`.`12`.`3` {
 
-    public typealias OutlineRoot = ISO_32000.Outline.Root
+    public typealias OutlineRoot = ISO.`32000`.Outline.Root
 
-    public typealias OutlineItem = ISO_32000.Outline.Item
+    public typealias OutlineItem = ISO.`32000`.Outline.Item
 
-    public typealias OutlineItemTarget = ISO_32000.Outline.Target
+    public typealias OutlineItemTarget = ISO.`32000`.Outline.Target
 
-    public typealias OutlineItemFlags = ISO_32000.Outline.ItemOptions
+    public typealias OutlineItemFlags = ISO.`32000`.Outline.ItemOptions
 
-    public typealias Destination = ISO_32000.Destination
+    public typealias Destination = ISO.`32000`.Destination
 }
 
-extension ISO_32000 {
+extension ISO.`32000` {
 
     public typealias DeviceRGB = IEC_61966.SRGB
 

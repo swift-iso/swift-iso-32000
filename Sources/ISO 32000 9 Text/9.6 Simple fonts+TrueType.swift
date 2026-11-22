@@ -4,56 +4,56 @@ public import ISO_32000_7_Syntax
 public import ISO_32000_Shared
 import Ownership
 
-extension ISO_32000.`9`.`6` {
+extension ISO.`32000`.`9`.`6` {
 
     public struct Embedded: Sendable {
 
-        public let fontFile: ISO_14496_22.FontFile
+        public let fontFile: ISO.`14496`.`22`.FontFile
 
         public let data: [Byte]
 
         public let postScriptName: String
 
-        public let metrics: ISO_32000.`9`.`8`.Metrics
+        public let metrics: ISO.`32000`.`9`.`8`.Metrics
 
         public let isMonospaced: Bool
 
-        public init(data: [Byte]) throws(ISO_14496_22.FontFile.ParsingError) {
-            let fontFile = try ISO_14496_22.FontFile(data: data)
+        public init(data: [Byte]) throws(ISO.`14496`.`22`.FontFile.ParsingError) {
+            let fontFile = try ISO.`14496`.`22`.FontFile(data: data)
 
             self.fontFile = fontFile
             self.data = data
             self.postScriptName = fontFile.postScriptName
             self.isMonospaced = fontFile.post.isFixedPitch
-            self.metrics = ISO_32000.`9`.`8`.Metrics(fontFile: fontFile)
+            self.metrics = ISO.`32000`.`9`.`8`.Metrics(fontFile: fontFile)
         }
 
     }
 }
 
-extension ISO_32000.`9`.`6`.Embedded {
+extension ISO.`32000`.`9`.`6`.Embedded {
 
-    public func descriptor(fontName: ISO_32000.`7`.`3`.COS.Name) -> ISO_32000.`9`.`8`.Descriptor {
-        ISO_32000.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
+    public func descriptor(fontName: ISO.`32000`.`7`.`3`.COS.Name) -> ISO.`32000`.`9`.`8`.Descriptor {
+        ISO.`32000`.`9`.`8`.Descriptor(fontFile: fontFile, fontName: fontName)
     }
 
     public enum SubsettingError: Swift::Error, Sendable {
 
-        case subset(ISO_14496_22.FontSubsetter.SubsetError)
+        case subset(ISO.`14496`.`22`.FontSubsetter.SubsetError)
 
-        case parsing(ISO_14496_22.FontFile.ParsingError)
+        case parsing(ISO.`14496`.`22`.FontFile.ParsingError)
     }
 
     public func subsetted(for characters: Set<Character>) throws(SubsettingError) -> Self {
-        let subsetter = ISO_14496_22.FontSubsetter(fontFile: fontFile)
+        let subsetter = ISO.`14496`.`22`.FontSubsetter(fontFile: fontFile)
         let subsetData: [Byte]
-        do throws(ISO_14496_22.FontSubsetter.SubsetError) {
+        do throws(ISO.`14496`.`22`.FontSubsetter.SubsetError) {
             subsetData = try subsetter.subset(characters: characters)
         } catch {
             throw .subset(error)
         }
 
-        do throws(ISO_14496_22.FontFile.ParsingError) {
+        do throws(ISO.`14496`.`22`.FontFile.ParsingError) {
             return try Self(data: subsetData)
         } catch {
             throw .parsing(error)
@@ -61,9 +61,9 @@ extension ISO_32000.`9`.`6`.Embedded {
     }
 }
 
-extension ISO_32000.`9`.`8`.Metrics {
+extension ISO.`32000`.`9`.`8`.Metrics {
 
-    public init(fontFile: ISO_14496_22.FontFile) {
+    public init(fontFile: ISO.`14496`.`22`.FontFile) {
 
         var widths: [UInt32: Int] = [:]
 
@@ -96,7 +96,7 @@ extension ISO_32000.`9`.`8`.Metrics {
     }
 }
 
-extension ISO_32000.`9`.`6` {
+extension ISO.`32000`.`9`.`6` {
 
     static func sanitizePostScriptName(_ name: String) -> String {
         var result = ""
@@ -112,19 +112,19 @@ extension ISO_32000.`9`.`6` {
     }
 }
 
-extension ISO_32000.`9`.`6`.Font {
+extension ISO.`32000`.`9`.`6`.Font {
 
     public init(
-        embedded: ISO_32000.`9`.`6`.Embedded,
-        resourceName: ISO_32000.`7`.`3`.COS.Name,
+        embedded: ISO.`32000`.`9`.`6`.Embedded,
+        resourceName: ISO.`32000`.`7`.`3`.COS.Name,
         weight: Weight = .regular,
         style: Style = .normal
-    ) throws(ISO_32000.`7`.`3`.COS.Name.Error) {
+    ) throws(ISO.`32000`.`7`.`3`.COS.Name.Error) {
 
-        let sanitizedName = ISO_32000.`9`.`6`.sanitizePostScriptName(embedded.postScriptName)
+        let sanitizedName = ISO.`32000`.`9`.`6`.sanitizePostScriptName(embedded.postScriptName)
 
         self.init(
-            baseFontName: try ISO_32000.`7`.`3`.COS.Name(sanitizedName),
+            baseFontName: try ISO.`32000`.`7`.`3`.COS.Name(sanitizedName),
             resourceName: resourceName,
             metrics: embedded.metrics,
             isMonospaced: embedded.isMonospaced,
@@ -137,24 +137,24 @@ extension ISO_32000.`9`.`6`.Font {
 
     public enum DataError: Swift::Error, Sendable {
 
-        case parsing(ISO_14496_22.FontFile.ParsingError)
+        case parsing(ISO.`14496`.`22`.FontFile.ParsingError)
 
-        case name(ISO_32000.`7`.`3`.COS.Name.Error)
+        case name(ISO.`32000`.`7`.`3`.COS.Name.Error)
     }
 
     public init(
         data: [Byte],
-        resourceName: ISO_32000.`7`.`3`.COS.Name,
+        resourceName: ISO.`32000`.`7`.`3`.COS.Name,
         weight: Weight = .regular,
         style: Style = .normal
     ) throws(DataError) {
-        let embedded: ISO_32000.`9`.`6`.Embedded
-        do throws(ISO_14496_22.FontFile.ParsingError) {
-            embedded = try ISO_32000.`9`.`6`.Embedded(data: data)
+        let embedded: ISO.`32000`.`9`.`6`.Embedded
+        do throws(ISO.`14496`.`22`.FontFile.ParsingError) {
+            embedded = try ISO.`32000`.`9`.`6`.Embedded(data: data)
         } catch {
             throw .parsing(error)
         }
-        do throws(ISO_32000.`7`.`3`.COS.Name.Error) {
+        do throws(ISO.`32000`.`7`.`3`.COS.Name.Error) {
             try self.init(
                 embedded: embedded,
                 resourceName: resourceName,
