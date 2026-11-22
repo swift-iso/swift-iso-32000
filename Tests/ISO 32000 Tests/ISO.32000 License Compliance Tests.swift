@@ -3,15 +3,13 @@ import Testing
 
 @testable import ISO_32000
 
-enum `ISO.32000 Tests` {}
-
-extension `ISO.32000 Tests` {
-    @Suite struct Tests {
+extension ISO.`32000` {
+    @Suite struct License {
         @Suite struct `Edge Case` {}
     }
 }
 
-extension `ISO.32000 Tests`.Tests.`Edge Case` {
+extension ISO.`32000`.License.`Edge Case` {
     @Test
     func `no verbatim ISO purchase watermark remains anywhere in package sources`() throws {
         let sourcesRoot = try Self.packageSourcesRoot()

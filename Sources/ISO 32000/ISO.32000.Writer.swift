@@ -50,7 +50,7 @@ extension ISO.`32000`.Writer {
         }
 
         var fontRefs: [ISO.`32000`.COS.Name: ISO.`32000`.COS.IndirectReference] = [:]
-        for (name, font) in allFonts.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+        for (name, font) in allFonts.sorted(by: { $0.key < $1.key }) {
             if let embedded = font.embeddedSource {
 
                 let fontRef = writeEmbeddedTrueTypeFont(
@@ -80,7 +80,7 @@ extension ISO.`32000`.Writer {
         }
 
         var imageRefs: [ISO.`32000`.COS.Name: ISO.`32000`.COS.IndirectReference] = [:]
-        for (name, image) in allImages.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+        for (name, image) in allImages.sorted(by: { $0.key < $1.key }) {
             let objNum = state.nextObjectNumber()
             imageRefs[name] = ISO.`32000`.COS.IndirectReference(objectNumber: objNum)
 
@@ -218,7 +218,7 @@ extension ISO.`32000`.Writer {
                     annotDict[.nonStrokingAlpha] = .real(fillOpacity)
                 }
                 if let blendMode = annotation.blendMode {
-                    annotDict[.bm] = .name(Self.name(blendMode.rawValue))
+                    annotDict[.bm] = .name(Self.name(blendMode))
                 }
                 if let language = annotation.language {
                     annotDict[.lang] = .string(ISO.`32000`.COS.StringValue(language.value))
@@ -251,7 +251,7 @@ extension ISO.`32000`.Writer {
                     }
 
                     if link.highlightMode != .invert {
-                        annotDict[.h] = .name(Self.name(link.highlightMode.rawValue))
+                        annotDict[.h] = .name(Self.name(link.highlightMode))
                     }
                     if let quadPoints = link.quadPoints {
                         annotDict[.quadPoints] = .array(
@@ -318,7 +318,7 @@ extension ISO.`32000`.Writer {
             if !resources.fonts.isEmpty {
                 var fontResourceDict = ISO.`32000`.COS.Dictionary()
                 for name in resources.fonts.keys
-                    .sorted(by: { $0.rawValue < $1.rawValue })
+                    .sorted()
                 {
                     if let ref = fontRefs[name] {
                         fontResourceDict[name] = .reference(ref)
@@ -330,7 +330,7 @@ extension ISO.`32000`.Writer {
             if !resources.xObjects.isEmpty {
                 var xObjectDict = ISO.`32000`.COS.Dictionary()
                 for name in resources.xObjects.keys
-                    .sorted(by: { $0.rawValue < $1.rawValue })
+                    .sorted()
                 {
                     if let ref = imageRefs[name] {
                         xObjectDict[name] = .reference(ref)
@@ -643,7 +643,7 @@ extension ISO.`32000`.Writer {
                 case .named(let action):
                     var actionDict = ISO.`32000`.COS.Dictionary()
                     actionDict[.s] = .name(.named)
-                    actionDict[.n] = .name(Self.name(action.name.rawValue))
+                    actionDict[.n] = .name(Self.name(action.name))
                     itemDict[.a] = .dictionary(actionDict)
 
                 case .javaScript(let action):
@@ -696,20 +696,21 @@ extension ISO.`32000`.Writer {
         for (key, value, fallback) in flags where value != fallback {
             dict[key] = .boolean(value)
         }
-        let names: [(ISO.`32000`.COS.Name, String, String)] = [
-            (.nonFullScreenPageMode, viewer.nonFullScreenPageMode.rawValue, defaults.nonFullScreenPageMode.rawValue),
-            (.direction, viewer.direction.rawValue, defaults.direction.rawValue),
-            (.viewArea, viewer.view.area.rawValue, defaults.view.area.rawValue),
-            (.viewClip, viewer.view.clip.rawValue, defaults.view.clip.rawValue),
-            (.printArea, viewer.print.area.rawValue, defaults.print.area.rawValue),
-            (.printClip, viewer.print.clip.rawValue, defaults.print.clip.rawValue),
-            (.printScaling, viewer.print.scaling.rawValue, defaults.print.scaling.rawValue),
-        ]
-        for (key, value, fallback) in names where value != fallback {
-            dict[key] = .name(Self.name(value))
+        func put<Value: RawRepresentable & Equatable>(_ key: ISO.`32000`.COS.Name, _ value: Value, _ fallback: Value)
+        where Value.RawValue == String {
+            if value != fallback {
+                dict[key] = .name(Self.name(value))
+            }
         }
+        put(.nonFullScreenPageMode, viewer.nonFullScreenPageMode, defaults.nonFullScreenPageMode)
+        put(.direction, viewer.direction, defaults.direction)
+        put(.viewArea, viewer.view.area, defaults.view.area)
+        put(.viewClip, viewer.view.clip, defaults.view.clip)
+        put(.printArea, viewer.print.area, defaults.print.area)
+        put(.printClip, viewer.print.clip, defaults.print.clip)
+        put(.printScaling, viewer.print.scaling, defaults.print.scaling)
         if let duplex = viewer.print.duplex {
-            dict[.duplex] = .name(Self.name(duplex.rawValue))
+            dict[.duplex] = .name(Self.name(duplex))
         }
         if let pickTray = viewer.print.pickTrayByPDFSize {
             dict[.pickTrayByPDFSize] = .boolean(pickTray)
@@ -723,7 +724,7 @@ extension ISO.`32000`.Writer {
             dict[.numCopies] = .integer(Int64(copies))
         }
         if !viewer.enforce.isEmpty {
-            dict[.enforce] = .array(viewer.enforce.map { .name(Self.name($0.rawValue)) })
+            dict[.enforce] = .array(viewer.enforce.map { .name(Self.name($0)) })
         }
         return dict
     }
@@ -831,8 +832,13 @@ extension ISO.`32000`.Writer {
         return .reference(ISO.`32000`.COS.IndirectReference(objectNumber: objectNumber))
     }
 
+    private static func name<Value: RawRepresentable>(_ value: Value) -> ISO.`32000`.COS.Name
+    where Value.RawValue == String {
+        name(value.rawValue)
+    }
+
     private static func name(_ rawValue: String) -> ISO.`32000`.COS.Name {
-        do {
+        do throws(ISO.`32000`.COS.Name.Error) {
             return try ISO.`32000`.COS.Name(rawValue)
         } catch {
             preconditionFailure("A viewer preference or named action raw value is a valid PDF name: \(error)")
