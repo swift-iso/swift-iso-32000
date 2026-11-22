@@ -1070,9 +1070,9 @@ extension ISO.`32000`.Writer {
             for (charCode, unicodeValue) in group {
 
                 var charCodeHex: [ASCII.Code] = []
-                RFC_4648.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
+                IETF.RFC.`4648`.Base16.encode(UInt8(charCode), into: &charCodeHex, uppercase: true)
                 var unicodeHex: [ASCII.Code] = []
-                RFC_4648.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
+                IETF.RFC.`4648`.Base16.encode(UInt16(unicodeValue), into: &unicodeHex, uppercase: true)
                 cmap +=
                     "<\(String(decoding: charCodeHex.map(\.underlying), as: UTF8.self))> <\(String(decoding: unicodeHex.map(\.underlying), as: UTF8.self))>\n"
             }

@@ -98,11 +98,11 @@ extension ISO.`32000`.Action {
 
     public struct URI: Sendable, Equatable, Hashable {
 
-        public var uri: RFC_3986.URI
+        public var uri: IETF.RFC.`3986`.URI
 
         public var isMap: Bool
 
-        public init(uri: RFC_3986.URI, isMap: Bool = false) {
+        public init(uri: IETF.RFC.`3986`.URI, isMap: Bool = false) {
             self.uri = uri
             self.isMap = isMap
         }

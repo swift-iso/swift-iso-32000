@@ -550,13 +550,13 @@ extension ISO.`32000`.Form.Field.Signature.SeedValue {
 
         public var oid: [String]?
 
-        public var url: RFC_3986.URI?
+        public var url: IETF.RFC.`3986`.URI?
 
         public init(
             subject: [String]? = nil,
             issuer: [String]? = nil,
             oid: [String]? = nil,
-            url: RFC_3986.URI? = nil
+            url: IETF.RFC.`3986`.URI? = nil
         ) {
             self.subject = subject
             self.issuer = issuer
@@ -628,13 +628,13 @@ extension ISO.`32000`.Form {
 
     public struct SubmitForm: Sendable, Hashable {
 
-        public var url: RFC_3986.URI
+        public var url: IETF.RFC.`3986`.URI
 
         public var fields: [String]?
 
         public var flags: SubmitOptions
 
-        public init(url: RFC_3986.URI, fields: [String]? = nil, flags: SubmitOptions = []) {
+        public init(url: IETF.RFC.`3986`.URI, fields: [String]? = nil, flags: SubmitOptions = []) {
             self.url = url
             self.fields = fields
             self.flags = flags

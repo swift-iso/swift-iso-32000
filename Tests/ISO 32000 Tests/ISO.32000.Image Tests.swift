@@ -29,8 +29,8 @@ struct `ISO.32000.Image Tests` {
         let image = try ISO.`32000`.Image(png: Self.rgba)
         let softMask = try #require(image.softMask)
 
-        #expect(try RFC_1950.decompress(image.data) == [255, 0, 0, 0, 255, 0].map(Byte.init(bitPattern:)))
-        #expect(try RFC_1950.decompress(softMask) == [128, 255].map(Byte.init(bitPattern:)))
+        #expect(try IETF.RFC.`1950`.decompress(image.data) == [255, 0, 0, 0, 255, 0].map(Byte.init(bitPattern:)))
+        #expect(try IETF.RFC.`1950`.decompress(softMask) == [128, 255].map(Byte.init(bitPattern:)))
     }
 
     @Test
@@ -39,8 +39,8 @@ struct `ISO.32000.Image Tests` {
         let softMask = try #require(image.softMask)
 
         #expect(image.colorSpace == .deviceGray)
-        #expect(try RFC_1950.decompress(image.data) == [10, 30].map(Byte.init(bitPattern:)))
-        #expect(try RFC_1950.decompress(softMask) == [20, 40].map(Byte.init(bitPattern:)))
+        #expect(try IETF.RFC.`1950`.decompress(image.data) == [10, 30].map(Byte.init(bitPattern:)))
+        #expect(try IETF.RFC.`1950`.decompress(softMask) == [20, 40].map(Byte.init(bitPattern:)))
     }
 
     @Test

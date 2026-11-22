@@ -90,7 +90,7 @@ struct `ISO.32000.Writer Structure Tests` {
         let link = ISO.`32000`.Annotation(
             rect: .letter,
             content: .link(
-                ISO.`32000`.Annotation.Link(uri: try RFC_3986.URI("https://example.com"), highlightMode: .outline)
+                ISO.`32000`.Annotation.Link(uri: try IETF.RFC.`3986`.URI("https://example.com"), highlightMode: .outline)
             ),
             contents: "Example",
             name: "link-1",
@@ -199,7 +199,7 @@ struct `ISO.32000.Writer Structure Tests` {
         let items = [
             ISO.`32000`.Outline.Item(
                 title: "Site",
-                target: .uri(ISO.`32000`.Action.URI(uri: try RFC_3986.URI("https://example.com"))),
+                target: .uri(ISO.`32000`.Action.URI(uri: try IETF.RFC.`3986`.URI("https://example.com"))),
                 color: ISO.`32000`.DeviceRGB(r: 1, g: 0, b: 0),
                 flags: .bold
             ),

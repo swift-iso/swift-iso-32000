@@ -74,7 +74,7 @@ extension `ISO.32000.COS.StringValue Tests`.Tests.Integration {
         let hexString = String(decoding: str.asHexadecimal(), as: UTF8.self)
 
         let innerHex = hexString.dropFirst().dropLast()
-        let rawBytes = RFC_4648.Base16.decode(innerHex, skipPrefix: false)!
+        let rawBytes = IETF.RFC.`4648`.Base16.decode(innerHex, skipPrefix: false)!
 
         let roundTripped = ISO.`32000`.COS.StringValue(pdfStringBytes: rawBytes)
         #expect(roundTripped.value == original)

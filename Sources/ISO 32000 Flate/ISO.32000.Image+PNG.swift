@@ -7,7 +7,7 @@ extension ISO.`32000`.Image {
 
     public init(
         png pngData: [Byte],
-        compressionLevel: RFC_1951.Level = .balanced
+        compressionLevel: IETF.RFC.`1951`.Level = .balanced
     ) throws(Parse.Error) {
 
         let image: W3C.PNG.Image
@@ -20,7 +20,7 @@ extension ISO.`32000`.Image {
         let (rawPixels, colorSpace, alpha) = Self.convertToRawPixels(image)
 
         var compressedData: [Byte] = []
-        RFC_1950.compress(rawPixels, into: &compressedData, level: compressionLevel)
+        IETF.RFC.`1950`.compress(rawPixels, into: &compressedData, level: compressionLevel)
 
         self.init(
             pixelWidth: image.width,
@@ -29,7 +29,7 @@ extension ISO.`32000`.Image {
             bitsPerComponent: 8,
             filter: .flateDecode,
             data: compressedData,
-            softMask: alpha.map { RFC_1950.compress($0, level: compressionLevel) }
+            softMask: alpha.map { IETF.RFC.`1950`.compress($0, level: compressionLevel) }
         )
     }
 

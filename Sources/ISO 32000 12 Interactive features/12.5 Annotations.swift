@@ -36,7 +36,7 @@ extension ISO.`32000`.`12`.`5` {
 
         public var blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode?
 
-        public var language: RFC_5646.LanguageTag?
+        public var language: IETF.RFC.`5646`.LanguageTag?
 
         public var appearance: ISO.`32000`.`12`.`5`.Appearance?
 
@@ -57,7 +57,7 @@ extension ISO.`32000`.`12`.`5` {
             fillOpacity: Double? = nil,
             strokeOpacity: Double? = nil,
             blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode? = nil,
-            language: RFC_5646.LanguageTag? = nil,
+            language: IETF.RFC.`5646`.LanguageTag? = nil,
             appearance: ISO.`32000`.`12`.`5`.Appearance? = nil,
             appearanceState: String? = nil
         ) {
@@ -520,7 +520,7 @@ extension ISO.`32000`.`12`.`5`.Annotation {
             self.quadPoints = quadPoints
         }
 
-        public init(uri: RFC_3986.URI, highlightMode: HighlightMode = .invert) {
+        public init(uri: IETF.RFC.`3986`.URI, highlightMode: HighlightMode = .invert) {
             self.target = .uri(uri)
             self.highlightMode = highlightMode
             self.quadPoints = nil
@@ -538,7 +538,7 @@ extension ISO.`32000`.`12`.`5`.Annotation.Link {
 
     public enum Target: Sendable, Hashable {
 
-        case uri(RFC_3986.URI)
+        case uri(IETF.RFC.`3986`.URI)
 
         case destination(ISO.`32000`.Destination)
     }
