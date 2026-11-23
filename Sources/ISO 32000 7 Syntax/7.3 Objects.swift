@@ -938,7 +938,7 @@ extension ISO.`32000`.`7`.`3`.`3`.PDFNumber {
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
 
-        guard IEEE_754.Classification.isFinite(value) else {
+        guard IEEE.`754`.Classification.isFinite(value) else {
             buffer.append(.ascii.0)
             return
         }

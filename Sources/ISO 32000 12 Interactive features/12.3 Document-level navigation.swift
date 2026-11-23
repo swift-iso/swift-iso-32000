@@ -359,7 +359,7 @@ extension ISO.`32000`.`12`.`3` {
 
 extension ISO.`32000` {
 
-    public typealias DeviceRGB = IEC_61966.SRGB
+    public typealias DeviceRGB = IEC.`61966`.SRGB
 
     public typealias OutlineRoot = Outline.Root
 
