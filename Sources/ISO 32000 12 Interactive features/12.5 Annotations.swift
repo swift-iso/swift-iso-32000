@@ -36,7 +36,7 @@ extension ISO.`32000`.`12`.`5` {
 
         public var blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode?
 
-        public var language: IETF.RFC.`5646`.LanguageTag?
+        public var language: IETF.RFC.`5646`.Tag?
 
         public var appearance: ISO.`32000`.`12`.`5`.Appearance?
 
@@ -57,7 +57,7 @@ extension ISO.`32000`.`12`.`5` {
             fillOpacity: Double? = nil,
             strokeOpacity: Double? = nil,
             blendMode: ISO.`32000`.`8`.`4`.Graphics.State.Blend.Mode? = nil,
-            language: IETF.RFC.`5646`.LanguageTag? = nil,
+            language: IETF.RFC.`5646`.Tag? = nil,
             appearance: ISO.`32000`.`12`.`5`.Appearance? = nil,
             appearanceState: String? = nil
         ) {
